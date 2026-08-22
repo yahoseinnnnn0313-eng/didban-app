@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه تشخیص شی نورانی</title>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  body { font-family: Tahoma, Arial; background:#111; color:#eee; padding:15px; }
+  .box { max-width:500px; margin:auto; background:#222; padding:20px; border-radius:10px; }
+  label { display:block; margin-top:15px; margin-bottom:5px; }
+  input, select { width:100%; padding:8px; border-radius:5px; border:none; box-sizing:border-box; }
+  button { margin-top:20px; width:100%; padding:12px; background:#2b7de9; color:white; border:none; border-radius:5px; font-size:16px; }
+  #locStatus { margin-top:10px; font-size:14px; color:#9f9; }
+  .hint { font-size:13px; color:#aaa; margin-top:8px; line-height:1.6; }
+  #resultBox { max-width:600px; margin:20px auto; background:#222; padding:20px; border-radius:10px; display:none; }
+  #map { width:100%; height:400px; margin-top:15px; border-radius:8px; }
+  .sat { color:#5f5; } .ac { color:#5af; } .un { color:#f55; }
+</style>
+</head>
+<body>
+
+<div class="box" id="formBox">
+  <h2>ثبت مشاهده شی نورانی</h2>
+
+  <label>موقعیت شما</label>
+  <input type="text" id="lat" placeholder="عرض جغرافیایی (مثلا 35.6892)">
+  <input type="text" id="lon" placeholder="طول جغرافیایی (مثلا 51.3890)">
+  <button type="button" onclick="getLocation()">دریافت خودکار موقعیت من (GPS)</button>
+  <div id="locStatus"></div>
+  <div class="hint">یا مختصات را دستی از گوگل‌مپ کپی کنید.</div>
+
+  <label>تاریخ و ساعت مشاهده</label>
+  <input type="datetime-local" id="obsTime">
+
+  <label>جهت دیدن شی (آزیموت، درجه از شمال)</label>
+  <input type="number" id="azimuth" min="0" max="360" placeholder="مثلا 90 برای شرق">
+
+  <label>جهت حرکت شی</label>
+  <select id="moveDir">
+    <option>از شمال به جنوب</option>
+    <option>از جنوب به شمال</option>
+    <option>از شرق به غرب</option>
+    <option>از غرب به شرق</option>
+    <option>از شمال‌شرق به جنوب‌غرب</option>
+    <option>از شمال‌غرب به جنوب‌شرق</option>
+    <option>از جنوب‌شرق به شمال‌غرب</option>
+    <option>از جنوب‌غرب به شمال‌شرق</option>
+  </select>
+
+  <button type="button" onclick="runAnalysis()">ثبت و تجزیه</button>
+</div>
+
+<div id="resultBox">
+  <h2>نتیجه تحلیل</h2>
+  <div id="resultText">در حال پردازش...</div>
+  <div id="map"></div>
+  <button type="button" onclick="location.reload()">ثبت مشاهده جدید</button>
+</div>
+
+<script>
+function getLocation(){
+  if(navigator.geolocation){
+    document.getElementById("locStatus").innerText = "در حال دریافت موقعیت...";
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById("lat").value = pos.coords.latitude;
+      document.getElementById("lon").value = pos.coords.longitude;
+      document.getElementById("locStatus").innerText = "موقعیت دریافت شد.";
+    }, function(err){
+      document.getElementById("locStatus").innerText = "خطا: " + err.message + " (می‌توانید دستی وارد کنید)";
+    });
+  }
+}
+
+window.onload = function(){
+  var now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('obsTime').value = now.toISOString().slice(0,16);
+};
+
+// ---------- توابع ریاضی کمکی ----------
+function toRad(d){ return d*Math.PI/180; }
+function toDeg(r){ return r*180/Math.PI; }
+
+function projectPoint(lat, lon, azDeg, distKm){
+  var R=6371.0;
+  var lat1=toRad(lat), lon1=toRad(lon), brng=toRad(azDeg), d=distKm/R;
+  var lat2=Math.asin(Math.sin(lat1)*Math.cos(d)+Math.cos(lat1)*Math.sin(d)*Math.cos(brng));
+  var lon2=lon1+Math.atan2(Math.sin(brng)*Math.sin(d)*Math.cos(lat1), Math.cos(d)-Math.sin(lat1)*Math.sin(lat2));
+  return [toDeg(lat2), toDeg(lon2)];
+}
+
+function bearingElevation(obsLat, obsLon, tgtLat, tgtLon, tgtAltM){
+  var lat1=toRad(obsLat), lat2=toRad(tgtLat), dlon=toRad(tgtLon-obsLon);
+  var x=Math.sin(dlon)*Math.cos(lat2);
+  var y=Math.cos(lat1)*Math.sin(lat2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dlon);
+  var bearing=(toDeg(Math.atan2(x,y))+360)%360;
+  var R=6371000;
+  var a=Math.sin((lat2-lat1)/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dlon/2)**2;
+  var c=2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var dist=R*c;
+  if(tgtAltM==null) tgtAltM=0;
+  var elev=toDeg(Math.atan2(tgtAltM, dist));
+  return {bearing:bearing, elev:elev, dist:dist};
+}
+
+function sunPosition(date){
+  var jd=(date.getTime()/86400000)+2440587.5;
+  var n=jd-2451545.0;
+  var L=(280.460+0.9856474*n)%360;
+  var g=(357.528+0.9856003*n)%360;
+  var lambda=L+1.915*Math.sin(toRad(g))+0.020*Math.sin(toRad(2*g));
+  var eps=23.439-0.0000004*n;
+  var ra=Math.atan2(Math.cos(toRad(eps))*Math.sin(toRad(lambda)), Math.cos(toRad(lambda)));
+  var dec=Math.asin(Math.sin(toRad(eps))*Math.sin(toRad(lambda)));
+  var Rdist=1.00014-0.01671*Math.cos(toRad(g))-0.00014*Math.cos(toRad(2*g));
+  return {ra:ra, dec:dec, distAU:Rdist};
+}
+
+function sunAltitude(date, latDeg, lonDeg){
+  var sun=sunPosition(date);
+  var gmst=satellite.gstime(date);
+  var lst=gmst+toRad(lonDeg);
+  var ha=lst-sun.ra;
+  var lat=toRad(latDeg);
+  var sinAlt=Math.sin(sun.dec)*Math.sin(lat)+Math.cos(sun.dec)*Math.cos(lat)*Math.cos(ha);
+  return toDeg(Math.asin(sinAlt));
+}
+
+function sunEciKm(date){
+  var sun=sunPosition(date);
+  var distKm=sun.distAU*149597870.7;
+  return {
+    x: distKm*Math.cos(sun.dec)*Math.cos(sun.ra),
+    y: distKm*Math.cos(sun.dec)*Math.sin(sun.ra),
+    z: distKm*Math.sin(sun.dec)
+  };
+}
+
+function isSunlit(satEci, sunEci){
+  var sunMag=Math.sqrt(sunEci.x**2+sunEci.y**2+sunEci.z**2);
+  var sunUnit={x:sunEci.x/sunMag, y:sunEci.y/sunMag, z:sunEci.z/sunMag};
+  var dotVal=satEci.x*sunUnit.x+satEci.y*sunUnit.y+satEci.z*sunUnit.z;
+  if(dotVal>0) return true;
+  var perp={x:satEci.x-sunUnit.x*dotVal, y:satEci.y-sunUnit.y*dotVal, z:satEci.z-sunUnit.z*dotVal};
+  var perpDist=Math.sqrt(perp.x**2+perp.y**2+perp.z**2);
+  return perpDist>6371;
+}
+
+// ---------- اجرای اصلی ----------
+function runAnalysis(){
+  var lat=parseFloat(document.getElementById("lat").value);
+  var lon=parseFloat(document.getElementById("lon").value);
+  var obsTimeStr=document.getElementById("obsTime").value;
+  var azimuth=parseFloat(document.getElementById("azimuth").value);
+  var moveDir=document.getElementById("moveDir").value;
+
+  if(isNaN(lat)||isNaN(lon)||!obsTimeStr||isNaN(azimuth)){
+    alert("لطفا همه فیلدها را پر کنید.");
+    return;
+  }
+
+  document.getElementById("formBox").style.display="none";
+  document.getElementById("resultBox").style.display="block";
+  document.getElementById("resultText").innerText="در حال دریافت داده ماهواره‌ها... کمی صبر کنید";
+
+  var obsDate=new Date(obsTimeStr);
+  var azTolerance=15;
+  var minAlt=10;
+  var maxMag=6.0;
+
+  var satResults=[];
+  var acResults=[];
+
+  fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")
+    .then(r=>r.text())
+    .then(tleText=>{
+      var lines=tleText.trim().split("\n");
+      var sunAlt=sunAltitude(obsDate, lat, lon);
+      var sunEci=sunEciKm(obsDate);
+      var darkEnough = sunAlt <= -6;
+
+      for(var i=0;i+2<lines.length;i+=3){
+        try{
+          var name=lines[i].trim();
+          var l1=lines[i+1];
+          var l2=lines[i+2];
+          var satrec=satellite.twoline2satrec(l1,l2);
+          var pv=satellite.propagate(satrec, obsDate);
+          if(!pv.position) continue;
+          var gmst=satellite.gstime(obsDate);
+          var ecf=satellite.eciToEcf(pv.position, gmst);
+          var observerGd={longitude:toRad(lon), latitude:toRad(lat), height:0};
+          var look=satellite.ecfToLookAngles(observerGd, ecf);
+          var altDeg=toDeg(look.elevation);
+          var azDeg=toDeg(look.azimuth);
+          var rangeKm=look.rangeSat;
+
+          if(altDeg>minAlt){
+            var azDiff=Math.abs(azDeg-azimuth);
+            azDiff=Math.min(azDiff, 360-azDiff);
+            if(azDiff<=azTolerance && darkEnough){
+              var lit=isSunlit(pv.position, sunEci);
+              if(lit){
+                var estMag=3.0 + 5*Math.sqrt(rangeKm/1000)/10;
+                if(estMag<=maxMag){
+                  var gp=projectPoint(lat, lon, azDeg, rangeKm*Math.cos(toRad(altDeg)));
+                  satResults.push({name:name, alt:altDeg.toFixed(1), az:azDeg.toFixed(1), mag:estMag.toFixed(1), lat:gp[0], lon:gp[1]});
+                }
+              }
+            }
+          }
+        }catch(e){}
+      }
+
+      document.getElementById("resultText").innerText="در حال دریافت داده هواپیماها...";
+
+      var margin=1.0;
+      var lamin=lat-margin, lamax=lat+margin, lomin=lon-margin, lomax=lon+margin;
+      var osUrl="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
+      return fetch("https://corsproxy.io/?url="+encodeURIComponent(osUrl));
+    })
+    .then(r=>r.json())
+    .then(data=>{
+      var states=data.states||[];
+      for(var i=0;i<states.length;i++){
+        var s=states[i];
+        var icao=s[0], callsign=(s[1]||"Unknown").trim(), acLon=s[5], acLat=s[6], baroAlt=s[7], onGround=s[8];
+        if(acLat==null||acLon==null||onGround) continue;
+        var be=bearingElevation(lat, lon, acLat, acLon, baroAlt);
+        var azDiff=Math.abs(be.bearing-azimuth);
+        azDiff=Math.min(azDiff,360-azDiff);
+        if(azDiff<=20 && be.elev>2){
+          acResults.push({name:callsign, icao:icao, elev:be.elev.toFixed(1), dist:(be.dist/1000).toFixed(1), lat:acLat, lon:acLon});
+        }
+      }
+      showResults(lat, lon, obsTimeStr, azimuth, moveDir, satResults, acResults);
+    })
+    .catch(err=>{
+      showResults(lat, lon, obsTimeStr, azimuth, moveDir, satResults, acResults, err.message);
+    });
+}
+
+function showResults(lat, lon, obsTimeStr, azimuth, moveDir, satResults, acResults, errMsg){
+  var html="";
+  html+="<p>موقعیت: "+lat+", "+lon+"</p>";
+  html+="<p>زمان مشاهده: "+obsTimeStr+"</p>";
+  html+="<p>آزیموت: "+azimuth+"</p>";
+  html+="<p>جهت حرکت: "+moveDir+"</p><hr>";
+
+  var hasSat=satResults.length>0, hasAc=acResults.length>0;
+
+  if(hasSat && !hasAc){
+    html+="<h3 class='sat'>نتیجه: ماهواره</h3>";
+    satResults.forEach(s=> html+="<p>🛰️ "+s.name+" | ارتفاع: "+s.alt+"° | آزیموت: "+s.az+"° | قدر: "+s.mag+"</p>");
+  } else if(hasAc && !hasSat){
+    html+="<h3 class='ac'>نتیجه: هواپیما</h3>";
+    acResults.forEach(a=> html+="<p>✈️ "+a.name+" ("+a.icao+") | ارتفاع زاویه‌ای: "+a.elev+"° | فاصله: "+a.dist+" کیلومتر</p>");
+  } else if(hasSat && hasAc){
+    html+="<h3 style='color:#fa5;'>هم ماهواره و هم هواپیما یافت شد</h3>";
+    html+="<h4>ماهواره‌ها:</h4>";
+    satResults.forEach(s=> html+="<p>🛰️ "+s.name+" | ارتفاع: "+s.alt+"° | آزیموت: "+s.az+"° | قدر: "+s.mag+"</p>");
+    html+="<h4>هواپیماها:</h4>";
+    acResults.forEach(a=> html+="<p>✈️ "+a.name+" ("+a.icao+") | ارتفاع زاویه‌ای: "+a.elev+"° | فاصله: "+a.dist+" کیلومتر</p>");
+  } else {
+    html+="<h3 class='un'>نتیجه: شی ناشناس</h3><p>هیچ ماهواره یا هواپیمای شناخته‌شده‌ای مطابقت نداشت.</p>";
+  }
+
+  if(errMsg){
+    html+="<p style='color:#f90;'>توجه: خطا در دریافت داده هواپیما: "+errMsg+"</p>";
+  }
+
+  document.getElementById("resultText").innerHTML=html;
+
+  var map=L.map('map').setView([lat, lon], 8);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(map);
+  L.marker([lat,lon]).addTo(map).bindPopup("محل مشاهده شما");
+
+  var endPoint=projectPoint(lat, lon, azimuth, 300);
+  L.polyline([[lat,lon],endPoint], {color:'yellow', dashArray:'5,10'}).addTo(map);
+
+  satResults.forEach(s=>{
+    L.marker([s.lat,s.lon]).addTo(map).bindPopup(s.name+" (ماهواره)");
+    L.polyline([[lat,lon],[s.lat,s.lon]], {color:'cyan', weight:1}).addTo(map);
+  });
+  acResults.forEach(a=>{
+    L.marker([a.lat,a.lon]).addTo(map).bindPopup(a.name+" (هواپیما)");
+    L.polyline([[lat,lon],[a.lat,a.lon]], {color:'lightgreen', weight:1}).addTo(map);
+  });
+}
+</script>
+</body>
+</html>
