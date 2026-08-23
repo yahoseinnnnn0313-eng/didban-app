@@ -243,6 +243,7 @@
     <input type="number" id="azimuth" min="0" max="360" placeholder="درجه از شمال، مثلا 90">
     <button type="button" class="btn btn-outline compass-btn" onclick="enableCompass()">🧭 استفاده از قطب‌نمای گوشی</button>
     <div class="status-msg" id="compassStatus"></div>
+    <button type="button" class="btn btn-primary" id="compassConfirmBtn" style="display:none; margin-top:8px;" onclick="confirmCompass()">✅ تایید و قفل کردن جهت</button>
 
     <label class="field-label">➡️ جهت حرکت شی</label>
     <select id="moveDir">
@@ -310,7 +311,7 @@
     <h2>📘 راهنمای استفاده از رصدیار</h2>
     <div class="guide-section">
       <h4>درباره رصدیار</h4>
-      <p>رصدیار یک سامانه هوشمند و مستقل برای تشخیص و شناسایی اجسام نورانی مشاهده‌شده در آسمان شب است. این ابزار با تحلیل هم‌زمان پایگاه‌های داده ماهواره‌های فعال و پروازهای هوایی جاری، تلاش می‌کند به این پرسش رایج پاسخ دهد که آیا نوری که در آسمان دیده‌اید یک ماهواره، یک هواپیما، یا یک شی ناشناخته بوده است. تمامی محاسبات مستقیماً روی دستگاه شما انجام می‌شود و نیازی به هیچ سرور واسطی ندارد.</p>
+      <p>رصدیار یک سامانه هوشمند و مستقل برای تشخیص و شناسایی اجسام نورانی مشاهده‌شده در آسمان شب است. این ابزار با تحلیل هم‌زمان پایگاه‌های داده ماهواره‌های فعال و پروازهای هوایی جاری، تلاش می‌کند به این پرسش رایج پاسخ دهد که آیا نوری که در آسمان دیده‌اید یک ماهواره، یک هواپیما، یا یک شی ناشناخته بوده است.</p>
     </div>
     <div class="guide-section">
       <h4>۱. محل مشاهده</h4>
@@ -560,28 +561,43 @@ function getManualCoords(){
 /* ========================================================================
    COMPASS
 ======================================================================== */
+var compassHandler=null;
+var compassLocked=false;
 function enableCompass(){
+  compassLocked=false;
   function handle(e){
+    if(compassLocked) return;
     var heading;
     if(e.webkitCompassHeading!==undefined) heading=e.webkitCompassHeading;
     else if(e.alpha!==null) heading=360-e.alpha;
     if(heading!==undefined){
       document.getElementById('azimuth').value=Math.round(heading);
-      document.getElementById('compassStatus').innerText="✅ جهت به‌صورت زنده از قطب‌نما دریافت می‌شود (دقت تقریبی است)";
+      document.getElementById('compassStatus').innerText="جهت زنده در حال دریافت است، گوشی را به سمت شی بگیرید و سپس تایید کنید.";
+      document.getElementById('compassConfirmBtn').style.display='block';
     }
   }
+  compassHandler=handle;
   if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
     DeviceOrientationEvent.requestPermission().then(function(state){
-      if(state==='granted') window.addEventListener('deviceorientation', handle);
+      if(state==='granted') window.addEventListener('deviceorientation', compassHandler);
       else document.getElementById('compassStatus').innerText="اجازه دسترسی به قطب‌نما داده نشد.";
     }).catch(function(){ document.getElementById('compassStatus').innerText="خطا در دسترسی به قطب‌نما."; });
   } else if('ondeviceorientationabsolute' in window){
-    window.addEventListener('deviceorientationabsolute', handle);
+    window.addEventListener('deviceorientationabsolute', compassHandler);
   } else if(typeof DeviceOrientationEvent!=='undefined'){
-    window.addEventListener('deviceorientation', handle);
+    window.addEventListener('deviceorientation', compassHandler);
   } else {
     document.getElementById('compassStatus').innerText="گوشی شما از قطب‌نمای خودکار پشتیبانی نمی‌کند.";
   }
+}
+function confirmCompass(){
+  compassLocked=true;
+  if(compassHandler){
+    window.removeEventListener('deviceorientation', compassHandler);
+    window.removeEventListener('deviceorientationabsolute', compassHandler);
+  }
+  document.getElementById('compassConfirmBtn').style.display='none';
+  document.getElementById('compassStatus').innerText="✅ جهت با موفقیت ثبت و قفل شد.";
 }
 
 /* ========================================================================
@@ -668,6 +684,104 @@ function fetchOpenSkyWithFallback(osUrl){
   }
   return tryProxy(0);
 }
+function fetchJsonSafe(url, timeoutMs){
+  return Promise.race([
+    fetch(url).then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('status '+r.status)); }),
+    new Promise(function(resolve, reject){ setTimeout(function(){ reject(new Error('timeout')); }, timeoutMs||8000); })
+  ]);
+}
+function fetchAirplanesLive(lat, lon, radiusNm){
+  var url="https://api.airplanes.live/v2/point/"+lat+"/"+lon+"/"+radiusNm;
+  return fetchJsonSafe(url).then(function(data){
+    var list=(data && data.ac) || [];
+    return list.map(function(a){
+      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
+      return {
+        icao:(a.hex||'').toLowerCase(),
+        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
+        country:null, lat:a.lat, lon:a.lon,
+        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
+        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
+        heading: a.track!=null ? Math.round(a.track) : null,
+        onGround: a.alt_baro==='ground'
+      };
+    });
+  }).catch(function(){ return []; });
+}
+function fetchAdsbOne(lat, lon, radiusNm){
+  var url="https://api.adsb.one/v2/point/"+lat+"/"+lon+"/"+radiusNm;
+  return fetchJsonSafe(url).then(function(data){
+    var list=(data && data.ac) || [];
+    return list.map(function(a){
+      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
+      return {
+        icao:(a.hex||'').toLowerCase(),
+        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
+        country:null, lat:a.lat, lon:a.lon,
+        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
+        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
+        heading: a.track!=null ? Math.round(a.track) : null,
+        onGround: a.alt_baro==='ground'
+      };
+    });
+  }).catch(function(){ return []; });
+}
+function fetchAdsbLol(lat, lon, radiusNm){
+  var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
+  return fetchJsonSafe(url).then(function(data){
+    var list=(data && data.ac) || [];
+    return list.map(function(a){
+      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
+      return {
+        icao:(a.hex||'').toLowerCase(),
+        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
+        country:null, lat:a.lat, lon:a.lon,
+        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
+        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
+        heading: a.track!=null ? Math.round(a.track) : null,
+        onGround: a.alt_baro==='ground'
+      };
+    });
+  }).catch(function(){ return []; });
+}
+function fetchOpenSkyList(lat, lon, marginDeg){
+  var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
+  var osUrl="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
+  return fetchOpenSkyWithFallback(osUrl).then(function(data){
+    var states=(data && data.states) || [];
+    return states.map(function(s){
+      return {
+        icao:(s[0]||'').toLowerCase(),
+        callsign:(s[1]||'نامشخص').trim(),
+        country: s[2]||null, lat:s[6], lon:s[5],
+        altM: s[7]!=null ? Math.round(s[7]) : null,
+        speedKmh: s[9]!=null ? Math.round(s[9]*3.6) : null,
+        heading: s[10]!=null ? Math.round(s[10]) : null,
+        onGround: s[8]
+      };
+    });
+  }).catch(function(){ return []; });
+}
+function fetchAllAircraft(lat, lon){
+  var radiusNm=65, marginDeg=1.1;
+  return Promise.all([
+    fetchAirplanesLive(lat, lon, radiusNm),
+    fetchAdsbOne(lat, lon, radiusNm),
+    fetchAdsbLol(lat, lon, radiusNm),
+    fetchOpenSkyList(lat, lon, marginDeg)
+  ]).then(function(results){
+    var merged={};
+    results.forEach(function(list){
+      list.forEach(function(a){
+        if(!a.icao || a.lat==null || a.lon==null) return;
+        if(!merged[a.icao]) merged[a.icao]=a;
+      });
+    });
+    var out=[];
+    for(var k in merged) out.push(merged[k]);
+    return out;
+  });
+}
 function calcConfidence(azDiff, azTolerance){
   var c = 95 - (azDiff/azTolerance)*45;
   return Math.max(40, Math.min(95, Math.round(c)));
@@ -736,9 +850,9 @@ function validateAndRun(){
 
 function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
   var azTolerance=20, minAlt=0, maxMag=6.5;
-  var satResults=[], acResults=[];
+  var satResults=[], acResults=[], acErrorMsg=null;
 
-  fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")
+  var satPromise = fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")
     .then(function(r){return r.text();})
     .then(function(tleText){
       var lines=tleText.trim().split("\n");
@@ -777,38 +891,31 @@ function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
           }
         }catch(e){}
       }
-
-      var margin=1.0;
-      var lamin=lat-margin, lamax=lat+margin, lomin=lon-margin, lomax=lon+margin;
-      var osUrl="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
-      return fetchOpenSkyWithFallback(osUrl);
     })
-    .then(function(data){
-      var states=(data && data.states) || [];
-      for(var i=0;i<states.length;i++){
-        var s=states[i];
-        var icao=s[0], callsign=(s[1]||"نامشخص").trim(), country=s[2]||"نامشخص";
-        var acLon=s[5], acLat=s[6], baroAlt=s[7], onGround=s[8], velocity=s[9], trueTrack=s[10];
-        if(acLat==null||acLon==null||onGround) continue;
-        var be=bearingElevation(lat, lon, acLat, acLon, baroAlt);
+    .catch(function(){});
+
+  var acPromise = fetchAllAircraft(lat, lon)
+    .then(function(list){
+      list.forEach(function(a){
+        if(a.onGround) return;
+        var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
         var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
         if(azDiff<=25 && be.elev>0.5){
           acResults.push({
-            name: callsign || icao, icao:icao, country:country,
+            name: a.callsign || a.icao, icao:a.icao, country:a.country || 'نامشخص',
             elev: be.elev.toFixed(1), dist:(be.dist/1000).toFixed(1),
-            alt: baroAlt ? Math.round(baroAlt) : null,
-            speed: velocity ? Math.round(velocity*3.6) : null,
-            heading: trueTrack!=null ? Math.round(trueTrack) : null,
-            lat:acLat, lon:acLon,
+            alt: a.altM, speed: a.speedKmh, heading: a.heading,
+            lat:a.lat, lon:a.lon,
             confidence: calcConfidence(azDiff, 25)
           });
         }
-      }
-      finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin);
+      });
     })
-    .catch(function(err){
-      finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, err.message);
-    });
+    .catch(function(err){ acErrorMsg = err.message; });
+
+  Promise.all([satPromise, acPromise]).then(function(){
+    finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, acErrorMsg);
+  });
 }
 
 /* ========================================================================
