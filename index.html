@@ -887,7 +887,7 @@ function validateAndRun(){
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, timeOffsetsSec, diag, allSatCandidates, satResults){
-  var CHUNK=250;
+  var CHUNK=800;
   var count=0;
   var total=Math.floor(lines.length/3);
   var observerGd={longitude:toRad(lon), latitude:toRad(lat), height:0};
@@ -899,52 +899,41 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       var satrec=satellite.twoline2satrec(l1,l2);
       diag.satChecked++;
 
-      var pv0=satellite.propagate(satrec, obsDate);
-      if(pv0.position){
-        var gmst0=satellite.gstime(obsDate);
-        var ecf0=satellite.eciToEcf(pv0.position, gmst0);
-        var look0=satellite.ecfToLookAngles(observerGd, ecf0);
-        var alt0=toDeg(look0.elevation);
+      var pv=satellite.propagate(satrec, obsDate);
+      if(pv.position){
+        var gmst=satellite.gstime(obsDate);
+        var ecf=satellite.eciToEcf(pv.position, gmst);
+        var look=satellite.ecfToLookAngles(observerGd, ecf);
+        var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
 
-        if(alt0 > -25){
-          var best=null;
-          for(var oi=0; oi<timeOffsetsSec.length; oi++){
-            var off=timeOffsetsSec[oi];
-            var tCandidate = off===0 ? obsDate : new Date(obsDate.getTime()+off*1000);
-            var pv = off===0 ? pv0 : satellite.propagate(satrec, tCandidate);
-            if(!pv.position) continue;
-            var gmst = off===0 ? gmst0 : satellite.gstime(tCandidate);
-            var ecf = off===0 ? ecf0 : satellite.eciToEcf(pv.position, gmst);
-            var look = off===0 ? look0 : satellite.ecfToLookAngles(observerGd, ecf);
-            var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
-            if(altDeg<=minAlt) continue;
-            var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
-            if(!best || azDiff<best.azDiff){
-              best={azDiff:azDiff, altDeg:altDeg, azDeg:azDeg, rangeKm:rangeKm, date:tCandidate, eci:pv.position, gmst:gmst};
-            }
-          }
-          if(best){
-            if(best.azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
-            var sunAltAtBest=sunAltitude(best.date, lat, lon);
-            if(sunAltAtBest<=-6){
-              var sunEci=sunEciKm(best.date);
-              if(isSunlit(best.eci, sunEci)){
-                var estMag=3.0+5*Math.sqrt(best.rangeKm/1000)/10;
-                if(estMag<=maxMag){
-                  var geo=satellite.eciToGeodetic(best.eci, best.gmst);
-                  var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
-                  var geo2=computeSubpoint(satrec, new Date(best.date.getTime()+10000));
-                  var heading = geo2 ? simpleBearing(subLat, subLon, geo2.lat, geo2.lon) : null;
-                  var info=guessSatInfo(name);
-                  var candidate={name:name, alt:best.altDeg.toFixed(1), az:best.azDeg.toFixed(1), mag:estMag.toFixed(1),
-                    dist:Math.round(best.rangeKm), orbitAltKm:Math.round(subHeightKm),
-                    lat:subLat, lon:subLon, heading:heading, type:info.type, country:info.country};
-                  allSatCandidates.push(Object.assign({}, candidate, {azDiff:best.azDiff}));
-                  if(best.azDiff<=azTolerance){
-                    var conf=calcConfidence(best.azDiff, azTolerance);
-                    conf=adjustConfidenceByMovement(conf, heading, moveDir);
-                    satResults.push(Object.assign({}, candidate, {confidence:conf}));
-                  }
+        if(altDeg>minAlt){
+          var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
+          if(azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
+
+          var sunAltNow=sunAltitude(obsDate, lat, lon);
+          if(sunAltNow<=-6){
+            var sunEci=sunEciKm(obsDate);
+            if(isSunlit(pv.position, sunEci)){
+              var estMag=3.0+5*Math.sqrt(rangeKm/1000)/10;
+              if(estMag<=maxMag){
+                var geo=satellite.eciToGeodetic(pv.position, gmst);
+                var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
+                var pv2=satellite.propagate(satrec, new Date(obsDate.getTime()+10000));
+                var heading=null;
+                if(pv2.position){
+                  var gmst2=satellite.gstime(new Date(obsDate.getTime()+10000));
+                  var geo2=satellite.eciToGeodetic(pv2.position, gmst2);
+                  heading=simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
+                }
+                var info=guessSatInfo(name);
+                var candidate={name:name, alt:altDeg.toFixed(1), az:azDeg.toFixed(1), mag:estMag.toFixed(1),
+                  dist:Math.round(rangeKm), orbitAltKm:Math.round(subHeightKm),
+                  lat:subLat, lon:subLon, heading:heading, type:info.type, country:info.country};
+                allSatCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
+                if(azDiff<=azTolerance){
+                  var conf=calcConfidence(azDiff, azTolerance);
+                  conf=adjustConfidenceByMovement(conf, heading, moveDir);
+                  satResults.push(Object.assign({}, candidate, {confidence:conf}));
                 }
               }
             }
@@ -1015,7 +1004,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(aircraftTimeUsable){
       try{
-        var list=await fetchAllAircraft(lat, lon);
+        var list=await fetchOpenSkyList(lat, lon, 1.5);
         diag.acNearby=list.length;
         list.forEach(function(a){
           if(a.onGround) return;
