@@ -986,10 +986,28 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(mainText) mainText.innerText='در حال دریافت پایگاه داده ماهواره‌ها...';
     var tleText='';
+    var satFetchError=null;
     try{
       var r=await fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle");
+      if(!r.ok) throw new Error('کد وضعیت HTTP: '+r.status);
       tleText=await r.text();
-    }catch(e){ tleText=''; }
+      if(tleText && tleText.length>1000){
+        try{ localStorage.setItem('rasadyar_tle_cache', tleText); localStorage.setItem('rasadyar_tle_cache_time', Date.now().toString()); }catch(e){}
+      } else {
+        throw new Error('پاسخ دریافتی خالی یا ناقص بود');
+      }
+    }catch(e){
+      satFetchError = e.message;
+      var cached=null;
+      try{ cached=localStorage.getItem('rasadyar_tle_cache'); }catch(e2){}
+      if(cached && cached.length>1000){
+        tleText=cached;
+        var cacheTime=localStorage.getItem('rasadyar_tle_cache_time');
+        var ageHours = cacheTime ? Math.round((Date.now()-parseInt(cacheTime))/3600000) : null;
+        satFetchError += ' — از نسخه ذخیره‌شده '+(ageHours!=null ? '('+ageHours+' ساعت قبل) ' : '')+'استفاده شد.';
+      }
+    }
+    diag.satFetchError = satFetchError;
 
     if(tleText){
       diag.sunAltCenter=sunAltitude(obsDate, lat, lon);
@@ -1109,9 +1127,16 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   }
 
   var warnBox=document.getElementById('acTimeWarning');
+  var warnParts=[];
+  if(diag && diag.satFetchError){
+    warnParts.push('⚠️ دریافت پایگاه داده ماهواره‌ها با مشکل مواجه شد: '+diag.satFetchError);
+  }
   if(diag && diag.acSkippedOldTime){
+    warnParts.push('⏱️ چون زمان گزارش بیش از ۱۰ دقیقه با اکنون فاصله دارد، بررسی هواپیما انجام نشد؛ چون منابع رایگان فقط موقعیت لحظه‌ای هواپیماها را می‌دهند، نه تاریخچه پروازها.');
+  }
+  if(warnParts.length>0){
     warnBox.style.display='block';
-    warnBox.innerHTML='⏱️ چون زمان گزارش بیش از ۱۰ دقیقه با اکنون فاصله دارد، بررسی هواپیما انجام نشد؛ چون منابع رایگان فقط موقعیت لحظه‌ای هواپیماها را می‌دهند، نه تاریخچه پروازها.';
+    warnBox.innerHTML=warnParts.join('<br><br>');
   } else {
     warnBox.style.display='none';
   }
@@ -1119,7 +1144,8 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   // Diagnostics
   if(diag){
     var d=document.getElementById('diagContent');
-    d.innerHTML =
+    var errRow = diag.satFetchError ? '<div class="diag-row" style="color:#ffb3b3;"><span>خطای دریافت دیتابیس ماهواره</span><span>'+diag.satFetchError+'</span></div>' : '';
+    d.innerHTML = errRow +
       '<div class="diag-row"><span>تعداد کل ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ماهواره‌های هم‌راستا با جهت شما (صرف‌نظر از نور)</span><span>'+diag.satAzMatchIgnoringLight+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید در لحظه گزارش</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
