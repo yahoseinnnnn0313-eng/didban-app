@@ -987,20 +987,29 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     if(mainText) mainText.innerText='در حال دریافت پایگاه داده ماهواره‌ها...';
     var tleText='';
     var satFetchError=null;
+    async function fetchTleGroup(groupName, timeoutMs){
+      return Promise.race([
+        fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP="+groupName+"&FORMAT=tle").then(function(r){
+          if(!r.ok) throw new Error('status '+r.status);
+          return r.text();
+        }),
+        new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||6000); })
+      ]);
+    }
     try{
-      var r=await fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle");
-      if(!r.ok) throw new Error('کد وضعیت HTTP: '+r.status);
-      tleText=await r.text();
-      if(tleText && tleText.length>1000){
-        try{ localStorage.setItem('rasadyar_tle_cache', tleText); localStorage.setItem('rasadyar_tle_cache_time', Date.now().toString()); }catch(e){}
-      } else {
-        throw new Error('پاسخ دریافتی خالی یا ناقص بود');
-      }
+      var groupTexts=await Promise.all([
+        fetchTleGroup('visual', 7000).catch(function(){return '';}),
+        fetchTleGroup('stations', 7000).catch(function(){return '';})
+      ]);
+      var combined=groupTexts.filter(function(t){return t && t.length>50;}).join("\n");
+      if(!combined) throw new Error('هیچ‌کدام از پایگاه‌های ماهواره در دسترس نبودند');
+      tleText=combined;
+      try{ localStorage.setItem('rasadyar_tle_cache', tleText); localStorage.setItem('rasadyar_tle_cache_time', Date.now().toString()); }catch(e){}
     }catch(e){
       satFetchError = e.message;
       var cached=null;
       try{ cached=localStorage.getItem('rasadyar_tle_cache'); }catch(e2){}
-      if(cached && cached.length>1000){
+      if(cached && cached.length>200){
         tleText=cached;
         var cacheTime=localStorage.getItem('rasadyar_tle_cache_time');
         var ageHours = cacheTime ? Math.round((Date.now()-parseInt(cacheTime))/3600000) : null;
