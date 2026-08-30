@@ -712,60 +712,52 @@ function fetchJsonSafe(url, timeoutMs){
     new Promise(function(resolve, reject){ setTimeout(function(){ reject(new Error('timeout')); }, timeoutMs||8000); })
   ]);
 }
+// ---- توابع قدیمی هواپیما (غیرفعال شده) ----
 function fetchAirplanesLive(lat, lon, radiusNm){
-  var url="https://api.airplanes.live/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  // غیرفعال شده - استفاده نمی‌شود
+  return Promise.resolve([]);
 }
 function fetchAdsbOne(lat, lon, radiusNm){
-  var url="https://api.adsb.one/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  // غیرفعال شده - استفاده نمی‌شود
+  return Promise.resolve([]);
 }
 function fetchAdsbLol(lat, lon, radiusNm){
-  var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  // غیرفعال شده - استفاده نمی‌شود
+  return Promise.resolve([]);
 }
+// ---- تابع جدید دریافت هواپیماها با CORS مستقیم ----
+async function fetchAllAircraft(lat, lon) {
+  // ابتدا از adsb.one استفاده می‌کنیم که CORS دارد
+  const radiusNm = 50;
+  const url = `https://data.adsb.one/v2/point/${lat}/${lon}/${radiusNm}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('adsb.one status ' + response.status);
+    const data = await response.json();
+    const list = (data && data.ac) || [];
+    return list.map(a => ({
+      icao: (a.hex || '').toLowerCase(),
+      callsign: (a.flight || a.r || a.hex || 'نامشخص').trim(),
+      country: null,
+      lat: a.lat,
+      lon: a.lon,
+      altM: (a.alt_baro != null) ? Math.round(a.alt_baro * 0.3048) : null,
+      speedKmh: (a.gs != null) ? Math.round(a.gs * 1.852) : null,
+      heading: (a.track != null) ? Math.round(a.track) : null,
+      onGround: (a.alt_baro === 'ground')
+    }));
+  } catch (err) {
+    console.warn('adsb.one failed, trying OpenSky via proxy...', err);
+    // Fallback: OpenSky با پروکسی (ممکن است کار کند)
+    try {
+      return await fetchOpenSkyList(lat, lon, 1.5);
+    } catch (e2) {
+      console.warn('OpenSky also failed', e2);
+      return [];
+    }
+  }
+}
+// ---- تابع OpenSky با پروکسی (همان قبلی) ----
 function fetchOpenSkyList(lat, lon, marginDeg){
   var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
   var osUrl="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
@@ -784,26 +776,29 @@ function fetchOpenSkyList(lat, lon, marginDeg){
     });
   }).catch(function(){ return []; });
 }
-function fetchAllAircraft(lat, lon){
-  var radiusNm=65, marginDeg=1.1;
-  return Promise.all([
-    fetchAirplanesLive(lat, lon, radiusNm),
-    fetchAdsbOne(lat, lon, radiusNm),
-    fetchAdsbLol(lat, lon, radiusNm),
-    fetchOpenSkyList(lat, lon, marginDeg)
-  ]).then(function(results){
-    var merged={};
-    results.forEach(function(list){
-      list.forEach(function(a){
-        if(!a.icao || a.lat==null || a.lon==null) return;
-        if(!merged[a.icao]) merged[a.icao]=a;
-      });
+
+// ---- تابع جدید دریافت TLE با API بدون CORS ----
+async function fetchTleGroup(groupName, timeoutMs) {
+  // استفاده از API جدید با CORS فعال
+  const url = `https://tle.ivanstanojevic.me/api/tle?category=${groupName}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('خطا در دریافت TLE');
+    const data = await response.json();
+    // داده‌ها شامل آرایه‌ای از اشیاء با فیلدهای name, line1, line2 است
+    let tleLines = [];
+    data.forEach(item => {
+      tleLines.push(item.name);
+      tleLines.push(item.line1);
+      tleLines.push(item.line2);
     });
-    var out=[];
-    for(var k in merged) out.push(merged[k]);
-    return out;
-  });
+    return tleLines.join('\n');
+  } catch (err) {
+    console.error('خطا در دریافت TLE از API جدید:', err);
+    throw new Error('دریافت TLE با شکست مواجه شد');
+  }
 }
+
 function calcConfidence(azDiff, azTolerance){
   var c = 95 - (azDiff/azTolerance)*45;
   return Math.max(40, Math.min(95, Math.round(c)));
@@ -987,34 +982,13 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     if(mainText) mainText.innerText='در حال دریافت پایگاه داده ماهواره‌ها...';
     var tleText='';
     var satFetchError=null;
-    function fetchTextWithProxies(targetUrl, timeoutMs){
-      var attempts=[
-        targetUrl,
-        "https://corsproxy.io/?url="+encodeURIComponent(targetUrl),
-        "https://api.allorigins.win/raw?url="+encodeURIComponent(targetUrl),
-        "https://proxy.cors.sh/"+targetUrl
-      ];
-      function tryOne(i){
-        if(i>=attempts.length) return Promise.reject(new Error("همه مسیرهای دریافت شکست خوردند"));
-        return Promise.race([
-          fetch(attempts[i]).then(function(r){ if(!r.ok) throw new Error('status '+r.status); return r.text(); }),
-          new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||7000); })
-        ]).catch(function(){ return tryOne(i+1); });
-      }
-      return tryOne(0);
-    }
-    async function fetchTleGroup(groupName, timeoutMs){
-      var url="https://celestrak.org/NORAD/elements/gp.php?GROUP="+groupName+"&FORMAT=tle";
-      return fetchTextWithProxies(url, timeoutMs);
-    }
     try{
-      var groupTexts=await Promise.all([
-        fetchTleGroup('visual', 7000).catch(function(){return '';}),
-        fetchTleGroup('stations', 7000).catch(function(){return '';})
-      ]);
-      var combined=groupTexts.filter(function(t){return t && t.length>50;}).join("\n");
-      if(!combined) throw new Error('هیچ‌کدام از پایگاه‌های ماهواره در دسترس نبودند');
-      tleText=combined;
+      // استفاده از API جدید برای دریافت TLE
+      var visualTle = await fetchTleGroup('visual', 7000);
+      var stationsTle = await fetchTleGroup('stations', 7000);
+      var combined = visualTle + "\n" + stationsTle;
+      if (combined.trim().length < 100) throw new Error('داده‌های TLE ناقص است');
+      tleText = combined;
       try{ localStorage.setItem('rasadyar_tle_cache', tleText); localStorage.setItem('rasadyar_tle_cache_time', Date.now().toString()); }catch(e){}
     }catch(e){
       satFetchError = e.message;
@@ -1025,6 +999,8 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         var cacheTime=localStorage.getItem('rasadyar_tle_cache_time');
         var ageHours = cacheTime ? Math.round((Date.now()-parseInt(cacheTime))/3600000) : null;
         satFetchError += ' — از نسخه ذخیره‌شده '+(ageHours!=null ? '('+ageHours+' ساعت قبل) ' : '')+'استفاده شد.';
+      } else {
+        satFetchError += ' — و کش معتبری نیز موجود نیست.';
       }
     }
     diag.satFetchError = satFetchError;
@@ -1042,7 +1018,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(aircraftTimeUsable){
       try{
-        var list=await fetchOpenSkyList(lat, lon, 1.5);
+        var list=await fetchAllAircraft(lat, lon);
         diag.acNearby=list.length;
         list.forEach(function(a){
           if(a.onGround) return;
@@ -1319,4 +1295,4 @@ window.onload=function(){
 };
 </script>
 </body>
-</html>
+ </html>
