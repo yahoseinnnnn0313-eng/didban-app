@@ -987,14 +987,25 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     if(mainText) mainText.innerText='در حال دریافت پایگاه داده ماهواره‌ها...';
     var tleText='';
     var satFetchError=null;
+    function fetchTextWithProxies(targetUrl, timeoutMs){
+      var attempts=[
+        targetUrl,
+        "https://corsproxy.io/?url="+encodeURIComponent(targetUrl),
+        "https://api.allorigins.win/raw?url="+encodeURIComponent(targetUrl),
+        "https://proxy.cors.sh/"+targetUrl
+      ];
+      function tryOne(i){
+        if(i>=attempts.length) return Promise.reject(new Error("همه مسیرهای دریافت شکست خوردند"));
+        return Promise.race([
+          fetch(attempts[i]).then(function(r){ if(!r.ok) throw new Error('status '+r.status); return r.text(); }),
+          new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||7000); })
+        ]).catch(function(){ return tryOne(i+1); });
+      }
+      return tryOne(0);
+    }
     async function fetchTleGroup(groupName, timeoutMs){
-      return Promise.race([
-        fetch("https://celestrak.org/NORAD/elements/gp.php?GROUP="+groupName+"&FORMAT=tle").then(function(r){
-          if(!r.ok) throw new Error('status '+r.status);
-          return r.text();
-        }),
-        new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||6000); })
-      ]);
+      var url="https://celestrak.org/NORAD/elements/gp.php?GROUP="+groupName+"&FORMAT=tle";
+      return fetchTextWithProxies(url, timeoutMs);
     }
     try{
       var groupTexts=await Promise.all([
