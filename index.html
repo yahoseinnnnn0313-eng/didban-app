@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  /* ... (همان استایل‌های قبلی، بدون تغییر) ... */
   * { box-sizing: border-box; }
   body {
     font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
@@ -249,7 +248,7 @@
   </div>
 
   <div class="card">
-    <label class="field-label">🧭 جهت مشاهده شی</label>
+    <label class="field-label">🧭 جهت مشاهده شی (آزیموت)</label>
     <input type="number" id="azimuth" min="0" max="360" placeholder="درجه از شمال، مثلا 90">
     <button type="button" class="btn btn-outline compass-btn" onclick="enableCompass()">🧭 استفاده از قطب‌نمای گوشی</button>
     <div class="status-msg" id="compassStatus"></div>
@@ -728,7 +727,6 @@ function fetchAdsbLol(lat, lon, radiusNm){
 }
 // ---- تابع جدید دریافت هواپیماها با CORS مستقیم ----
 async function fetchAllAircraft(lat, lon) {
-  // ابتدا از adsb.one استفاده می‌کنیم که CORS دارد
   const radiusNm = 50;
   const url = `https://data.adsb.one/v2/point/${lat}/${lon}/${radiusNm}`;
   try {
@@ -749,7 +747,6 @@ async function fetchAllAircraft(lat, lon) {
     }));
   } catch (err) {
     console.warn('adsb.one failed, trying OpenSky via proxy...', err);
-    // Fallback: OpenSky با پروکسی (ممکن است کار کند)
     try {
       return await fetchOpenSkyList(lat, lon, 1.5);
     } catch (e2) {
@@ -778,10 +775,7 @@ function fetchOpenSkyList(lat, lon, marginDeg){
   }).catch(function(){ return []; });
 }
 
-// ================================================================
-//   لیست ثابت TLE برای ماهواره‌های معروف (در صورت عدم دسترسی به API)
-//   این لیست شامل حدود ۵۰ ماهواره پرکاربرد است.
-// ================================================================
+// ---- لیست ثابت TLE برای ماهواره‌های معروف (در صورت عدم دسترسی به API) ----
 const STATIC_TLE = `
 ISS (ZARYA)
 1 25544U 98067A   24123.50000000  .00016717  00000-0  10270-4 0  9042
@@ -1141,11 +1135,9 @@ async function fetchTleGroup(groupName, timeoutMs) {
     return tleLines.join('\n');
   } catch (err) {
     console.warn(`دریافت از API برای گروه ${groupName} ناموفق بود، استفاده از لیست ثابت...`);
-    // اگر API کار نکرد، از لیست ثابت استفاده می‌کنیم (اما فقط برای گروه visual)
     if (groupName === 'visual') {
       return STATIC_TLE;
     } else {
-      // برای stations هم می‌توانیم همان لیست را برگردانیم یا خالی
       return STATIC_TLE; // یا '' اگر نخواهیم
     }
   }
@@ -1267,15 +1259,19 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
                 var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
                 var pv2=satellite.propagate(satrec, new Date(obsDate.getTime()+10000));
                 var heading=null;
+                var nextLat=null, nextLon=null;
                 if(pv2.position){
                   var gmst2=satellite.gstime(new Date(obsDate.getTime()+10000));
                   var geo2=satellite.eciToGeodetic(pv2.position, gmst2);
-                  heading=simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
+                  nextLat=toDeg(geo2.latitude);
+                  nextLon=toDeg(geo2.longitude);
+                  heading=simpleBearing(subLat, subLon, nextLat, nextLon);
                 }
                 var info=guessSatInfo(name);
                 var candidate={name:name, alt:altDeg.toFixed(1), az:azDeg.toFixed(1), mag:estMag.toFixed(1),
                   dist:Math.round(rangeKm), orbitAltKm:Math.round(subHeightKm),
-                  lat:subLat, lon:subLon, heading:heading, type:info.type, country:info.country};
+                  lat:subLat, lon:subLon, heading:heading, type:info.type, country:info.country,
+                  nextLat:nextLat, nextLon:nextLon};
                 allSatCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
                 if(azDiff<=azTolerance){
                   var conf=calcConfidence(azDiff, azTolerance);
@@ -1311,7 +1307,7 @@ function computeSubpoint(satrec, date){
 function simpleBearing(lat1,lon1,lat2,lon2){
   var la1=toRad(lat1), la2=toRad(lat2), dlon=toRad(lon2-lon1);
   var x=Math.sin(dlon)*Math.cos(la2);
-  var y=Math.cos(la1)*Math.sin(la2)-Math.sin(la1)*Math.cos(la2)*Math.cos(dlon);
+  var y=Math.cos(lat1)*Math.sin(la2)-Math.sin(lat1)*Math.cos(lat2)*Math.cos(dlon);
   return (toDeg(Math.atan2(x,y))+360)%360;
 }
 
@@ -1335,7 +1331,6 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     var tleText='';
     var satFetchError=null;
     try{
-      // استفاده از API جدید برای دریافت TLE با پشتیبان ثابت
       var visualTle = await fetchTleGroup('visual', 7000);
       var stationsTle = await fetchTleGroup('stations', 7000);
       var combined = visualTle + "\n" + stationsTle;
@@ -1404,18 +1399,28 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 }
 
 /* ========================================================================
-   RESULT DISPLAY (بدون تغییر)
+   RESULT DISPLAY (با تغییرات برای نمایش مسیر واقعی)
 ======================================================================== */
 var mapRef=null;
 var nearbyActive=false;
 var cachedAllSat=[], cachedAllAc=[], cachedLat=0, cachedLon=0;
 var nearbyLayers=[];
 
-function endpointFromHeading(objLat, objLon, heading, kmEach){
+function endpointFromHeading(objLat, objLon, heading, distKm){
   if(heading==null) return null;
-  var p1=projectPoint(objLat, objLon, heading, kmEach);
-  var p2=projectPoint(objLat, objLon, (heading+180)%360, kmEach);
+  var p1=projectPoint(objLat, objLon, heading, distKm);
+  var p2=projectPoint(objLat, objLon, (heading+180)%360, distKm);
   return [p1, p2];
+}
+
+function drawSatellitePath(map, lat1, lon1, lat2, lon2, color, label){
+  if(lat2==null || lon2==null) return;
+  var pts = [[lat1, lon1], [lat2, lon2]];
+  var line = L.polyline(pts, {color:color, weight:2.5, dashArray:'6,8', opacity:.85});
+  line.addTo(map);
+  // اضافه کردن یک نشانگر در نقطه دوم برای نمایش جهت
+  var icon = L.divIcon({html:'<div style="background:transparent;border:2px solid '+color+';width:12px;height:12px;border-radius:50%;"></div>', iconSize:[12,12], className:''});
+  L.marker([lat2, lon2], {icon:icon}).addTo(map).bindPopup(label);
 }
 
 function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, errMsg, diag, allSatCandidates, allAcCandidates){
@@ -1467,6 +1472,8 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     rows.push(['شماره پرواز/شناسه', a.name+' ('+a.icao+')']);
     rows.push(['فاصله از شما', a.dist+' کیلومتر']);
     if(a.heading!=null) rows.push(['جهت حرکت', a.heading+'°']);
+    rows.push(['مبدا', 'نامشخص']);
+    rows.push(['مقصد', 'نامشخص']);
     container.innerHTML += buildObjCard('✈️', a.name, rows, a.confidence);
   });
 
@@ -1513,25 +1520,28 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   var sightEnd=projectPoint(lat, lon, azimuth, 60);
   L.polyline([[lat,lon],sightEnd], {color:'#ffd166', weight:2, dashArray:'3,7', opacity:.8}).addTo(map).bindPopup('خط دید شما به سمت هدف');
 
-  function drawObject(objLat, objLon, heading, iconHtml, popupHtml, lineColor, lineKm){
-    var icon=L.divIcon({html:iconHtml, iconSize:[30,30], className:''});
-    L.marker([objLat,objLon],{icon:icon}).addTo(map).bindPopup(popupHtml);
-    var ends=endpointFromHeading(objLat, objLon, heading, lineKm||60);
-    if(ends){
-      L.polyline(ends, {color:lineColor, weight:2.5, dashArray:'8,8', opacity:.85}).addTo(map);
-    }
-  }
-
+  // رسم مسیر ماهواره‌ها با دو نقطه واقعی
   satResults.forEach(function(s){
-    drawObject(s.lat, s.lon, s.heading,
-      '<div style="background:#1a7ae0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">🛰️</div>',
-      '<b>'+s.name+'</b><br>'+s.type+' - '+s.country, '#6dd5ff', 250);
+    if(s.lat && s.lon && s.nextLat!=null && s.nextLon!=null){
+      drawSatellitePath(map, s.lat, s.lon, s.nextLat, s.nextLon, '#6dd5ff', s.name);
+    }
+    // نشانگر موقعیت فعلی
+    var icon = L.divIcon({html:'<div style="background:#1a7ae0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">🛰️</div>', iconSize:[30,30], className:''});
+    L.marker([s.lat, s.lon], {icon:icon}).addTo(map).bindPopup('<b>'+s.name+'</b><br>'+s.type+' - '+s.country);
   });
+
+  // رسم مسیر هواپیماها (با استفاده از heading و یک خط کوتاه)
   acResults.forEach(function(a){
-    drawObject(a.lat, a.lon, a.heading,
-      '<div style="background:#1a9e6e;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">✈️</div>',
-      '<b>'+a.name+'</b><br>'+a.country, '#7ee6a0', 50);
+    if(a.heading!=null && a.lat && a.lon){
+      var pts = endpointFromHeading(a.lat, a.lon, a.heading, 30); // 30 کیلومتر
+      if(pts){
+        L.polyline(pts, {color:'#7ee6a0', weight:2.5, dashArray:'8,8', opacity:.85}).addTo(map);
+      }
+    }
+    var icon = L.divIcon({html:'<div style="background:#1a9e6e;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">✈️</div>', iconSize:[30,30], className:''});
+    L.marker([a.lat, a.lon], {icon:icon}).addTo(map).bindPopup('<b>'+a.name+'</b><br>'+a.country);
   });
+
   if(!hasSat && !hasAc){
     var unkIcon=L.divIcon({html:'<div style="background:#c0396b;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">💡</div>', iconSize:[30,30], className:''});
     L.marker(sightEnd,{icon:unkIcon}).addTo(map).bindPopup('جهت تقریبی مشاهده شما (شی شناسایی نشد)');
@@ -1647,4 +1657,4 @@ window.onload=function(){
 };
 </script>
 </body>
- </html>
+        </html>
