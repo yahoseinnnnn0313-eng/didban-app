@@ -52,6 +52,10 @@
             font-size: 13px;
             margin: 0;
         }
+        .header .admin-btn {
+            margin-top: 6px;
+            display: inline-block;
+        }
 
         .card {
             max-width: 520px;
@@ -119,30 +123,62 @@
         .btn-sm {
             padding: 8px 12px;
             font-size: 13px;
+            width: auto;
+        }
+        .btn-block {
+            width: 100%;
         }
 
-        .two-col {
+        /* ===== ردیف سه گزینه موقعیت ===== */
+        .loc-mode-row {
             display: flex;
-            gap: 10px;
+            flex-wrap: nowrap;
+            gap: 6px;
+            justify-content: center;
         }
-        .mode-card {
+        .loc-mode-row .mode-card {
             flex: 1;
-            padding: 14px 8px;
+            padding: 8px 4px;
             border-radius: 12px;
             text-align: center;
             cursor: pointer;
             background: rgba(255, 255, 255, .06);
             border: 1px solid rgba(255, 255, 255, .12);
-            font-size: 13px;
+            font-size: 11px;
+            min-width: 0;
+            white-space: nowrap;
         }
-        .mode-card.active {
+        .loc-mode-row .mode-card.active {
             background: linear-gradient(135deg, #2b7de9, #1a4fa0);
             border-color: #6dd5ff;
         }
-        .mode-card .icon {
-            font-size: 22px;
+        .loc-mode-row .mode-card .icon {
+            font-size: 18px;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 2px;
+        }
+
+        /* ===== تاریخ ===== */
+        .dt-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+        }
+        .dt-row select {
+            flex: 1;
+            padding: 9px 4px;
+            font-size: 13px;
+            min-width: 0;
+        }
+        .dt-time-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .dt-time-row select {
+            flex: 1;
+            padding: 9px 4px;
+            font-size: 13px;
         }
 
         .coord-boxes {
@@ -180,22 +216,6 @@
             display: none;
         }
 
-        .dt-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-        .dt-grid select {
-            padding: 9px 4px;
-            font-size: 13px;
-        }
-        .dt-grid-time {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
         .compass-btn {
             margin-top: 8px;
             display: flex;
@@ -226,39 +246,26 @@
             font-size: 18px;
         }
 
-        /* Loading */
+        /* Loading - ساعت شنی */
         #loadingBox {
             display: none;
             text-align: center;
             padding: 40px 20px;
         }
-        .radar {
-            width: 90px;
-            height: 90px;
+        .hourglass {
+            width: 80px;
+            height: 80px;
             margin: 0 auto 18px;
             position: relative;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(43, 125, 233, .25) 0%, transparent 70%);
-            border: 2px solid rgba(109, 213, 255, .35);
+            animation: spin 2s linear infinite;
         }
-        .radar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, #6dd5ff, transparent);
-            transform-origin: 0 50%;
-            animation: spin 1.4s linear infinite;
+        .hourglass svg {
+            width: 100%;
+            height: 100%;
         }
         @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         #loadingBox p {
             color: #a8c8ff;
@@ -390,8 +397,8 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, .6);
-            z-index: 1000;
+            background: rgba(0, 0, 0, .7);
+            z-index: 9999;
             padding: 20px;
             overflow-y: auto;
         }
@@ -404,6 +411,7 @@
             border: 1px solid rgba(255, 255, 255, .12);
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
         }
         .modal-box h2 {
             margin-top: 0;
@@ -496,17 +504,21 @@
             color: #c8c8e8;
         }
 
-        /* ===== استایل‌های جدید ===== */
-        .admin-login-box {
-            max-width: 400px;
-            margin: 20px auto;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        /* مدیریت سیستم */
         .admin-login-box input {
             margin-bottom: 12px;
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(0, 0, 0, .25);
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .admin-login-box input:focus {
+            outline: none;
+            border-color: #6dd5ff;
         }
         .admin-panel-tabs {
             display: flex;
@@ -558,6 +570,22 @@
             max-height: 200px;
             overflow-y: auto;
         }
+        .ip-detail-logs .log-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .ip-detail-logs .log-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .log-detail-box {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+        }
         .map-picker-btn {
             margin-top: 8px;
         }
@@ -572,11 +600,20 @@
 
         /* Responsive */
         @media(max-width:600px) {
-            .two-col {
-                flex-direction: column;
+            .loc-mode-row .mode-card {
+                font-size: 10px;
+                padding: 6px 2px;
             }
-            .dt-grid {
-                grid-template-columns: 1fr 1fr;
+            .loc-mode-row .mode-card .icon {
+                font-size: 16px;
+            }
+            .dt-row select {
+                font-size: 12px;
+                padding: 7px 2px;
+            }
+            .dt-time-row select {
+                font-size: 12px;
+                padding: 7px 2px;
             }
         }
     </style>
@@ -588,8 +625,8 @@
         <div class="logo">🛰️</div>
         <h1>رصدیار</h1>
         <p>سامانه هوشمند تشخیص اجسام نورانی آسمان</p>
-        <div style="margin-top:6px;">
-            <button class="btn btn-sm btn-outline" style="width:auto;padding:6px 16px;" onclick="showAdminLogin()">🔐 مدیریت سیستم</button>
+        <div class="admin-btn">
+            <button class="btn btn-sm btn-outline" id="adminBtn" onclick="showAdminLogin()">🔐 مدیریت سیستم</button>
         </div>
     </div>
 
@@ -597,15 +634,15 @@
     <div id="formBox">
         <div class="card">
             <label class="field-label">📍 محل مشاهده شی نورانی</label>
-            <div class="two-col" id="locModeContainer">
+            <div class="loc-mode-row" id="locModeContainer">
                 <div class="mode-card active" data-mode="auto" onclick="setLocationMode('auto')">
-                    <span class="icon">🎯</span> دریافت خودکار
+                    <span class="icon">🎯</span> خودکار
                 </div>
                 <div class="mode-card" data-mode="manual" onclick="setLocationMode('manual')">
-                    <span class="icon">⌨️</span> وارد کردن دستی
+                    <span class="icon">⌨️</span> دستی
                 </div>
                 <div class="mode-card" data-mode="map" onclick="setLocationMode('map')">
-                    <span class="icon">🗺️</span> انتخاب از نقشه
+                    <span class="icon">🗺️</span> نقشه
                 </div>
             </div>
 
@@ -629,18 +666,18 @@
                 </div>
                 <div id="dmsInputs" style="display:none; margin-top:12px;">
                     <label class="field-label" style="font-size:12px;">عرض (X)</label>
-                    <div class="two-col">
-                        <input type="number" id="latD" placeholder="درجه">
-                        <input type="number" id="latM" placeholder="دقیقه">
-                        <input type="number" id="latS" placeholder="ثانیه">
-                        <select id="latDir"><option value="N">N</option><option value="S">S</option></select>
+                    <div class="two-col" style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <input type="number" id="latD" placeholder="درجه" style="flex:1;min-width:50px;">
+                        <input type="number" id="latM" placeholder="دقیقه" style="flex:1;min-width:50px;">
+                        <input type="number" id="latS" placeholder="ثانیه" style="flex:1;min-width:50px;">
+                        <select id="latDir" style="flex:0.8;"><option value="N">N</option><option value="S">S</option></select>
                     </div>
                     <label class="field-label" style="font-size:12px;">طول (Y)</label>
-                    <div class="two-col">
-                        <input type="number" id="lonD" placeholder="درجه">
-                        <input type="number" id="lonM" placeholder="دقیقه">
-                        <input type="number" id="lonS" placeholder="ثانیه">
-                        <select id="lonDir"><option value="E">E</option><option value="W">W</option></select>
+                    <div class="two-col" style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <input type="number" id="lonD" placeholder="درجه" style="flex:1;min-width:50px;">
+                        <input type="number" id="lonM" placeholder="دقیقه" style="flex:1;min-width:50px;">
+                        <input type="number" id="lonS" placeholder="ثانیه" style="flex:1;min-width:50px;">
+                        <select id="lonDir" style="flex:0.8;"><option value="E">E</option><option value="W">W</option></select>
                     </div>
                 </div>
                 <div id="decInputs" style="display:none; margin-top:12px;">
@@ -671,21 +708,22 @@
             </div>
         </div>
 
-        <!-- بقیه فرم (تاریخ، جهت، ...) -->
+        <!-- تاریخ و ساعت -->
         <div class="card">
             <label class="field-label">🗓️ تاریخ و ساعت مشاهده</label>
-            <div class="dt-grid">
+            <div class="dt-row">
                 <select id="jYear"></select>
                 <select id="jMonth"></select>
                 <select id="jDay"></select>
             </div>
-            <div class="dt-grid-time">
+            <div class="dt-time-row">
                 <select id="jHour"></select>
                 <select id="jMinute"></select>
             </div>
             <div class="status-msg" style="color:#a0a0c8;">می‌توانید زمان گذشته را انتخاب کنید؛ آینده مجاز نیست.</div>
         </div>
 
+        <!-- جهت و حرکت -->
         <div class="card">
             <label class="field-label">🧭 جهت مشاهده (آزیموت)</label>
             <input type="number" id="azimuth" min="0" max="360" placeholder="درجه از شمال، مثلا 90">
@@ -717,10 +755,18 @@
         </div>
     </div>
 
-    <!-- ===== لودینگ ===== -->
+    <!-- ===== لودینگ (ساعت شنی) ===== -->
     <div id="loadingBox">
-        <div class="radar"></div>
-        <p id="loadingMainText">در حال پردازش...</p>
+        <div class="hourglass">
+            <svg viewBox="0 0 100 100">
+                <polygon points="50,10 20,80 80,80 50,10" fill="none" stroke="#6dd5ff" stroke-width="3" />
+                <polygon points="50,10 20,80 80,80 50,10" fill="rgba(109,213,255,0.1)" />
+                <polygon points="30,30 70,30 50,70 30,30" fill="none" stroke="#6dd5ff" stroke-width="2" />
+                <circle cx="50" cy="50" r="8" fill="#6dd5ff" />
+                <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="2s" repeatCount="indefinite" />
+            </svg>
+        </div>
+        <p id="loadingMainText">سیستم در حال پردازش است، لطفاً چند لحظه صبر کنید...</p>
         <p id="loadingProgress" style="font-size:12px; color:#7ee8fa;"></p>
     </div>
 
@@ -802,7 +848,7 @@
             <h2>🔐 پنل مدیریت <button class="close-btn" onclick="closeModal('adminModal')">✕</button></h2>
             <div id="adminContent">
                 <!-- فرم ورود -->
-                <div id="adminLoginForm">
+                <div id="adminLoginForm" class="admin-login-box">
                     <input type="text" id="adminUser" placeholder="نام کاربری" style="margin-bottom:8px;">
                     <input type="password" id="adminPass" placeholder="رمز عبور" style="margin-bottom:12px;">
                     <button class="btn btn-primary" onclick="adminLogin()">ورود</button>
@@ -819,15 +865,15 @@
                     <!-- تب TLE -->
                     <div id="tabTLE" class="admin-tab-content active">
                         <h3>به‌روزرسانی داده‌های TLE</h3>
-                        <p style="font-size:13px;color:#aaa;">می‌توانید فایل TLE جدید آپلود کنید یا از یک URL دریافت کنید.</p>
+                        <p style="font-size:13px;color:#aaa;">TLE فعلی را آپلود کنید یا از یک URL دریافت کنید. (فقط از همین منبع استفاده می‌شود)</p>
                         <div style="margin:12px 0;">
                             <label style="font-size:13px;">آپلود فایل TLE (.txt)</label>
-                            <input type="file" id="tleFileInput" accept=".txt" style="color:#fff;padding:6px;">
+                            <input type="file" id="tleFileInput" accept=".txt" style="color:#fff;padding:6px;width:100%;">
                             <button class="btn btn-outline btn-sm" onclick="uploadTLEFile()" style="margin-top:6px;">📤 بارگذاری</button>
                         </div>
                         <div style="margin:12px 0;">
-                            <label style="font-size:13px;">دریافت از URL (مثلاً Celestrak)</label>
-                            <input type="text" id="tleUrlInput" placeholder="https://celestrak.org/..." style="margin-bottom:6px;">
+                            <label style="font-size:13px;">دریافت از URL</label>
+                            <input type="text" id="tleUrlInput" placeholder="https://celestrak.org/..." style="margin-bottom:6px;width:100%;">
                             <button class="btn btn-outline btn-sm" onclick="fetchTLEFromUrl()">📥 دریافت</button>
                         </div>
                         <div style="margin:12px 0;">
@@ -839,7 +885,7 @@
                     <!-- تب تاریخچه کلی -->
                     <div id="tabHistory" class="admin-tab-content">
                         <h3>تاریخچه کلی جستجوها</h3>
-                        <p style="font-size:13px;color:#aaa;">لیست کاربران (بر اساس شناسه یکتا) و جستجوهای آنها.</p>
+                        <p style="font-size:13px;color:#aaa;">لیست کاربران (بر اساس شناسه یکتا). برای مشاهده جزئیات هر جستجو، روی تاریخ آن کلیک کنید.</p>
                         <div id="globalHistoryList"></div>
                     </div>
                 </div>
@@ -1011,7 +1057,6 @@
             document.getElementById('autoLocPanel').style.display = (mode === 'auto') ? 'block' : 'none';
             document.getElementById('manualLocPanel').style.display = (mode === 'manual') ? 'block' : 'none';
             document.getElementById('mapLocPanel').style.display = (mode === 'map') ? 'block' : 'none';
-            // اگر حالت نقشه است، مقداردهی
             if (mode === 'map') {
                 document.getElementById('mapLat').value = '';
                 document.getElementById('mapLon').value = '';
@@ -1118,7 +1163,6 @@
 
         function openMapPicker() {
             document.getElementById('mapPickerModal').style.display = 'block';
-            // ایجاد نقشه اگر نشده
             if (!mapPickerInstance) {
                 mapPickerInstance = L.map('mapPicker').setView([35.6892, 51.3890], 6);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© OpenStreetMap' })
@@ -1126,7 +1170,6 @@
                 mapPickerInstance.on('click', function(e) {
                     pickedLat = e.latlng.lat;
                     pickedLon = e.latlng.lng;
-                    // نمایش یک نشانگر
                     if (window._pickerMarker) mapPickerInstance.removeLayer(window._pickerMarker);
                     window._pickerMarker = L.marker([pickedLat, pickedLon]).addTo(mapPickerInstance);
                     document.getElementById('mapLat').value = pickedLat.toFixed(6);
@@ -1191,7 +1234,7 @@
         }
 
         /* ========================================================================
-           بخش دوم: توابع اصلی محاسبات (با تغییرات برای پشتیبانی از TLE مدیریت‌شده)
+           بخش دوم: توابع اصلی محاسبات (با حذف API و لیست پیش‌فرض)
            ======================================================================== */
         function toRad(d) { return d * Math.PI / 180; }
 
@@ -1266,7 +1309,7 @@
             return perpDist > 6371;
         }
 
-        // === توابع دریافت هواپیما ===
+        // === توابع دریافت هواپیما (بدون تغییر) ===
         function fetchOpenSkyWithFallback(osUrl) {
             var proxies = [
                 { url: "https://corsproxy.io/?url=" + encodeURIComponent(osUrl), type: "raw" },
@@ -1347,16 +1390,13 @@
             }).catch(function() { return []; });
         }
 
-        /* ===== مدیریت TLE (ذخیره در localStorage) ===== */
-        // کلید ذخیره‌سازی
+        /* ===== مدیریت TLE (ذخیره در localStorage) - فقط از همین منبع استفاده می‌شود ===== */
         const TLE_STORAGE_KEY = 'rasadyar_custom_tle';
-        const TLE_FALLBACK = `
+        // لیست پیش‌فرض بسیار کوچک (فقط برای مواقعی که هیچ داده‌ای وجود ندارد)
+        const TLE_MINIMAL = `
         ISS (ZARYA)
         1 25544U 98067A   24123.50000000  .00016717  00000-0  10270-4 0  9042
         2 25544  51.6427 183.5535 0004529  74.1678 285.9945 15.48990096271601
-        STARLINK-1007
-        1 44713U 19074A   24123.50000000  .00000034  00000-0  19932-4 0  9042
-        2 44713  53.0540 184.2130 0001244 110.0320 250.1090 15.06400000000000
         `;
 
         function getTleData() {
@@ -1364,7 +1404,8 @@
             if (custom && custom.trim().length > 50) {
                 return custom;
             }
-            return TLE_FALLBACK;
+            // اگر هیچ داده‌ای وجود نداشت، یک TLE حداقلی برای جلوگیری از خطا (اما با پیام)
+            return TLE_MINIMAL;
         }
 
         function setTleData(tle) {
@@ -1373,7 +1414,7 @@
 
         function resetTleToFallback() {
             localStorage.removeItem(TLE_STORAGE_KEY);
-            document.getElementById('tleStatus').innerText = '✅ بازنشانی به پیش‌فرض انجام شد.';
+            document.getElementById('tleStatus').innerText = '✅ بازنشانی به پیش‌فرض حداقلی انجام شد.';
         }
 
         // آپلود فایل TLE
@@ -1416,30 +1457,14 @@
             }
         }
 
-        // تابع دریافت TLE از API جدید با پشتیبان (که حالا از TLE مدیریت‌شده استفاده می‌کند)
-        async function fetchTleGroup(groupName, timeoutMs) {
-            // اول سعی کن از API دریافت کنی
-            const url = `https://tle.ivanstanojevic.me/api/tle?category=${groupName}`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('API error');
-                const data = await response.json();
-                let tleLines = [];
-                data.forEach(item => {
-                    tleLines.push(item.name);
-                    tleLines.push(item.line1);
-                    tleLines.push(item.line2);
-                });
-                return tleLines.join('\n');
-            } catch (err) {
-                console.warn('API TLE failed, using custom/fallback TLE');
-                // اگر گروه visual بود، از TLE ذخیره‌شده استفاده کن
-                if (groupName === 'visual') {
-                    return getTleData();
-                } else {
-                    // برای stations هم می‌توان از همان استفاده کرد یا خالی برگرداند
-                    return getTleData(); // یا '' 
-                }
+        // تابع دریافت TLE - فقط از داده‌های ذخیره‌شده استفاده می‌کند
+        function fetchTleGroup(groupName) {
+            // صرف‌نظر از groupName، همان داده‌های ذخیره‌شده را برمی‌گرداند
+            var tle = getTleData();
+            if (tle && tle.trim().length > 50) {
+                return Promise.resolve(tle);
+            } else {
+                return Promise.reject(new Error('هیچ داده TLE معتبری در سیستم وجود ندارد. لطفاً از طریق مدیر سیستم بارگذاری کنید.'));
             }
         }
 
@@ -1547,8 +1572,11 @@
 
             var moveDir = document.getElementById('moveDir').value;
 
-            // ذخیره تاریخچه کلی (قبل از اجرا)
+            // ذخیره تاریخچه کلی
             saveGlobalHistory(lat, lon, obsDate, azimuth, moveDir);
+
+            // مخفی کردن دکمه مدیریت
+            document.getElementById('adminBtn').style.display = 'none';
 
             document.getElementById('formBox').style.display = 'none';
             document.getElementById('loadingBox').style.display = 'block';
@@ -1559,7 +1587,7 @@
         function sleep(ms) { return new Promise(function(res) { setTimeout(res, ms); }); }
 
         async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag,
-            timeOffsetsSec, diag, allSatCandidates, satResults) {
+            diag, allSatCandidates, satResults) {
             var CHUNK = 800;
             var count = 0;
             var total = Math.floor(lines.length / 3);
@@ -1650,7 +1678,6 @@
             var azTolerance = 20,
                 minAlt = 0,
                 maxMag = 6.5;
-            var timeOffsetsSec = [-120, -60, 0, 60, 120];
             var satResults = [],
                 acResults = [],
                 acErrorMsg = null;
@@ -1672,27 +1699,28 @@
                 var tleText = '';
                 var satFetchError = null;
                 try {
-                    var visualTle = await fetchTleGroup('visual', 7000);
-                    var stationsTle = await fetchTleGroup('stations', 7000);
-                    var combined = visualTle + "\n" + stationsTle;
-                    if (combined.trim().length < 100) throw new Error('داده‌های TLE ناقص است');
-                    tleText = combined;
+                    // فقط از داده‌های ذخیره‌شده استفاده می‌کنیم
+                    var tleData = await fetchTleGroup('visual');
+                    tleText = tleData;
+                    if (tleText.trim().length < 50) throw new Error('داده‌های TLE ناقص است');
+                    // ذخیره در کش برای سرعت بیشتر
                     try {
                         localStorage.setItem('rasadyar_tle_cache', tleText);
                         localStorage.setItem('rasadyar_tle_cache_time', Date.now().toString());
                     } catch (e) {}
                 } catch (e) {
                     satFetchError = e.message;
+                    // اگر داده‌ای نبود، از کش استفاده می‌کنیم
                     var cached = null;
                     try { cached = localStorage.getItem('rasadyar_tle_cache'); } catch (e2) {}
-                    if (cached && cached.length > 200) {
+                    if (cached && cached.length > 50) {
                         tleText = cached;
                         var cacheTime = localStorage.getItem('rasadyar_tle_cache_time');
                         var ageHours = cacheTime ? Math.round((Date.now() - parseInt(cacheTime)) / 3600000) : null;
                         satFetchError += ' — از کش ' + (ageHours != null ? '(' + ageHours + ' ساعت قبل) ' : '') +
                         'استفاده شد.';
                     } else {
-                        satFetchError += ' — و کش معتبری موجود نیست.';
+                        satFetchError += ' — و کش معتبری نیز موجود نیست. لطفاً TLE را از طریق مدیر سیستم بارگذاری کنید.';
                     }
                 }
                 diag.satFetchError = satFetchError;
@@ -1703,7 +1731,7 @@
                     var lines = tleText.trim().split("\n");
                     if (mainText) mainText.innerText = 'در حال بررسی ماهواره‌ها (ممکن است چند ثانیه طول بکشد)...';
                     await processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt,
-                        maxMag, timeOffsetsSec, diag, allSatCandidates, satResults);
+                        maxMag, diag, allSatCandidates, satResults);
                 }
 
                 if (progText) progText.innerText = '';
@@ -1748,6 +1776,7 @@
             } catch (fatalErr) {
                 document.getElementById('loadingBox').style.display = 'none';
                 document.getElementById('formBox').style.display = 'block';
+                document.getElementById('adminBtn').style.display = 'inline-block';
                 showError('خطا: ' + fatalErr.message);
             }
         }
@@ -1787,6 +1816,8 @@
             diag, allSatCandidates, allAcCandidates) {
             document.getElementById('loadingBox').style.display = 'none';
             document.getElementById('resultBox').style.display = 'block';
+            // نمایش مجدد دکمه مدیریت
+            document.getElementById('adminBtn').style.display = 'inline-block';
 
             cachedAllSat = allSatCandidates || [];
             cachedAllAc = allAcCandidates || [];
@@ -1828,17 +1859,20 @@
             satResults.sort(function(a, b) { return b.confidence - a.confidence; });
             acResults.sort(function(a, b) { return b.confidence - a.confidence; });
 
+            // نمایش اطلاعات ماهواره با جزئیات کامل
             satResults.forEach(function(s) {
                 container.innerHTML += buildObjCard('🛰️', s.name, [
                     ['کشور بهره‌بردار', s.country + ' <span class="estimate-tag">تخمین</span>'],
-                    ['نوع تخمینی', s.type + ' <span class="estimate-tag">تخمین</span>'],
+                    ['نوع مأموریت', s.type + ' <span class="estimate-tag">تخمین</span>'],
                     ['فاصله از شما', s.dist + ' کیلومتر'],
                     ['ارتفاع مداری', s.orbitAltKm + ' کیلومتر'],
-                    ['ارتفاع زاویه‌ای', s.alt + '°'],
-                    ['آزیموت', s.az + '°'],
-                    ['قدر ظاهری تخمینی', s.mag]
+                    ['ارتفاع زاویه‌ای از افق', s.alt + '°'],
+                    ['آزیموت (سمت)', s.az + '°'],
+                    ['قدر ظاهری تخمینی', s.mag + ' (هرچه کمتر، روشن‌تر)'],
+                    ['جهت حرکت', (s.heading != null ? s.heading.toFixed(1) + '°' : 'نامشخص')]
                 ], s.confidence);
             });
+
             acResults.forEach(function(a) {
                 var rows = [];
                 if (a.speed) rows.push(['سرعت', a.speed + ' کیلومتر بر ساعت']);
@@ -1859,7 +1893,7 @@
             var warnBox = document.getElementById('acTimeWarning');
             var warnParts = [];
             if (diag && diag.satFetchError) {
-                warnParts.push('⚠️ دریافت پایگاه داده ماهواره‌ها با مشکل مواجه شد: ' + diag.satFetchError);
+                warnParts.push('⚠️ ' + diag.satFetchError);
             }
             if (diag && diag.acSkippedOldTime) {
                 warnParts.push('⏱️ چون زمان گزارش بیش از ۱۰ دقیقه با اکنون فاصله دارد، بررسی هواپیما انجام نشد.');
@@ -2071,7 +2105,6 @@
         }
 
         function saveGlobalHistory(lat, lon, obsDate, azimuth, moveDir) {
-            // تولید یک شناسه یکتا برای کاربر (ساده)
             var userId = localStorage.getItem('rasadyar_user_id');
             if (!userId) {
                 userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -2088,7 +2121,7 @@
             };
             var hist = getGlobalHistory();
             hist.push(entry);
-            if (hist.length > 500) hist = hist.slice(-500); // محدودیت
+            if (hist.length > 500) hist = hist.slice(-500);
             localStorage.setItem('rasadyar_global_history', JSON.stringify(hist));
         }
 
@@ -2113,15 +2146,17 @@
                 html += '<span style="font-size:12px;color:#aaa;">' + logs.length + ' جستجو</span>';
                 html += '</div>';
                 html += '<div id="ipdetail_' + uid + '" class="ip-detail-logs" style="display:none;">';
-                logs.forEach(function(log) {
+                logs.forEach(function(log, index) {
                     var d = new Date(log.time);
-                    html += '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">';
-                    html += '📍 ' + log.lat.toFixed(3) + ', ' + log.lon.toFixed(3) + ' | ';
-                    html += '🧭 ' + log.az + '° | ';
+                    html += '<div class="log-item" onclick="showLogDetail(' + index + ')">';
                     html += '🕓 ' + d.toLocaleString('fa-IR');
+                    html += ' | 📍 ' + log.lat.toFixed(3) + ', ' + log.lon.toFixed(3);
+                    html += ' | 🧭 ' + log.az + '°';
                     html += '</div>';
                 });
                 html += '</div>';
+                // محل نمایش جزئیات یک جستجو
+                html += '<div id="logDetailContainer" style="margin-top:10px;"></div>';
             }
             container.innerHTML = html;
         }
@@ -2130,6 +2165,22 @@
             var el = document.getElementById('ipdetail_' + uid);
             if (el.style.display === 'none') el.style.display = 'block';
             else el.style.display = 'none';
+        }
+
+        function showLogDetail(index) {
+            var hist = getGlobalHistory();
+            if (index >= hist.length) return;
+            var log = hist[index];
+            var container = document.getElementById('logDetailContainer');
+            var d = new Date(log.time);
+            container.innerHTML = '<div class="log-detail-box">' +
+                '<div><strong>زمان:</strong> ' + d.toLocaleString('fa-IR') + '</div>' +
+                '<div><strong>عرض:</strong> ' + log.lat.toFixed(6) + '</div>' +
+                '<div><strong>طول:</strong> ' + log.lon.toFixed(6) + '</div>' +
+                '<div><strong>جهت (آزیموت):</strong> ' + log.az + '°</div>' +
+                '<div><strong>جهت حرکت:</strong> ' + log.moveDir + '</div>' +
+                '<div><strong>شناسه کاربر:</strong> ' + log.userId + '</div>' +
+                '</div>';
         }
 
         /* ========================================================================
@@ -2142,7 +2193,6 @@
             document.getElementById('adminLoginForm').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminLoginMsg').innerText = '';
-            // پاک کردن فرم
             document.getElementById('adminUser').value = '';
             document.getElementById('adminPass').value = '';
         }
@@ -2150,14 +2200,11 @@
         function adminLogin() {
             var user = document.getElementById('adminUser').value.trim();
             var pass = document.getElementById('adminPass').value.trim();
-            // نام کاربری و رمز عبور پیش‌فرض (برای نمونه)
             if (user === 'admin' && pass === '123456') {
                 adminLoggedIn = true;
                 document.getElementById('adminLoginForm').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                // نمایش تاریخچه کلی
                 renderGlobalHistory();
-                // فعال کردن تب اول
                 switchAdminTab('tabTLE');
             } else {
                 document.getElementById('adminLoginMsg').innerText = '❌ نام کاربری یا رمز عبور اشتباه است.';
@@ -2169,7 +2216,6 @@
             document.querySelectorAll('.admin-panel-tabs .tab-btn').forEach(function(el) { el.classList.remove('active'); });
             document.getElementById(tabId).classList.add('active');
             document.querySelector('.admin-panel-tabs .tab-btn[data-tab="' + tabId + '"]').classList.add('active');
-            // اگر تب تاریخچه است، دوباره رندر کن
             if (tabId === 'tabHistory') {
                 renderGlobalHistory();
             }
@@ -2177,7 +2223,7 @@
 
         function resetTLE() {
             resetTleToFallback();
-            document.getElementById('tleStatus').innerText = '✅ به پیش‌فرض بازنشانی شد.';
+            document.getElementById('tleStatus').innerText = '✅ به پیش‌فرض حداقلی بازنشانی شد.';
         }
 
         /* ========================================================================
@@ -2193,11 +2239,8 @@
         window.onload = function() {
             fillDatePicker();
             setLocationMode('auto');
-            // تنظیم مقداردهی اولیه برای نقشه‌ی انتخاب
-            // (نقشه در زمان باز شدن مودال مقداردهی می‌شود)
         };
 
-        // بستن مودال‌ها با کلیک روی زمینه
         document.querySelectorAll('.modal-overlay').forEach(function(modal) {
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) modal.style.display = 'none';
@@ -2205,4 +2248,4 @@
         });
     </script>
 </body>
- </html>
+    </html>
