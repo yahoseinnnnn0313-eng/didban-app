@@ -973,7 +973,7 @@ function validateAndRun(){
 
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
-async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, timeOffsetsSec, diag, allSatCandidates, satResults){
+async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults){
   var CHUNK=800;
   var count=0;
   var total=Math.floor(lines.length/3);
@@ -993,7 +993,7 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
         var look=satellite.ecfToLookAngles(observerGd, ecf);
         var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
 
-        if(altDeg>minAlt){
+        if(altDeg>minAlt && rangeKm<=maxSatRangeKm){
           var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
           if(azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
 
@@ -1057,6 +1057,8 @@ function simpleBearing(lat1,lon1,lat2,lon2){
 
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
   var azTolerance=20, minAlt=0, maxMag=6.5;
+  var maxSatRangeKm=2500;
+  var maxAircraftDistKm=80;
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[], acErrorMsg=null;
   var allSatCandidates=[], allAcCandidates=[];
@@ -1138,7 +1140,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
       diag.satDarkAtCenter = diag.sunAltCenter<=-6;
       var lines=tleText.trim().split("\n");
       if(mainText) mainText.innerText='در حال بررسی ماهواره‌ها (ممکن است چند ثانیه طول بکشد)...';
-      await processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, timeOffsetsSec, diag, allSatCandidates, satResults);
+      await processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults);
     }
 
     if(progText) progText.innerText='';
@@ -1151,7 +1153,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         list.forEach(function(a){
           if(a.onGround) return;
           var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
-          if(be.elev<=0.5) return;
+          if(be.elev<=0.5 || be.dist/1000>maxAircraftDistKm) return;
           var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
           var candidate={
             name: a.callsign || a.icao, icao:a.icao, country:a.country || 'نامشخص',
