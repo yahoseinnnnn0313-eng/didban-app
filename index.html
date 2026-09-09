@@ -1066,7 +1066,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
   var nowUtc=new Date();
   var minutesAgo=(nowUtc.getTime()-obsDate.getTime())/60000;
-  var aircraftTimeUsable = minutesAgo <= 10;
+  var aircraftTimeUsable = minutesAgo <= 30;
   diag.acSkippedOldTime = !aircraftTimeUsable;
 
   try{
