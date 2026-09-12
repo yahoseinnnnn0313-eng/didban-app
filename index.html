@@ -865,7 +865,7 @@ function fetchOpenSkyList(lat, lon, marginDeg){
         onGround: s[8]
       };
     });
-  }).catch(function(){ return []; });
+  }).catch(function(e){ throw new Error(e && e.message ? e.message : 'خطای نامشخص در دریافت داده هواپیما'); });
 }
 function fetchAllAircraft(lat, lon){
   var radiusNm=65, marginDeg=1.1;
