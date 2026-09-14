@@ -1148,7 +1148,13 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(aircraftTimeUsable){
       try{
-        var list=await fetchOpenSkyList(lat, lon, 1.5);
+        var list;
+        try{
+          list=await fetchOpenSkyList(lat, lon, 1.5);
+        }catch(openSkyErr){
+          list=await fetchAirplanesLive(lat, lon, 80);
+          if(!list || list.length===0) throw openSkyErr;
+        }
         diag.acNearby=list.length;
         list.forEach(function(a){
           if(a.onGround) return;
