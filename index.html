@@ -1153,6 +1153,12 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
           list=await fetchOpenSkyList(lat, lon, 1.5);
         }catch(openSkyErr){
           list=await fetchAirplanesLive(lat, lon, 80);
+          if(!list || list.length===0){
+            list=await fetchAdsbOne(lat, lon, 80);
+          }
+          if(!list || list.length===0){
+            list=await fetchAdsbLol(lat, lon, 80);
+          }
           if(!list || list.length===0) throw openSkyErr;
         }
         diag.acNearby=list.length;
