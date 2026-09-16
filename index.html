@@ -203,9 +203,9 @@
     <div id="manualLocPanel" style="display:none;">
       <label class="field-label" style="font-size:12px;">نوع فرمت مختصات را انتخاب کنید</label>
       <div class="coord-fmt-row">
-        <div class="mode-card" onclick="setCoordFormat('dms')">درجه/دقیقه/ثانیه</div>
-        <div class="mode-card" onclick="setCoordFormat('dec')">Decimal Degree</div>
-        <div class="mode-card" onclick="setCoordFormat('utm')">UTM</div>
+        <div class="mode-card" onclick="setCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
+        <div class="mode-card" onclick="setCoordFormat('dec', this)">Decimal Degree</div>
+        <div class="mode-card" onclick="setCoordFormat('utm', this)">UTM</div>
       </div>
 
       <div id="dmsInputs" style="display:none; margin-top:12px;">
@@ -481,7 +481,6 @@ function toGregorian(jy,jm,jd){ return d2g(j2d(jy,jm,jd)); }
 function isLeapJalali(jy){ return jalCal(jy).leap===0; }
 var monthNamesFa=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
 
-/* Get current Tehran time as a plain object {y,m,d,h,min} using Jalali calendar */
 function getNowTehran(){
   var now=new Date();
   var tehranStr=now.toLocaleString("en-US",{timeZone:"Asia/Tehran", hour12:false});
@@ -489,11 +488,8 @@ function getNowTehran(){
   var jd=toJalali(d.getFullYear(), d.getMonth()+1, d.getDate());
   return {jy:jd[0], jm:jd[1], jd:jd[2], h:d.getHours(), min:d.getMinutes()};
 }
-
-/* Convert a chosen Jalali date+time (Tehran local) into a JS Date representing that UTC instant */
 function jalaliToUtcDate(jy,jm,jd,h,min){
   var g=toGregorian(jy,jm,jd);
-  // Construct as if it were Tehran local time, then shift by -3:30 to get UTC
   var utcMillis = Date.UTC(g[0], g[1]-1, g[2], h, min, 0) - (3*60+30)*60000;
   return new Date(utcMillis);
 }
@@ -523,7 +519,6 @@ function fillDatePicker(){
     var opt=document.createElement('option'); opt.value=mm; opt.textContent=String(mm).padStart(2,'0');
     minSel.appendChild(opt);
   }
-  fillDaySelect();
   yearSel.value=now.jy; monthSel.value=now.jm;
   fillDaySelect();
   document.getElementById('jDay').value=now.jd;
@@ -593,10 +588,10 @@ function getLocation(){
     document.getElementById('locStatus').innerText="مرورگر شما از GPS پشتیبانی نمی‌کند.";
   }
 }
-function setCoordFormat(fmt){
+function setCoordFormat(fmt, el){
   currentCoordFormat=fmt;
-  document.querySelectorAll('#manualLocPanel .coord-fmt-row .mode-card').forEach(function(el){el.classList.remove('active');});
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll('#manualLocPanel .coord-fmt-row .mode-card').forEach(function(c){ c.classList.remove('active'); });
+  if(el) el.classList.add('active');
   document.getElementById('dmsInputs').style.display = fmt==='dms' ? 'block':'none';
   document.getElementById('decInputs').style.display = fmt==='dec' ? 'block':'none';
   document.getElementById('utmInputs').style.display = fmt==='utm' ? 'block':'none';
@@ -706,7 +701,7 @@ function confirmCompass(){
 }
 
 /* ========================================================================
-   MATH HELPERS (reused core logic)
+   MATH HELPERS
 ======================================================================== */
 function toRad(d){ return d*Math.PI/180; }
 function toDeg(r){ return r*180/Math.PI; }
@@ -764,129 +759,119 @@ function isSunlit(satEci,sunEci){
   var perpDist=Math.sqrt(perp.x**2+perp.y**2+perp.z**2);
   return perpDist>6371;
 }
-function fetchOpenSkyWithFallback(osUrl){
-  var proxies=[
-    { url:"https://corsproxy.io/?url="+encodeURIComponent(osUrl), type:"raw" },
-    { url:"https://api.allorigins.win/raw?url="+encodeURIComponent(osUrl), type:"raw" },
-    { url:"https://proxy.cors.sh/"+osUrl, type:"raw" },
-    { url:"https://api.allorigins.win/get?url="+encodeURIComponent(osUrl), type:"wrapped" }
+
+/* ========================================================================
+   UNIFIED CORS PROXY HELPERS
+======================================================================== */
+function buildProxyAttempts(url){
+  return [
+    url,
+    "https://corsproxy.io/?url="+encodeURIComponent(url),
+    "https://api.allorigins.win/raw?url="+encodeURIComponent(url),
+    "https://proxy.cors.sh/"+url
   ];
-  function tryProxy(i){
-    if(i>=proxies.length) return Promise.reject(new Error("تمام منابع داده هواپیما در دسترس نبودند"));
-    var p=proxies[i];
-    return fetch(p.url).then(function(r){
-      if(!r.ok) throw new Error("status "+r.status);
-      return r.json();
-    }).then(function(data){
-      if(p.type==="wrapped"){
-        if(!data.contents) throw new Error("empty");
-        return JSON.parse(data.contents);
-      }
-      return data;
-    }).catch(function(){
-      return tryProxy(i+1);
-    });
+}
+async function fetchTextWithProxies(url, timeoutMs){
+  var attempts=buildProxyAttempts(url);
+  var lastErr=null;
+  for(var i=0;i<attempts.length;i++){
+    try{
+      var r=await Promise.race([
+        fetch(attempts[i]),
+        new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('timeout')); }, timeoutMs||8000); })
+      ]);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return await r.text();
+    }catch(e){ lastErr=e; }
   }
-  return tryProxy(0);
+  throw lastErr || new Error('همه پروکسی‌ها شکست خوردند');
 }
-function fetchJsonSafe(url, timeoutMs){
-  return Promise.race([
-    fetch(url).then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('status '+r.status)); }),
-    new Promise(function(resolve, reject){ setTimeout(function(){ reject(new Error('timeout')); }, timeoutMs||8000); })
-  ]);
+async function fetchJsonWithProxies(url, timeoutMs){
+  var txt=await fetchTextWithProxies(url, timeoutMs);
+  try{ return JSON.parse(txt); }
+  catch(e){ throw new Error('پاسخ نامعتبر (JSON نبود)'); }
 }
-function fetchAirplanesLive(lat, lon, radiusNm){
+
+/* ========================================================================
+   AIRCRAFT DATA SOURCES — each now uses CORS proxies
+======================================================================== */
+function normalizeAdsbAc(a){
+  var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : (typeof a.alt_geom==='number' ? a.alt_geom : null);
+  return {
+    icao:(a.hex||'').toLowerCase(),
+    callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
+    country:a.ownOp||null,
+    lat:a.lat, lon:a.lon,
+    altM: altFt!=null ? Math.round(altFt*0.3048) : null,
+    speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
+    heading: a.track!=null ? Math.round(a.track) : null,
+    onGround: a.alt_baro==='ground'
+  };
+}
+async function fetchAirplanesLive(lat, lon, radiusNm){
   var url="https://api.airplanes.live/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  var data=await fetchJsonWithProxies(url, 9000);
+  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-function fetchAdsbOne(lat, lon, radiusNm){
+async function fetchAdsbOne(lat, lon, radiusNm){
   var url="https://api.adsb.one/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  var data=await fetchJsonWithProxies(url, 9000);
+  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-function fetchAdsbLol(lat, lon, radiusNm){
+async function fetchAdsbLol(lat, lon, radiusNm){
   var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  return fetchJsonSafe(url).then(function(data){
-    var list=(data && data.ac) || [];
-    return list.map(function(a){
-      var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : null;
-      return {
-        icao:(a.hex||'').toLowerCase(),
-        callsign:(a.flight||a.r||a.hex||'نامشخص').trim(),
-        country:null, lat:a.lat, lon:a.lon,
-        altM: altFt!=null ? Math.round(altFt*0.3048) : null,
-        speedKmh: a.gs!=null ? Math.round(a.gs*1.852) : null,
-        heading: a.track!=null ? Math.round(a.track) : null,
-        onGround: a.alt_baro==='ground'
-      };
-    });
-  }).catch(function(){ return []; });
+  var data=await fetchJsonWithProxies(url, 9000);
+  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-function fetchOpenSkyList(lat, lon, marginDeg){
+async function fetchOpenSkyList(lat, lon, marginDeg){
   var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
-  var osUrl="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
-  return fetchOpenSkyWithFallback(osUrl).then(function(data){
-    var states=(data && data.states) || [];
-    return states.map(function(s){
-      return {
-        icao:(s[0]||'').toLowerCase(),
-        callsign:(s[1]||'نامشخص').trim(),
-        country: s[2]||null, lat:s[6], lon:s[5],
-        altM: s[7]!=null ? Math.round(s[7]) : null,
-        speedKmh: s[9]!=null ? Math.round(s[9]*3.6) : null,
-        heading: s[10]!=null ? Math.round(s[10]) : null,
-        onGround: s[8]
-      };
-    });
-  }).catch(function(e){ throw new Error(e && e.message ? e.message : 'خطای نامشخص در دریافت داده هواپیما'); });
+  var url="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
+  var data=await fetchJsonWithProxies(url, 12000);
+  var states=(data && data.states) || [];
+  return states.map(function(s){
+    return {
+      icao:(s[0]||'').toLowerCase(),
+      callsign:(s[1]||'نامشخص').trim(),
+      country: s[2]||null, lat:s[6], lon:s[5],
+      altM: s[7]!=null ? Math.round(s[7]) : null,
+      speedKmh: s[9]!=null ? Math.round(s[9]*3.6) : null,
+      heading: s[10]!=null ? Math.round(s[10]) : null,
+      onGround: s[8]
+    };
+  }).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-function fetchAllAircraft(lat, lon){
-  var radiusNm=65, marginDeg=1.1;
-  return Promise.all([
-    fetchAirplanesLive(lat, lon, radiusNm),
-    fetchAdsbOne(lat, lon, radiusNm),
-    fetchAdsbLol(lat, lon, radiusNm),
-    fetchOpenSkyList(lat, lon, marginDeg)
-  ]).then(function(results){
-    var merged={};
-    results.forEach(function(list){
-      list.forEach(function(a){
-        if(!a.icao || a.lat==null || a.lon==null) return;
-        if(!merged[a.icao]) merged[a.icao]=a;
-      });
+
+async function fetchAllAircraft(lat, lon){
+  var radiusNm=80, marginDeg=1.5;
+  var sources=[
+    { name:'OpenSky',       fn:function(){ return fetchOpenSkyList(lat, lon, marginDeg); } },
+    { name:'airplanes.live',fn:function(){ return fetchAirplanesLive(lat, lon, radiusNm); } },
+    { name:'adsb.one',      fn:function(){ return fetchAdsbOne(lat, lon, radiusNm); } },
+    { name:'adsb.lol',      fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
+  ];
+  var ok=[], fail=[];
+  var results=await Promise.all(sources.map(function(s){
+    return s.fn().then(function(r){ ok.push(s.name); return r; })
+                 .catch(function(e){ fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص')); return []; });
+  }));
+  var merged={};
+  results.forEach(function(list){
+    (list||[]).forEach(function(a){
+      if(!a.icao) return;
+      if(!merged[a.icao]) merged[a.icao]=a;
+      else {
+        // merge: keep non-null fields from both
+        for(var k in a){
+          if(merged[a.icao][k]==null || merged[a.icao][k]==='') merged[a.icao][k]=a[k];
+        }
+      }
     });
-    var out=[];
-    for(var k in merged) out.push(merged[k]);
-    return out;
   });
+  var list=[];
+  for(var k in merged) list.push(merged[k]);
+  return { list:list, sourcesOk:ok, sourcesFail:fail };
 }
+
 function calcConfidence(azDiff, azTolerance){
   var c = 95 - (azDiff/azTolerance)*45;
   return Math.max(40, Math.min(95, Math.round(c)));
@@ -917,6 +902,26 @@ function guessSatInfo(name){
   if(n.indexOf('ISS')>-1||n.indexOf('ZARYA')>-1) return {type:'ایستگاه فضایی بین‌المللی', country:'بین‌المللی'};
   if(n.indexOf('HULIANWANG')>-1||n.indexOf('SHIJIAN')>-1||n.indexOf('YAOGAN')>-1) return {type:'ماهواره چندمنظوره', country:'چین'};
   return {type:'نامشخص', country:'نامشخص'};
+}
+
+/* Standard-magnitude based apparent magnitude estimate.
+   Uses per-type standard magnitude at 1000 km reference range. */
+function estimateSatMag(rangeKm, name){
+  var n=(name||'').toUpperCase();
+  var stdMag=2.0;
+  if(n.indexOf('ISS')>-1 || n.indexOf('ZARYA')>-1) stdMag=-2.0;
+  else if(n.indexOf('TIANGONG')>-1 || n.indexOf('CSS')>-1) stdMag=-1.0;
+  else if(n.indexOf('STARLINK')>-1) stdMag=5.0;
+  else if(n.indexOf('ONEWEB')>-1) stdMag=4.5;
+  else if(n.indexOf('IRIDIUM')>-1) stdMag=4.0;
+  else if(n.indexOf('COSMOS')>-1) stdMag=3.5;
+  else if(n.indexOf('GLOBALSTAR')>-1) stdMag=4.5;
+  else if(n.indexOf('NAVSTAR')>-1 || n.indexOf('GPS')>-1) stdMag=3.5;
+  else if(n.indexOf('GLONASS')>-1) stdMag=4.0;
+  else if(n.indexOf('GALILEO')>-1) stdMag=4.0;
+  else if(n.indexOf('BEIDOU')>-1) stdMag=4.0;
+  var refRange=1000;
+  return stdMag + 5 * Math.log10(Math.max(rangeKm, 100) / refRange);
 }
 
 /* ========================================================================
@@ -973,11 +978,18 @@ function validateAndRun(){
 
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
+/* ------------------------------------------------------------------------
+   SATELLITE PROCESSING
+   - Tries multiple time offsets around obsDate (±2 min)
+   - Deduplicates by satellite name (keeps best azimuth match)
+   - Uses realistic apparent-magnitude model
+------------------------------------------------------------------------ */
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults){
-  var CHUNK=800;
+  var CHUNK=600;
   var count=0;
   var total=Math.floor(lines.length/3);
   var observerGd={longitude:toRad(lon), latitude:toRad(lat), height:0};
+  var bestByName={};
 
   for(var i=0;i+2<lines.length;i+=3){
     try{
@@ -986,45 +998,55 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       var satrec=satellite.twoline2satrec(l1,l2);
       diag.satChecked++;
 
-      var pv=satellite.propagate(satrec, obsDate);
-      if(pv.position){
-        var gmst=satellite.gstime(obsDate);
+      var bestVisible=null;
+
+      for(var t=0; t<timeOffsetsSec.length; t++){
+        var tDate=new Date(obsDate.getTime()+timeOffsetsSec[t]*1000);
+        var pv=satellite.propagate(satrec, tDate);
+        if(!pv.position) continue;
+
+        var gmst=satellite.gstime(tDate);
         var ecf=satellite.eciToEcf(pv.position, gmst);
         var look=satellite.ecfToLookAngles(observerGd, ecf);
         var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
 
-        if(altDeg>minAlt && rangeKm<=maxSatRangeKm){
-          var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
-          if(azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
+        if(altDeg<=minAlt || rangeKm>maxSatRangeKm) continue;
 
-          var sunAltNow=sunAltitude(obsDate, lat, lon);
-          if(sunAltNow<=-6){
-            var sunEci=sunEciKm(obsDate);
-            if(isSunlit(pv.position, sunEci)){
-              var estMag=3.0+5*Math.sqrt(rangeKm/1000)/10;
-              if(estMag<=maxMag){
-                var geo=satellite.eciToGeodetic(pv.position, gmst);
-                var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
-                var pv2=satellite.propagate(satrec, new Date(obsDate.getTime()+10000));
-                var heading=null;
-                if(pv2.position){
-                  var gmst2=satellite.gstime(new Date(obsDate.getTime()+10000));
-                  var geo2=satellite.eciToGeodetic(pv2.position, gmst2);
-                  heading=simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
-                }
-                var info=guessSatInfo(name);
-                var candidate={name:name, alt:altDeg.toFixed(1), az:azDeg.toFixed(1), mag:estMag.toFixed(1),
-                  dist:Math.round(rangeKm), orbitAltKm:Math.round(subHeightKm),
-                  lat:subLat, lon:subLon, heading:heading, type:info.type, country:info.country};
-                allSatCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
-                if(azDiff<=azTolerance){
-                  var conf=calcConfidence(azDiff, azTolerance);
-                  conf=adjustConfidenceByMovement(conf, heading, moveDir);
-                  satResults.push(Object.assign({}, candidate, {confidence:conf}));
-                }
-              }
-            }
-          }
+        var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
+
+        if(timeOffsetsSec[t]===0 && azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
+
+        var sunAltNow=sunAltitude(tDate, lat, lon);
+        if(sunAltNow>-6) continue;
+        var sunEci=sunEciKm(tDate);
+        if(!isSunlit(pv.position, sunEci)) continue;
+
+        var estMag=estimateSatMag(rangeKm, name);
+        if(estMag>maxMag) continue;
+
+        if(bestVisible && azDiff >= bestVisible.azDiff) continue;
+
+        var geo=satellite.eciToGeodetic(pv.position, gmst);
+        var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
+        var pv2=satellite.propagate(satrec, new Date(tDate.getTime()+10000));
+        var heading=null;
+        if(pv2.position){
+          var gmst2=satellite.gstime(new Date(tDate.getTime()+10000));
+          var geo2=satellite.eciToGeodetic(pv2.position, gmst2);
+          heading=simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
+        }
+        bestVisible={
+          name:name,
+          altDeg:altDeg, azDeg:azDeg, mag:estMag,
+          rangeKm:rangeKm, subHeightKm:subHeightKm,
+          lat:subLat, lon:subLon, heading:heading,
+          azDiff:azDiff
+        };
+      }
+
+      if(bestVisible){
+        if(!bestByName[name] || bestVisible.azDiff < bestByName[name].azDiff){
+          bestByName[name]=bestVisible;
         }
       }
     }catch(e){}
@@ -1036,18 +1058,29 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       await sleep(0);
     }
   }
+
+  for(var key in bestByName){
+    var b=bestByName[key];
+    var info=guessSatInfo(b.name);
+    var full={
+      name:b.name,
+      alt:b.altDeg.toFixed(1),
+      az:b.azDeg.toFixed(1),
+      mag:b.mag.toFixed(1),
+      dist:Math.round(b.rangeKm),
+      orbitAltKm:Math.round(b.subHeightKm),
+      lat:b.lat, lon:b.lon, heading:b.heading,
+      type:info.type, country:info.country
+    };
+    allSatCandidates.push(Object.assign({}, full, {azDiff:b.azDiff}));
+    if(b.azDiff<=azTolerance){
+      var conf=calcConfidence(b.azDiff, azTolerance);
+      conf=adjustConfidenceByMovement(conf, b.heading, moveDir);
+      satResults.push(Object.assign({}, full, {confidence:conf}));
+    }
+  }
 }
 
-function computeSubpoint(satrec, date){
-  var pv=satellite.propagate(satrec, date);
-  if(!pv.position) return null;
-  var gmst=satellite.gstime(date);
-  var geo=satellite.eciToGeodetic(pv.position, gmst);
-  return {
-    lat: toDeg(geo.latitude), lon: toDeg(geo.longitude), heightKm: geo.height,
-    eci: pv.position, gmst: gmst
-  };
-}
 function simpleBearing(lat1,lon1,lat2,lon2){
   var la1=toRad(lat1), la2=toRad(lat2), dlon=toRad(lon2-lon1);
   var x=Math.sin(dlon)*Math.cos(la2);
@@ -1056,13 +1089,21 @@ function simpleBearing(lat1,lon1,lat2,lon2){
 }
 
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  var azTolerance=20, minAlt=0, maxMag=6.5;
+  var azTolerance=20;
+  var minAlt=5;                 // satellites below 5° elevation are not really visible
+  var maxMag=6.5;
   var maxSatRangeKm=2500;
   var maxAircraftDistKm=80;
   var timeOffsetsSec=[-120,-60,0,60,120];
-  var satResults=[], acResults=[], acErrorMsg=null;
+  var satResults=[], acResults=[];
+  var acErrorMsg=null;
+  var acSourcesOk=[], acSourcesFail=[];
   var allSatCandidates=[], allAcCandidates=[];
-  var diag={ satChecked:0, satAzMatchIgnoringLight:0, satDarkAtCenter:false, sunAltCenter:null, acNearby:0, acAzMatch:0, acSkippedOldTime:false };
+  var diag={
+    satChecked:0, satAzMatchIgnoringLight:0, satDarkAtCenter:false, sunAltCenter:null,
+    acNearby:0, acAzMatch:0, acSkippedOldTime:false,
+    acSourcesOk:[], acSourcesFail:[]
+  };
 
   var nowUtc=new Date();
   var minutesAgo=(nowUtc.getTime()-obsDate.getTime())/60000;
@@ -1089,22 +1130,6 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
       }
     }catch(e){}
 
-    function fetchTextWithProxies(targetUrl, timeoutMs){
-      var attempts=[
-        targetUrl,
-        "https://corsproxy.io/?url="+encodeURIComponent(targetUrl),
-        "https://api.allorigins.win/raw?url="+encodeURIComponent(targetUrl),
-        "https://proxy.cors.sh/"+targetUrl
-      ];
-      function tryOne(i){
-        if(i>=attempts.length) return Promise.reject(new Error("همه مسیرهای دریافت شکست خوردند"));
-        return Promise.race([
-          fetch(attempts[i]).then(function(r){ if(!r.ok) throw new Error('status '+r.status); return r.text(); }),
-          new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||7000); })
-        ]).catch(function(){ return tryOne(i+1); });
-      }
-      return tryOne(0);
-    }
     async function fetchTleGroup(groupName, timeoutMs){
       var url="https://celestrak.org/NORAD/elements/gp.php?GROUP="+groupName+"&FORMAT=tle";
       return fetchTextWithProxies(url, timeoutMs);
@@ -1113,8 +1138,8 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     if(!usedLocalFile){
       try{
         var groupTexts=await Promise.all([
-          fetchTleGroup('visual', 7000).catch(function(){return '';}),
-          fetchTleGroup('stations', 7000).catch(function(){return '';})
+          fetchTleGroup('visual', 8000).catch(function(){return '';}),
+          fetchTleGroup('stations', 8000).catch(function(){return '';})
         ]);
         var combined=groupTexts.filter(function(t){return t && t.length>50;}).join("\n");
         if(!combined) throw new Error('هیچ‌کدام از پایگاه‌های ماهواره در دسترس نبودند (نه فایل محلی، نه دریافت زنده)');
@@ -1148,40 +1173,43 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(aircraftTimeUsable){
       try{
-        var list;
-        try{
-          list=await fetchOpenSkyList(lat, lon, 1.5);
-        }catch(openSkyErr){
-          list=await fetchAirplanesLive(lat, lon, 80);
-          if(!list || list.length===0){
-            list=await fetchAdsbOne(lat, lon, 80);
-          }
-          if(!list || list.length===0){
-            list=await fetchAdsbLol(lat, lon, 80);
-          }
-          if(!list || list.length===0) throw openSkyErr;
-        }
+        var acData=await fetchAllAircraft(lat, lon);
+        var list=acData.list;
+        acSourcesOk=acData.sourcesOk;
+        acSourcesFail=acData.sourcesFail;
+        diag.acSourcesOk=acSourcesOk;
+        diag.acSourcesFail=acSourcesFail;
         diag.acNearby=list.length;
-        list.forEach(function(a){
-          if(a.onGround) return;
-          var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
-          if(be.elev<=0.5 || be.dist/1000>maxAircraftDistKm) return;
-          var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
-          var candidate={
-            name: a.callsign || a.icao, icao:a.icao, country:a.country || 'نامشخص',
-            elev: be.elev.toFixed(1), dist:(be.dist/1000).toFixed(1),
-            alt: a.altM, speed: a.speedKmh, heading: a.heading,
-            lat:a.lat, lon:a.lon
-          };
-          allAcCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
-          if(azDiff<=25){
-            diag.acAzMatch++;
-            var conf=calcConfidence(azDiff, 25);
-            conf=adjustConfidenceByMovement(conf, a.heading, moveDir);
-            acResults.push(Object.assign({}, candidate, {confidence:conf}));
-          }
-        });
-      }catch(err){ acErrorMsg = err.message; }
+
+        if(list.length===0 && acSourcesOk.length===0){
+          acErrorMsg='همه منابع داده هواپیما در دسترس نبودند. جزئیات: '+acSourcesFail.join(' | ');
+        } else {
+          list.forEach(function(a){
+            if(a.onGround) return;
+            var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
+            if(be.elev<=0.5 || be.dist/1000>maxAircraftDistKm) return;
+            var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
+            var candidate={
+              name: a.callsign || a.icao,
+              icao:a.icao,
+              country:a.country || 'نامشخص',
+              elev: be.elev.toFixed(1),
+              dist:(be.dist/1000).toFixed(1),
+              alt: a.altM, speed: a.speedKmh, heading: a.heading,
+              lat:a.lat, lon:a.lon
+            };
+            allAcCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
+            if(azDiff<=25){
+              diag.acAzMatch++;
+              var conf=calcConfidence(azDiff, 25);
+              conf=adjustConfidenceByMovement(conf, a.heading, moveDir);
+              acResults.push(Object.assign({}, candidate, {confidence:conf}));
+            }
+          });
+        }
+      }catch(err){
+        acErrorMsg = err && err.message ? err.message : 'خطای نامشخص در دریافت داده هواپیما';
+      }
     }
 
     finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, acErrorMsg, diag, allSatCandidates, allAcCandidates);
@@ -1231,14 +1259,14 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   document.getElementById('infoTime').innerText=jd+' '+monthNamesFa[jm-1]+' '+jy+' - '+String(jh).padStart(2,'0')+':'+String(jmin).padStart(2,'0');
   document.getElementById('infoAz').innerText=azimuth+'° / '+moveDir;
 
-  var container=document.getElementById('objectsContainer');
-  container.innerHTML='';
-
   satResults.sort(function(a,b){return b.confidence-a.confidence;});
   acResults.sort(function(a,b){return b.confidence-a.confidence;});
 
+  // Build all cards in one string to avoid repeated innerHTML parsing
+  var cardsHtml='';
+
   satResults.forEach(function(s){
-    container.innerHTML += buildObjCard('🛰️', s.name, [
+    cardsHtml += buildObjCard('🛰️', s.name, [
       ['کشور بهره‌بردار', s.country+' <span class="estimate-tag">تخمین</span>'],
       ['نوع تخمینی', s.type+' <span class="estimate-tag">تخمین</span>'],
       ['فاصله از شما', s.dist+' کیلومتر'],
@@ -1248,6 +1276,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       ['قدر ظاهری تخمینی', s.mag]
     ], s.confidence);
   });
+
   acResults.forEach(function(a){
     var rows=[];
     if(a.speed) rows.push(['سرعت', a.speed+' کیلومتر بر ساعت']);
@@ -1257,12 +1286,14 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     rows.push(['شماره پرواز/شناسه', a.name+' ('+a.icao+')']);
     rows.push(['فاصله از شما', a.dist+' کیلومتر']);
     if(a.heading!=null) rows.push(['جهت حرکت', a.heading+'°']);
-    container.innerHTML += buildObjCard('✈️', a.name, rows, a.confidence);
+    cardsHtml += buildObjCard('✈️', a.name, rows, a.confidence);
   });
 
   if(errMsg){
-    container.innerHTML += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: در دریافت اطلاعات هواپیما مشکلی رخ داد ('+errMsg+')</p></div>';
+    cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: در دریافت اطلاعات هواپیما مشکلی رخ داد ('+errMsg+')</p></div>';
   }
+
+  document.getElementById('objectsContainer').innerHTML = cardsHtml;
 
   var warnBox=document.getElementById('acTimeWarning');
   var warnParts=[];
@@ -1270,7 +1301,10 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     warnParts.push('⚠️ دریافت پایگاه داده ماهواره‌ها با مشکل مواجه شد: '+diag.satFetchError);
   }
   if(diag && diag.acSkippedOldTime){
-    warnParts.push('⏱️ چون زمان گزارش بیش از ۱۰ دقیقه با اکنون فاصله دارد، بررسی هواپیما انجام نشد؛ چون منابع رایگان فقط موقعیت لحظه‌ای هواپیماها را می‌دهند، نه تاریخچه پروازها.');
+    warnParts.push('⏱️ چون زمان گزارش بیش از ۳۰ دقیقه با اکنون فاصله دارد، بررسی هواپیما انجام نشد؛ چون منابع رایگان فقط موقعیت لحظه‌ای هواپیماها را می‌دهند، نه تاریخچه پروازها.');
+  }
+  if(diag && diag.acSourcesOk && diag.acSourcesFail && diag.acSourcesFail.length>0 && diag.acSourcesOk.length>0){
+    warnParts.push('ℹ️ برخی منابع داده هواپیما در دسترس نبودند: '+diag.acSourcesFail.join(' | ')+' (نتایج از: '+diag.acSourcesOk.join(', ')+')');
   }
   if(warnParts.length>0){
     warnBox.style.display='block';
@@ -1284,7 +1318,9 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     var d=document.getElementById('diagContent');
     var errRow = diag.satFetchError ? '<div class="diag-row" style="color:#ffb3b3;"><span>خطای دریافت دیتابیس ماهواره</span><span>'+diag.satFetchError+'</span></div>' : '';
     var sourceRow = '<div class="diag-row"><span>منبع دیتابیس ماهواره</span><span>'+(diag.usedLocalFile?'فایل محلی مخزن ✅':'دریافت زنده از اینترنت')+'</span></div>';
-    d.innerHTML = errRow + sourceRow +
+    var acSourceRow = '<div class="diag-row"><span>منابع داده هواپیما (موفق)</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? diag.acSourcesOk.join(', ') : '—')+'</span></div>';
+    var acFailRow = (diag.acSourcesFail && diag.acSourcesFail.length) ? '<div class="diag-row" style="color:#ffb3b3;"><span>منابع داده هواپیما (ناموفق)</span><span>'+diag.acSourcesFail.join(' | ')+'</span></div>' : '';
+    d.innerHTML = errRow + sourceRow + acSourceRow + acFailRow +
       '<div class="diag-row"><span>تعداد کل ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ماهواره‌های هم‌راستا با جهت شما (صرف‌نظر از نور)</span><span>'+diag.satAzMatchIgnoringLight+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید در لحظه گزارش</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
@@ -1337,9 +1373,12 @@ function guessAirline(callsign){
   var prefix=callsign.trim().substring(0,3).toUpperCase();
   var table={
     IRA:'ایران‌ایر', IRC:'ماهان‌ایر', IRM:'ایران ایرتور', IRB:'ایران‌ایرتور', CQH:'کاسپین', QSM:'قشم‌ایر', ATC:'آتا',
+    IRZ:'زاگرس', IRX:'کیش‌ایر', IRU:'آسمان', SVR:'ساها', PYA:'پویا',
     UAE:'امارات', QTR:'قطر ایرویز', ETD:'الاتحاد', THY:'ترک‌ایرلاین', PGT:'پگاسوس', FDB:'فلای‌دبی',
     UAL:'یونایتد', DAL:'دلتا', AAL:'امریکن ایرلاینز', BAW:'بریتیش ایرویز', DLH:'لوفت‌هانزا', AFR:'ایرفرانس',
-    KLM:'کا‌ال‌ام', AFL:'ایرفلوت', CCA:'ایرچاینا', CES:'چاینا ایسترن', CSN:'چاینا سادرن'
+    KLM:'کا‌ال‌ام', AFL:'ایرفلوت', CCA:'ایرچاینا', CES:'چاینا ایسترن', CSN:'چاینا سادرن',
+    SIA:'سنگاپور ایرلاینز', QFA:'کانتاس', JAL:'جپن ایرلاینز', ANA:'آل نیپون', KAL:'کورین ایر',
+    RYR:'رایان‌ایر', EZY:'ایزی‌جت', WZZ:'ویز‌ایر'
   };
   return table[prefix] || 'نامشخص';
 }
@@ -1498,7 +1537,7 @@ async function autoUpdateTle(){
   setAdminStatus('در حال دریافت داده از CelesTrak...', false);
   try{
     var url="https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
-    var text=await fetchTextWithProxiesGlobal(url, 15000);
+    var text=await fetchTextWithProxies(url, 15000);
     if(!text || text.length<1000) throw new Error('پاسخ دریافتی خالی یا ناقص بود');
     setAdminStatus('داده دریافت شد ('+text.length+' کاراکتر). در حال ارسال به مخزن...', false);
     await pushTleToRepo(text);
@@ -1511,22 +1550,6 @@ async function manualUpdateTle(){
   if(!text || text.length<1000){ setAdminStatus('متن وارد شده خیلی کوتاه یا خالی است.', true); return; }
   await pushTleToRepo(text);
 }
-function fetchTextWithProxiesGlobal(targetUrl, timeoutMs){
-  var attempts=[
-    targetUrl,
-    "https://corsproxy.io/?url="+encodeURIComponent(targetUrl),
-    "https://api.allorigins.win/raw?url="+encodeURIComponent(targetUrl),
-    "https://proxy.cors.sh/"+targetUrl
-  ];
-  function tryOne(i){
-    if(i>=attempts.length) return Promise.reject(new Error("همه مسیرهای دریافت شکست خوردند"));
-    return Promise.race([
-      fetch(attempts[i]).then(function(r){ if(!r.ok) throw new Error('status '+r.status); return r.text(); }),
-      new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'));}, timeoutMs||7000); })
-    ]).catch(function(){ return tryOne(i+1); });
-  }
-  return tryOne(0);
-}
 
 /* ========================================================================
    INIT
@@ -1537,4 +1560,4 @@ window.onload=function(){
 };
 </script>
 </body>
-</html>
+     </html>
