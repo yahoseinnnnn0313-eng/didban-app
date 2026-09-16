@@ -358,7 +358,11 @@
       <p>سامانه ابتدا پایگاه داده ماهواره‌های فعال و سپس پروازهای هوایی نزدیک محل شما را بررسی می‌کند. اگر تنها یک نوع جسم با مشخصات شما هم‌خوانی داشته باشد، همان به‌عنوان نتیجه نمایش داده می‌شود. اگر هر دو یافت شدند، هر دو به‌طور جداگانه نشان داده می‌شوند و اگر هیچ‌کدام یافت نشد، به‌عنوان «شی ناشناس» ثبت می‌گردد.</p>
     </div>
     <div class="guide-section">
-      <h4>۵. درصد اطمینان</h4>
+      <h4>۵. معیارهای دقت</h4>
+      <p>سامانه برای جلوگیری از نتایج اشتباه، از معیارهای سخت‌گیرانه‌ای استفاده می‌کند: ارتفاع زاویه‌ای شی باید حداقل ۱۰ درجه بالای افق باشد (زیر این مقدار، آلودگی و موانع دید مانع می‌شوند)، جهت مشاهده باید حداکثر ۱۵ درجه با جهت واقعی جسم اختلاف داشته باشد، و قدر ظاهری ماهواره باید حداکثر ۵ باشد تا با چشم غیرمسلح قابل مشاهده باشد.</p>
+    </div>
+    <div class="guide-section">
+      <h4>۶. درصد اطمینان</h4>
       <p>این عدد یک برآورد تقریبی از میزان هم‌خوانی جهت گزارش‌شده با موقعیت واقعی جسم است و به‌معنای اثبات قطعی نیست.</p>
     </div>
   </div>
@@ -759,13 +763,10 @@ var VERCEL_PROXY = "https://didban-app.vercel.app/api/proxy";
 function buildProxyAttempts(url){
   var encoded = encodeURIComponent(url);
   var attempts = [];
-  // اول: Vercel اختصاصی (پایدارترین)
   if(VERCEL_PROXY && VERCEL_PROXY.indexOf("vercel.app") > -1){
     attempts.push(VERCEL_PROXY + "?url=" + encoded);
   }
-  // دوم: مستقیم (برای کاربران خارج ایران)
   attempts.push(url);
-  // سوم: پروکسی عمومی (آخرین راه‌حل)
   attempts.push("https://api.codetabs.com/v1/proxy/?quest=" + encoded);
   return attempts;
 }
@@ -1058,12 +1059,13 @@ function simpleBearing(lat1,lon1,lat2,lon2){
   return (toDeg(Math.atan2(x,y))+360)%360;
 }
 
+/* ✅ مقادیر متعادل و منطقی بر اساس دقت چشم انسان و فیزیک جو */
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  var azTolerance=20;
-  var minAlt=5;
-  var maxMag=6.5;
-  var maxSatRangeKm=2500;
-  var maxAircraftDistKm=80;
+  var azTolerance=15;              // ±۱۵ درجه (نزدیک به دقت چشم انسان)
+  var minAlt=10;                    // حداقل ۱۰ درجه بالای افق (زیر این، غبار و موانع دید مانع می‌شوند)
+  var maxMag=5.0;                   // فقط ماهواره‌های نسبتاً پرنور
+  var maxSatRangeKm=2000;           // فاصله‌ی منطقی برای رؤیت
+  var maxAircraftDistKm=60;         // هواپیماها فقط در ۶۰ کیلومتری
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[];
   var acErrorMsg=null;
@@ -1154,7 +1156,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
           list.forEach(function(a){
             if(a.onGround) return;
             var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
-            if(be.elev<=0.5 || be.dist/1000>maxAircraftDistKm) return;
+            if(be.elev<=1.0 || be.dist/1000>maxAircraftDistKm) return;
             var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
             var candidate={
               name: a.callsign || a.icao,
@@ -1166,9 +1168,10 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
               lat:a.lat, lon:a.lon
             };
             allAcCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
-            if(azDiff<=25){
+            /* ✅ تلورانس هواپیما = ۲۰ درجه */
+            if(azDiff<=20){
               diag.acAzMatch++;
-              var conf=calcConfidence(azDiff, 25);
+              var conf=calcConfidence(azDiff, 20);
               conf=adjustConfidenceByMovement(conf, a.heading, moveDir);
               acResults.push(Object.assign({}, candidate, {confidence:conf}));
             }
@@ -1215,7 +1218,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
 
   if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+' ماهواره با مشخصات شما مطابقت دارد'; icon='🛰️'; }
   else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+' پرواز با مشخصات شما مطابقت دارد'; icon='✈️'; }
-  else if(hasSat && hasAc){ cls='mix'; title='چند احتمال یافت شد'; sub='هم ماهواره و هم هواپیما با این مشخصات هم‌خوانی دارند'; icon='🛰️✈️'; }
+  else if(hasSat && hasAc){ cls='mix'; title='هم ماهواره و هم هواپیما'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما با این مشخصات هم‌خوانی دارند'; icon='🛰️✈️'; }
 
   hero.className='result-hero '+cls;
   document.getElementById('resultIcon').innerText=icon;
@@ -1237,7 +1240,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       ['نوع تخمینی', s.type+' <span class="estimate-tag">تخمین</span>'],
       ['فاصله از شما', s.dist+' کیلومتر'],
       ['ارتفاع مداری', s.orbitAltKm+' کیلومتر'],
-      ['ارتفاع زاویه‌ای', s.alt+'°'],
+      ['ارتفاع زاویه‌ای از افق', s.alt+'°'],
       ['آزیموت', s.az+'°'],
       ['قدر ظاهری تخمینی', s.mag]
     ], s.confidence);
@@ -1285,7 +1288,8 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     var sourceRow = '<div class="diag-row"><span>منبع دیتابیس ماهواره</span><span>'+(diag.usedLocalFile?'فایل محلی مخزن ✅':'دریافت زنده از اینترنت')+'</span></div>';
     var acSourceRow = '<div class="diag-row"><span>منابع داده هواپیما (موفق)</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? diag.acSourcesOk.join(', ') : '—')+'</span></div>';
     var acFailRow = (diag.acSourcesFail && diag.acSourcesFail.length) ? '<div class="diag-row" style="color:#ffb3b3;"><span>منابع داده هواپیما (ناموفق)</span><span>'+diag.acSourcesFail.join(' | ')+'</span></div>' : '';
-    d.innerHTML = errRow + sourceRow + acSourceRow + acFailRow +
+    var filterRow = '<div class="diag-row" style="color:#9fd0ff;"><span>معیارهای سخت‌گیری</span><span>آزیموت ±۱۵° | ارتفاع ≥۱۰° | قدر ≤۵ | فاصله ≤۲۰۰۰km</span></div>';
+    d.innerHTML = errRow + sourceRow + acSourceRow + acFailRow + filterRow +
       '<div class="diag-row"><span>تعداد کل ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ماهواره‌های هم‌راستا با جهت شما (صرف‌نظر از نور)</span><span>'+diag.satAzMatchIgnoringLight+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید در لحظه گزارش</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
@@ -1524,4 +1528,4 @@ window.onload=function(){
 };
 </script>
 </body>
-           </html>
+ </html>
