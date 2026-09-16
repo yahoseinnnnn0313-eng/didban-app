@@ -309,7 +309,7 @@
   <div id="acTimeWarning" style="display:none;" class="diag-box"></div>
 
   <div class="nearby-toggle-wrap">
-    <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()">🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف</button>
+    <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()">🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف (۳۶۰°)</button>
   </div>
   <table class="nearby-table" id="nearbyTable" style="display:none;"></table>
 
@@ -358,11 +358,15 @@
       <p>سامانه ابتدا پایگاه داده ماهواره‌های فعال و سپس پروازهای هوایی نزدیک محل شما را بررسی می‌کند. اگر تنها یک نوع جسم با مشخصات شما هم‌خوانی داشته باشد، همان به‌عنوان نتیجه نمایش داده می‌شود. اگر هر دو یافت شدند، هر دو به‌طور جداگانه نشان داده می‌شوند و اگر هیچ‌کدام یافت نشد، به‌عنوان «شی ناشناس» ثبت می‌گردد.</p>
     </div>
     <div class="guide-section">
-      <h4>۵. معیارهای دقت</h4>
+      <h4>۵. نمایش همه‌ی اهداف اطراف (۳۶۰ درجه)</h4>
+      <p>با زدن دکمه «نمایش همه‌ی اهداف قابل مشاهده اطراف (۳۶۰°)»، تمام ماهواره‌های بالای افق و همه‌ی هواپیماهای اطراف شما در همه‌ی جهات (نه فقط جهت مشاهده) نمایش داده می‌شوند. این بخش برای کاوش و آگاهی از وضعیت کلی آسمان اطراف شما طراحی شده است.</p>
+    </div>
+    <div class="guide-section">
+      <h4>۶. معیارهای دقت</h4>
       <p>سامانه برای جلوگیری از نتایج اشتباه، از معیارهای سخت‌گیرانه‌ای استفاده می‌کند: ارتفاع زاویه‌ای شی باید حداقل ۱۰ درجه بالای افق باشد (زیر این مقدار، آلودگی و موانع دید مانع می‌شوند)، جهت مشاهده باید حداکثر ۱۵ درجه با جهت واقعی جسم اختلاف داشته باشد، و قدر ظاهری ماهواره باید حداکثر ۵ باشد تا با چشم غیرمسلح قابل مشاهده باشد.</p>
     </div>
     <div class="guide-section">
-      <h4>۶. درصد اطمینان</h4>
+      <h4>۷. درصد اطمینان</h4>
       <p>این عدد یک برآورد تقریبی از میزان هم‌خوانی جهت گزارش‌شده با موقعیت واقعی جسم است و به‌معنای اثبات قطعی نیست.</p>
     </div>
   </div>
@@ -819,7 +823,7 @@ async function fetchAdsbLol(lat, lon, radiusNm){
 }
 
 async function fetchAllAircraft(lat, lon){
-  var radiusNm=80;
+  var radiusNm=100;
   var sources=[
     { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
     { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
@@ -955,12 +959,22 @@ function validateAndRun(){
 
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
+/* ========================================================================
+   SATELLITE PROCESSING — دو فهرست جدا:
+   - allSatCandidates: همه‌ی ماهواره‌های بالای افق (۳۶۰ درجه)
+   - satResults: فقط اون‌هایی که با جهت دید کاربر می‌خونن
+======================================================================== */
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults){
   var CHUNK=600;
   var count=0;
   var total=Math.floor(lines.length/3);
   var observerGd={longitude:toRad(lon), latitude:toRad(lat), height:0};
   var bestByName={};
+
+  /* فیلترهای آزاد برای «نمایش همه اهداف» (۳۶۰ درجه) */
+  var NEARBY_MIN_ALT = 5;
+  var NEARBY_MAX_RANGE = 3500;
+  var NEARBY_MAX_MAG = 7.0;
 
   for(var i=0;i+2<lines.length;i+=3){
     try{
@@ -980,12 +994,12 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
         var ecf=satellite.eciToEcf(pv.position, gmst);
         var look=satellite.ecfToLookAngles(observerGd, ecf);
         var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
-
-        if(altDeg<=minAlt || rangeKm>maxSatRangeKm) continue;
-
         var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
 
-        if(timeOffsetsSec[t]===0 && azDiff<=azTolerance) diag.satAzMatchIgnoringLight++;
+        if(timeOffsetsSec[t]===0 && azDiff<=azTolerance && altDeg>NEARBY_MIN_ALT) diag.satAzMatchIgnoringLight++;
+
+        /* فیلتر آزاد: فقط ارتفاع و فاصله */
+        if(altDeg <= NEARBY_MIN_ALT || rangeKm > NEARBY_MAX_RANGE) continue;
 
         var sunAltNow=sunAltitude(tDate, lat, lon);
         if(sunAltNow>-6) continue;
@@ -993,9 +1007,10 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
         if(!isSunlit(pv.position, sunEci)) continue;
 
         var estMag=estimateSatMag(rangeKm, name);
-        if(estMag>maxMag) continue;
+        if(estMag > NEARBY_MAX_MAG) continue;
 
-        if(bestVisible && azDiff >= bestVisible.azDiff) continue;
+        /* بهترین رو بر اساس بیشترین ارتفاع زاویه‌ای انتخاب کن */
+        if(bestVisible && altDeg <= bestVisible.altDeg) continue;
 
         var geo=satellite.eciToGeodetic(pv.position, gmst);
         var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
@@ -1016,7 +1031,7 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       }
 
       if(bestVisible){
-        if(!bestByName[name] || bestVisible.azDiff < bestByName[name].azDiff){
+        if(!bestByName[name] || bestVisible.altDeg > bestByName[name].altDeg){
           bestByName[name]=bestVisible;
         }
       }
@@ -1043,8 +1058,12 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       lat:b.lat, lon:b.lon, heading:b.heading,
       type:info.type, country:info.country
     };
+
+    /* ✅ همه‌ی ماهواره‌های بالای افق → برای «نمایش همه اهداف» */
     allSatCandidates.push(Object.assign({}, full, {azDiff:b.azDiff}));
-    if(b.azDiff<=azTolerance){
+
+    /* ✅ فقط اون‌هایی که با دید کاربر می‌خونن → برای نتیجه اصلی */
+    if(b.azDiff <= azTolerance && b.altDeg > minAlt && b.mag <= maxMag && b.rangeKm <= maxSatRangeKm){
       var conf=calcConfidence(b.azDiff, azTolerance);
       conf=adjustConfidenceByMovement(conf, b.heading, moveDir);
       satResults.push(Object.assign({}, full, {confidence:conf}));
@@ -1059,14 +1078,18 @@ function simpleBearing(lat1,lon1,lat2,lon2){
   return (toDeg(Math.atan2(x,y))+360)%360;
 }
 
-/* ✅ مقادیر متعادل و منطقی بر اساس دقت چشم انسان و فیزیک جو */
+/* ========================================================================
+   MAIN ANALYSIS
+======================================================================== */
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  var azTolerance=15;              // ±۱۵ درجه (نزدیک به دقت چشم انسان)
-  var minAlt=10;                    // حداقل ۱۰ درجه بالای افق (زیر این، غبار و موانع دید مانع می‌شوند)
-  var maxMag=5.0;                   // فقط ماهواره‌های نسبتاً پرنور
-  var maxSatRangeKm=2000;           // فاصله‌ی منطقی برای رؤیت
-  var maxAircraftDistKm=60;         // هواپیماها فقط در ۶۰ کیلومتری
+  /* فیلترهای سخت‌گیرانه برای نتیجه اصلی */
+  var azTolerance=15;
+  var minAlt=10;
+  var maxMag=5.0;
+  var maxSatRangeKm=2000;
+  var maxAircraftDistKm=60;
   var timeOffsetsSec=[-120,-60,0,60,120];
+
   var satResults=[], acResults=[];
   var acErrorMsg=null;
   var allSatCandidates=[], allAcCandidates=[];
@@ -1150,26 +1173,37 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
 
+        /* فیلترهای آزاد برای «نمایش همه اهداف» */
+        var NEARBY_AC_DIST = 100;
+        var NEARBY_AC_MIN_ELEV = 0.3;
+
         if(acData.sourcesOk.length===0){
           acErrorMsg='دسترسی به منابع داده هواپیما ممکن نشد. جزئیات: '+acData.sourcesFail.join(' | ');
         } else {
           list.forEach(function(a){
             if(a.onGround) return;
             var be=bearingElevation(lat, lon, a.lat, a.lon, a.altM);
-            if(be.elev<=1.0 || be.dist/1000>maxAircraftDistKm) return;
+
+            /* فیلتر آزاد: ارتفاع و فاصله */
+            if(be.elev <= NEARBY_AC_MIN_ELEV || be.dist/1000 > NEARBY_AC_DIST) return;
+
             var azDiff=Math.abs(be.bearing-azimuth); azDiff=Math.min(azDiff,360-azDiff);
             var candidate={
               name: a.callsign || a.icao,
               icao:a.icao,
               country:a.country || 'نامشخص',
               elev: be.elev.toFixed(1),
+              az: be.bearing.toFixed(1),
               dist:(be.dist/1000).toFixed(1),
               alt: a.altM, speed: a.speedKmh, heading: a.heading,
               lat:a.lat, lon:a.lon
             };
+
+            /* ✅ همه → برای «نمایش همه اهداف» */
             allAcCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
-            /* ✅ تلورانس هواپیما = ۲۰ درجه */
-            if(azDiff<=20){
+
+            /* ✅ فقط اون‌هایی که با دید کاربر می‌خونن → برای نتیجه اصلی */
+            if(azDiff <= 20 && be.dist/1000 <= maxAircraftDistKm){
               diag.acAzMatch++;
               var conf=calcConfidence(azDiff, 20);
               conf=adjustConfidenceByMovement(conf, a.heading, moveDir);
@@ -1288,12 +1322,14 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     var sourceRow = '<div class="diag-row"><span>منبع دیتابیس ماهواره</span><span>'+(diag.usedLocalFile?'فایل محلی مخزن ✅':'دریافت زنده از اینترنت')+'</span></div>';
     var acSourceRow = '<div class="diag-row"><span>منابع داده هواپیما (موفق)</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? diag.acSourcesOk.join(', ') : '—')+'</span></div>';
     var acFailRow = (diag.acSourcesFail && diag.acSourcesFail.length) ? '<div class="diag-row" style="color:#ffb3b3;"><span>منابع داده هواپیما (ناموفق)</span><span>'+diag.acSourcesFail.join(' | ')+'</span></div>' : '';
-    var filterRow = '<div class="diag-row" style="color:#9fd0ff;"><span>معیارهای سخت‌گیری</span><span>آزیموت ±۱۵° | ارتفاع ≥۱۰° | قدر ≤۵ | فاصله ≤۲۰۰۰km</span></div>';
-    d.innerHTML = errRow + sourceRow + acSourceRow + acFailRow + filterRow +
+    var filterRow = '<div class="diag-row" style="color:#9fd0ff;"><span>معیارهای نتیجه‌ی اصلی</span><span>آزیموت ±۱۵° | ارتفاع ≥۱۰° | قدر ≤۵ | فاصله ≤۲۰۰۰km</span></div>';
+    var nearbyRow = '<div class="diag-row" style="color:#9fd0ff;"><span>معیارهای نمایش همه (۳۶۰°)</span><span>ماهواره: ارتفاع ≥۵° | هواپیما: تا ۱۰۰km</span></div>';
+    d.innerHTML = errRow + sourceRow + acSourceRow + acFailRow + filterRow + nearbyRow +
       '<div class="diag-row"><span>تعداد کل ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ماهواره‌های هم‌راستا با جهت شما (صرف‌نظر از نور)</span><span>'+diag.satAzMatchIgnoringLight+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید در لحظه گزارش</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
       '<div class="diag-row"><span>آسمان به‌اندازه کافی تاریک بود؟</span><span>'+(diag.satDarkAtCenter?'بله':'خیر')+'</span></div>'+
+      '<div class="diag-row"><span>ماهواره‌های قابل مشاهده در کل آسمان</span><span>'+(allSatCandidates?allSatCandidates.length:0)+'</span></div>'+
       '<div class="diag-row"><span>هواپیماهای یافت‌شده در شعاع بررسی</span><span>'+diag.acNearby+'</span></div>'+
       '<div class="diag-row"><span>هواپیماهای هم‌راستا با جهت شما</span><span>'+diag.acAzMatch+'</span></div>';
   }
@@ -1346,11 +1382,15 @@ function guessAirline(callsign){
     UAL:'یونایتد', DAL:'دلتا', AAL:'امریکن ایرلاینز', BAW:'بریتیش ایرویز', DLH:'لوفت‌هانزا', AFR:'ایرفرانس',
     KLM:'کا‌ال‌ام', AFL:'ایرفلوت', CCA:'ایرچاینا', CES:'چاینا ایسترن', CSN:'چاینا سادرن',
     SIA:'سنگاپور ایرلاینز', QFA:'کانتاس', JAL:'جپن ایرلاینز', ANA:'آل نیپون', KAL:'کورین ایر',
-    RYR:'رایان‌ایر', EZY:'ایزی‌جت', WZZ:'ویز‌ایر', ABY:'ایر عربیا', GFA:'گلف ایر', ADY:'الاتحاد ابوظبی'
+    RYR:'رایان‌ایر', EZY:'ایزی‌جت', WZZ:'ویز‌ایر', ABY:'ایر عربیا', GFA:'گلف ایر', ADY:'الاتحاد ابوظبی',
+    OMA:'عمان ایر', ALK:'سریلانکا ایرلاینز', AIC:'ایر ایندیا', IGO:'ایندی‌گو', KMF:'کام ایر'
   };
   return table[prefix] || 'نامشخص';
 }
 
+/* ========================================================================
+   NEARBY ALL — نمایش ۳۶۰ درجه‌ی همه اهداف
+======================================================================== */
 function toggleNearbyAll(){
   nearbyActive=!nearbyActive;
   var btn=document.getElementById('nearbyToggleBtn');
@@ -1359,27 +1399,32 @@ function toggleNearbyAll(){
   nearbyLayers=[];
 
   if(!nearbyActive){
-    btn.innerText='🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف';
+    btn.innerText='🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف (۳۶۰°)';
     table.style.display='none';
     table.innerHTML='';
     return;
   }
   btn.innerText='🔭 پنهان کردن اهداف اطراف';
 
-  var satList=cachedAllSat.slice().sort(function(a,b){return a.azDiff-b.azDiff;}).slice(0,20);
-  var acList=cachedAllAc.slice().sort(function(a,b){return a.azDiff-b.azDiff;}).slice(0,20);
+  /* مرتب‌سازی بر اساس فاصله (نزدیک‌ترین اول) */
+  var satList=cachedAllSat.slice().sort(function(a,b){
+    return parseFloat(a.dist) - parseFloat(b.dist);
+  }).slice(0,50);
+  var acList=cachedAllAc.slice().sort(function(a,b){
+    return parseFloat(a.dist) - parseFloat(b.dist);
+  }).slice(0,50);
 
-  var rows='<tr><th>نوع</th><th>نام</th><th>آزیموت</th><th>فاصله (km)</th></tr>';
+  var rows='<tr><th>نوع</th><th>نام</th><th>آزیموت</th><th>ارتفاع افق</th><th>فاصله (km)</th></tr>';
   satList.forEach(function(s){
-    rows+='<tr><td>🛰️</td><td>'+s.name+'</td><td>'+s.az+'°</td><td>'+s.dist+'</td></tr>';
+    rows+='<tr><td>🛰️</td><td>'+s.name+'</td><td>'+s.az+'°</td><td>'+(s.alt||'-')+'°</td><td>'+s.dist+'</td></tr>';
     var icon=L.divIcon({html:'<div style="background:rgba(43,125,233,.55);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #fff;">🛰️</div>', iconSize:[22,22], className:''});
-    var m=L.marker([s.lat,s.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+s.name+'</b><br>'+s.type+' - '+s.country);
+    var m=L.marker([s.lat,s.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+s.name+'</b><br>'+s.type+' - '+s.country+'<br>ارتفاع از افق: '+s.alt+'°<br>آزیموت: '+s.az+'°');
     nearbyLayers.push(m);
   });
   acList.forEach(function(a){
-    rows+='<tr><td>✈️</td><td>'+a.name+'</td><td>'+a.elev+'°</td><td>'+a.dist+'</td></tr>';
+    rows+='<tr><td>✈️</td><td>'+a.name+'</td><td>'+(a.az||'-')+'°</td><td>'+a.elev+'°</td><td>'+a.dist+'</td></tr>';
     var icon=L.divIcon({html:'<div style="background:rgba(26,158,110,.55);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #fff;">✈️</div>', iconSize:[22,22], className:''});
-    var m=L.marker([a.lat,a.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+a.name+'</b><br>'+a.country);
+    var m=L.marker([a.lat,a.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+a.name+'</b><br>'+a.country+'<br>ارتفاع از افق: '+a.elev+'°<br>آزیموت: '+(a.az||'-')+'°');
     nearbyLayers.push(m);
   });
 
@@ -1528,4 +1573,4 @@ window.onload=function(){
 };
 </script>
 </body>
- </html>
+           </html>
