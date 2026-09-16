@@ -252,7 +252,7 @@
       <select id="jHour"></select>
       <select id="jMinute"></select>
     </div>
-    <div class="status-msg" style="color:#a0a0c8;">می‌توانید زمان گذشته را انتخاب کنید؛ انتخاب زمان آینده مجاز نیست.</div>
+    <div class="status-msg" style="color:#a0a0c8;">زمان بر اساس ساعت محلی دستگاه شما ثبت می‌شود.</div>
   </div>
 
   <div class="card">
@@ -347,7 +347,7 @@
     </div>
     <div class="guide-section">
       <h4>۲. تاریخ و ساعت</h4>
-      <p>تاریخ به تقویم شمسی نمایش داده می‌شود. انتخاب زمانی در آینده امکان‌پذیر نیست.</p>
+      <p>تاریخ به تقویم شمسی نمایش داده می‌شود. انتخاب زمانی در آینده امکان‌پذیر نیست. زمان بر اساس ساعت محلی دستگاه شما ثبت می‌شود.</p>
     </div>
     <div class="guide-section">
       <h4>۳. جهت مشاهده (آزیموت)</h4>
@@ -474,24 +474,24 @@ function toGregorian(jy,jm,jd){ return d2g(j2d(jy,jm,jd)); }
 function isLeapJalali(jy){ return jalCal(jy).leap===0; }
 var monthNamesFa=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
 
-function getNowTehran(){
+/* ✅ FIX #3: زمان محلی دستگاه کاربر (نه هاردکد تهران) */
+function getNowLocal(){
   var now=new Date();
-  var tehranStr=now.toLocaleString("en-US",{timeZone:"Asia/Tehran", hour12:false});
-  var d=new Date(tehranStr);
-  var jd=toJalali(d.getFullYear(), d.getMonth()+1, d.getDate());
-  return {jy:jd[0], jm:jd[1], jd:jd[2], h:d.getHours(), min:d.getMinutes()};
+  var jd=toJalali(now.getFullYear(), now.getMonth()+1, now.getDate());
+  return {jy:jd[0], jm:jd[1], jd:jd[2], h:now.getHours(), min:now.getMinutes()};
 }
+/* ✅ FIX #3: تبدیل زمان محلی کاربر به UTC */
 function jalaliToUtcDate(jy,jm,jd,h,min){
   var g=toGregorian(jy,jm,jd);
-  var utcMillis = Date.UTC(g[0], g[1]-1, g[2], h, min, 0) - (3*60+30)*60000;
-  return new Date(utcMillis);
+  var localDate = new Date(g[0], g[1]-1, g[2], h, min, 0);
+  return localDate;
 }
 
 /* ========================================================================
    DATE PICKER UI SETUP
 ======================================================================== */
 function fillDatePicker(){
-  var now=getNowTehran();
+  var now=getNowLocal();
   var yearSel=document.getElementById('jYear');
   for(var y=now.jy; y>=now.jy-5; y--){
     var opt=document.createElement('option'); opt.value=y; opt.textContent=y+" ه.ش";
@@ -521,7 +521,7 @@ function fillDatePicker(){
   document.getElementById('jMonth').addEventListener('change', fillDaySelect);
 }
 function fillDaySelect(){
-  var jy=parseInt(document.getElementById('jYear').value)||getNowTehran().jy;
+  var jy=parseInt(document.getElementById('jYear').value)||getNowLocal().jy;
   var jm=parseInt(document.getElementById('jMonth').value)||1;
   var daySel=document.getElementById('jDay');
   var prevVal=daySel.value;
@@ -755,20 +755,17 @@ function isSunlit(satEci,sunEci){
 
 /* ========================================================================
    CORS PROXY HELPERS
-   ⭐ استراتژی جدید: مستقیم از مرورگر (UA واقعی) → بعد Worker
+   استراتژی: مستقیم از مرورگر → Worker اختصاصی → پروکسی عمومی
 ======================================================================== */
 var CLOUDFLARE_PROXY = "https://rasadyar-proxy.yahoseinnnnn0313.workers.dev";
 
 function buildProxyAttempts(url){
   var encoded = encodeURIComponent(url);
   var attempts = [];
-  // ⭐ اول: مستقیم از مرورگر (بهترین شانس، UA واقعی مرورگر داره)
   attempts.push(url);
-  // دوم: Worker اختصاصی
   if(CLOUDFLARE_PROXY && CLOUDFLARE_PROXY.indexOf("workers.dev") > -1){
     attempts.push(CLOUDFLARE_PROXY + "?url=" + encoded);
   }
-  // سوم: پروکسی عمومی
   attempts.push("https://cors.lol/" + url);
   return attempts;
 }
@@ -795,7 +792,6 @@ async function fetchJsonWithProxies(url, timeoutMs){
 
 /* ========================================================================
    AIRCRAFT DATA SOURCES
-   فقط adsb.fi و adsb.lol (منابع فعال و تأیید شده)
 ======================================================================== */
 function normalizeAdsbAc(a){
   var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : (typeof a.alt_geom==='number' ? a.alt_geom : null);
@@ -821,6 +817,7 @@ async function fetchAdsbLol(lat, lon, radiusNm){
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 
+/* ✅ FIX #1: منطق «موفق» شامل پاسخ‌های خالی هم می‌شه */
 async function fetchAllAircraft(lat, lon){
   var radiusNm=80;
   var sources=[
@@ -830,7 +827,8 @@ async function fetchAllAircraft(lat, lon){
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
     return s.fn().then(function(r){
-      if(r && r.length>0) ok.push(s.name);
+      // هر پاسخ موفق (حتی خالی) = منبع در دسترس
+      ok.push(s.name + (r && r.length ? ' ('+r.length+')' : ' (خالی)'));
       return r;
     }).catch(function(e){
       fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص'));
@@ -1152,8 +1150,9 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
 
-        if(list.length===0 && acData.sourcesOk.length===0){
-          acErrorMsg='همه منابع داده هواپیما در دسترس نبودند. جزئیات: '+acData.sourcesFail.join(' | ');
+        /* ✅ FIX #2: خطا فقط وقتی نشون داده می‌شه که هیچ منبعی جواب نداده باشه */
+        if(acData.sourcesOk.length===0){
+          acErrorMsg='دسترسی به منابع داده هواپیما ممکن نشد. جزئیات: '+acData.sourcesFail.join(' | ');
         } else {
           list.forEach(function(a){
             if(a.onGround) return;
@@ -1260,7 +1259,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   });
 
   if(errMsg){
-    cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: در دریافت اطلاعات هواپیما مشکلی رخ داد ('+errMsg+')</p></div>';
+    cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: '+errMsg+'</p></div>';
   }
 
   document.getElementById('objectsContainer').innerHTML = cardsHtml;
@@ -1346,7 +1345,7 @@ function guessAirline(callsign){
     UAL:'یونایتد', DAL:'دلتا', AAL:'امریکن ایرلاینز', BAW:'بریتیش ایرویز', DLH:'لوفت‌هانزا', AFR:'ایرفرانس',
     KLM:'کا‌ال‌ام', AFL:'ایرفلوت', CCA:'ایرچاینا', CES:'چاینا ایسترن', CSN:'چاینا سادرن',
     SIA:'سنگاپور ایرلاینز', QFA:'کانتاس', JAL:'جپن ایرلاینز', ANA:'آل نیپون', KAL:'کورین ایر',
-    RYR:'رایان‌ایر', EZY:'ایزی‌جت', WZZ:'ویز‌ایر'
+    RYR:'رایان‌ایر', EZY:'ایزی‌جت', WZZ:'ویز‌ایر', ABY:'ایر عربیا', GFA:'گلف ایر', ADY:'الاتحاد ابوظبی'
   };
   return table[prefix] || 'نامشخص';
 }
@@ -1528,4 +1527,4 @@ window.onload=function(){
 };
 </script>
 </body>
-       </html>
+ </html>
