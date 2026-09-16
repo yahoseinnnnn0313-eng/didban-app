@@ -761,14 +761,16 @@ function isSunlit(satEci,sunEci){
 }
 
 /* ========================================================================
-   UNIFIED CORS PROXY HELPERS
+   UNIFIED CORS PROXY HELPERS  — updated with working proxies
 ======================================================================== */
 function buildProxyAttempts(url){
+  // Updated list: some older proxies are dead; these are more reliable as of 2026
   return [
-    url,
-    "https://corsproxy.io/?url="+encodeURIComponent(url),
-    "https://api.allorigins.win/raw?url="+encodeURIComponent(url),
-    "https://proxy.cors.sh/"+url
+    url, // try direct first (some APIs may have CORS enabled)
+    "https://cors.lol/"+url,
+    "https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(url),
+    "https://cors-anywhere.herokuapp.com/"+url,
+    "https://api.allorigins.win/raw?url="+encodeURIComponent(url)
   ];
 }
 async function fetchTextWithProxies(url, timeoutMs){
@@ -793,7 +795,9 @@ async function fetchJsonWithProxies(url, timeoutMs){
 }
 
 /* ========================================================================
-   AIRCRAFT DATA SOURCES — each now uses CORS proxies
+   AIRCRAFT DATA SOURCES  — updated: working sources only
+   NOTE: airplanes.live and adsb.one are SHUT DOWN (see docs).
+   We now use: OpenSky, adsb.fi, adsb.lol, and PocketWorld.
 ======================================================================== */
 function normalizeAdsbAc(a){
   var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : (typeof a.alt_geom==='number' ? a.alt_geom : null);
@@ -808,25 +812,48 @@ function normalizeAdsbAc(a){
     onGround: a.alt_baro==='ground'
   };
 }
-async function fetchAirplanesLive(lat, lon, radiusNm){
-  var url="https://api.airplanes.live/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  var data=await fetchJsonWithProxies(url, 9000);
-  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
-}
-async function fetchAdsbOne(lat, lon, radiusNm){
-  var url="https://api.adsb.one/v2/point/"+lat+"/"+lon+"/"+radiusNm;
+async function fetchAdsbFi(lat, lon, radiusNm){
+  // adsb.fi open data API — replaces adsb.lol as primary community source
+  var url="https://opendata.adsb.fi/api/v2/point/"+lat+"/"+lon+"/"+radiusNm;
   var data=await fetchJsonWithProxies(url, 9000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 async function fetchAdsbLol(lat, lon, radiusNm){
+  // adsb.lol is still alive but needs a CORS proxy (which fetchJsonWithProxies provides)
   var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
   var data=await fetchJsonWithProxies(url, 9000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
+async function fetchPocketWorld(lat, lon){
+  // PocketWorld has open CORS — direct call should work; still routed through proxy helper for safety
+  var url="https://api.pocketworld.org/api/flights";
+  try{
+    var data=await fetchJsonWithProxies(url, 9000);
+    var list = Array.isArray(data) ? data : (data && data.flights) || [];
+    // PocketWorld returns global snapshot; filter by distance client-side
+    var out=[];
+    list.forEach(function(f){
+      if(f.lat==null || f.lon==null) return;
+      var be=bearingElevation(lat, lon, f.lat, f.lon, f.alt!=null ? f.alt*0.3048 : null);
+      if(be.dist/1000 > 150) return;
+      out.push({
+        icao:(f.hex||f.icao||'').toLowerCase(),
+        callsign:(f.flight||f.callsign||'نامشخص').trim(),
+        country:f.origin_country||null,
+        lat:f.lat, lon:f.lon,
+        altM: f.alt!=null ? Math.round(f.alt*0.3048) : null,
+        speedKmh: f.gs!=null ? Math.round(f.gs*1.852) : null,
+        heading: f.track!=null ? Math.round(f.track) : null,
+        onGround: false
+      });
+    });
+    return out.filter(function(a){return a.icao;});
+  }catch(e){ return []; }
+}
 async function fetchOpenSkyList(lat, lon, marginDeg){
   var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
   var url="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
-  var data=await fetchJsonWithProxies(url, 12000);
+  var data=await fetchJsonWithProxies(url, 15000); // OpenSky needs a longer timeout
   var states=(data && data.states) || [];
   return states.map(function(s){
     return {
@@ -843,11 +870,12 @@ async function fetchOpenSkyList(lat, lon, marginDeg){
 
 async function fetchAllAircraft(lat, lon){
   var radiusNm=80, marginDeg=1.5;
+  // Only include sources that are actually alive in 2026
   var sources=[
     { name:'OpenSky',       fn:function(){ return fetchOpenSkyList(lat, lon, marginDeg); } },
-    { name:'airplanes.live',fn:function(){ return fetchAirplanesLive(lat, lon, radiusNm); } },
-    { name:'adsb.one',      fn:function(){ return fetchAdsbOne(lat, lon, radiusNm); } },
-    { name:'adsb.lol',      fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
+    { name:'adsb.fi',       fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
+    { name:'adsb.lol',      fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } },
+    { name:'PocketWorld',   fn:function(){ return fetchPocketWorld(lat, lon); } }
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
@@ -860,7 +888,6 @@ async function fetchAllAircraft(lat, lon){
       if(!a.icao) return;
       if(!merged[a.icao]) merged[a.icao]=a;
       else {
-        // merge: keep non-null fields from both
         for(var k in a){
           if(merged[a.icao][k]==null || merged[a.icao][k]==='') merged[a.icao][k]=a[k];
         }
@@ -904,8 +931,6 @@ function guessSatInfo(name){
   return {type:'نامشخص', country:'نامشخص'};
 }
 
-/* Standard-magnitude based apparent magnitude estimate.
-   Uses per-type standard magnitude at 1000 km reference range. */
 function estimateSatMag(rangeKm, name){
   var n=(name||'').toUpperCase();
   var stdMag=2.0;
@@ -978,12 +1003,6 @@ function validateAndRun(){
 
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
-/* ------------------------------------------------------------------------
-   SATELLITE PROCESSING
-   - Tries multiple time offsets around obsDate (±2 min)
-   - Deduplicates by satellite name (keeps best azimuth match)
-   - Uses realistic apparent-magnitude model
------------------------------------------------------------------------- */
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults){
   var CHUNK=600;
   var count=0;
@@ -1090,14 +1109,13 @@ function simpleBearing(lat1,lon1,lat2,lon2){
 
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
   var azTolerance=20;
-  var minAlt=5;                 // satellites below 5° elevation are not really visible
+  var minAlt=5;
   var maxMag=6.5;
   var maxSatRangeKm=2500;
   var maxAircraftDistKm=80;
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[];
   var acErrorMsg=null;
-  var acSourcesOk=[], acSourcesFail=[];
   var allSatCandidates=[], allAcCandidates=[];
   var diag={
     satChecked:0, satAzMatchIgnoringLight:0, satDarkAtCenter:false, sunAltCenter:null,
@@ -1262,7 +1280,6 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   satResults.sort(function(a,b){return b.confidence-a.confidence;});
   acResults.sort(function(a,b){return b.confidence-a.confidence;});
 
-  // Build all cards in one string to avoid repeated innerHTML parsing
   var cardsHtml='';
 
   satResults.forEach(function(s){
@@ -1313,7 +1330,6 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
     warnBox.style.display='none';
   }
 
-  // Diagnostics
   if(diag){
     var d=document.getElementById('diagContent');
     var errRow = diag.satFetchError ? '<div class="diag-row" style="color:#ffb3b3;"><span>خطای دریافت دیتابیس ماهواره</span><span>'+diag.satFetchError+'</span></div>' : '';
@@ -1329,7 +1345,6 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       '<div class="diag-row"><span>هواپیماهای هم‌راستا با جهت شما</span><span>'+diag.acAzMatch+'</span></div>';
   }
 
-  // Build map
   var map=L.map('map').setView([lat, lon], 8);
   mapRef=map;
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(map);
@@ -1560,4 +1575,4 @@ window.onload=function(){
 };
 </script>
 </body>
-     </html>
+   </html>
