@@ -88,7 +88,6 @@
   }
   .link-card .icon { font-size:18px; }
 
-  /* Loading */
   #loadingBox { display:none; text-align:center; padding: 40px 20px; }
   .radar { width:90px; height:90px; margin:0 auto 18px; position:relative; border-radius:50%;
     background: radial-gradient(circle, rgba(43,125,233,.25) 0%, transparent 70%);
@@ -102,7 +101,6 @@
   @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
   #loadingBox p { color:#a8c8ff; font-size:14px; margin-top:6px; }
 
-  /* Result */
   #resultBox { display:none; }
   .result-hero {
     max-width:520px; margin:14px auto; padding:22px; border-radius:18px; text-align:center;
@@ -136,7 +134,6 @@
 
   #map { max-width:520px; height:380px; margin:14px auto; border-radius:14px; }
 
-  /* Modal */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; padding:20px; overflow-y:auto; }
   .modal-box { max-width:520px; margin:20px auto; background:#1c1c34; border-radius:16px; padding:22px; border:1px solid rgba(255,255,255,.12); }
   .modal-box h2 { margin-top:0; }
@@ -165,7 +162,6 @@
   <p>سامانه هوشمند تشخیص اجسام نورانی آسمان</p>
 </div>
 
-<!-- ================= FORM ================= -->
 <div id="formBox">
 
   <div class="card">
@@ -291,14 +287,12 @@
   </div>
 </div>
 
-<!-- ================= LOADING ================= -->
 <div id="loadingBox">
   <div class="radar"></div>
   <p id="loadingMainText">سیستم در حال پردازش است، لطفاً چند لحظه صبر کنید...</p>
   <p id="loadingProgress" style="font-size:12px; color:#7ee8fa;"></p>
 </div>
 
-<!-- ================= RESULT ================= -->
 <div id="resultBox">
   <div class="result-hero" id="resultHero">
     <div class="big-icon" id="resultIcon">❓</div>
@@ -331,7 +325,6 @@
   </div>
 </div>
 
-<!-- ================= MODALS ================= -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
     <button class="close-btn" onclick="closeModal('historyModal')">✕</button>
@@ -761,23 +754,22 @@ function isSunlit(satEci,sunEci){
 }
 
 /* ========================================================================
-   CLOUDFLARE WORKER PROXY (اختصاصی)
+   CORS PROXY HELPERS
+   ⭐ استراتژی جدید: مستقیم از مرورگر (UA واقعی) → بعد Worker
 ======================================================================== */
 var CLOUDFLARE_PROXY = "https://rasadyar-proxy.yahoseinnnnn0313.workers.dev";
 
 function buildProxyAttempts(url){
   var encoded = encodeURIComponent(url);
   var attempts = [];
-  // اول Worker اختصاصی
+  // ⭐ اول: مستقیم از مرورگر (بهترین شانس، UA واقعی مرورگر داره)
+  attempts.push(url);
+  // دوم: Worker اختصاصی
   if(CLOUDFLARE_PROXY && CLOUDFLARE_PROXY.indexOf("workers.dev") > -1){
     attempts.push(CLOUDFLARE_PROXY + "?url=" + encoded);
   }
-  // پروکسی‌های عمومی به عنوان پشتیبان
-  attempts.push(
-    url,
-    "https://cors.lol/" + url,
-    "https://api.codetabs.com/v1/proxy/?quest=" + encoded
-  );
+  // سوم: پروکسی عمومی
+  attempts.push("https://cors.lol/" + url);
   return attempts;
 }
 async function fetchTextWithProxies(url, timeoutMs){
@@ -803,6 +795,7 @@ async function fetchJsonWithProxies(url, timeoutMs){
 
 /* ========================================================================
    AIRCRAFT DATA SOURCES
+   فقط adsb.fi و adsb.lol (منابع فعال و تأیید شده)
 ======================================================================== */
 function normalizeAdsbAc(a){
   var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : (typeof a.alt_geom==='number' ? a.alt_geom : null);
@@ -818,45 +811,31 @@ function normalizeAdsbAc(a){
   };
 }
 async function fetchAdsbFi(lat, lon, radiusNm){
-  // adsb.fi جدید: endpoint v3
   var url="https://opendata.adsb.fi/api/v3/lat/"+lat+"/lon/"+lon+"/dist/"+radiusNm;
-  var data=await fetchJsonWithProxies(url, 10000);
+  var data=await fetchJsonWithProxies(url, 15000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 async function fetchAdsbLol(lat, lon, radiusNm){
   var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  var data=await fetchJsonWithProxies(url, 10000);
-  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
-}
-async function fetchOpenSkyList(lat, lon, marginDeg){
-  var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
-  var url="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
   var data=await fetchJsonWithProxies(url, 15000);
-  var states=(data && data.states) || [];
-  return states.map(function(s){
-    return {
-      icao:(s[0]||'').toLowerCase(),
-      callsign:(s[1]||'نامشخص').trim(),
-      country: s[2]||null, lat:s[6], lon:s[5],
-      altM: s[7]!=null ? Math.round(s[7]) : null,
-      speedKmh: s[9]!=null ? Math.round(s[9]*3.6) : null,
-      heading: s[10]!=null ? Math.round(s[10]) : null,
-      onGround: s[8]
-    };
-  }).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
+  return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 
 async function fetchAllAircraft(lat, lon){
-  var radiusNm=80, marginDeg=1.5;
+  var radiusNm=80;
   var sources=[
-    { name:'adsb.fi', fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
-    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } },
-    { name:'OpenSky', fn:function(){ return fetchOpenSkyList(lat, lon, marginDeg); } }
+    { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
+    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
-    return s.fn().then(function(r){ ok.push(s.name); return r; })
-                 .catch(function(e){ fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص')); return []; });
+    return s.fn().then(function(r){
+      if(r && r.length>0) ok.push(s.name);
+      return r;
+    }).catch(function(e){
+      fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص'));
+      return [];
+    });
   }));
   var merged={};
   results.forEach(function(list){
@@ -1549,4 +1528,4 @@ window.onload=function(){
 };
 </script>
 </body>
-           </html>
+       </html>
