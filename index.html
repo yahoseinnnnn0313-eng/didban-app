@@ -474,13 +474,11 @@ function toGregorian(jy,jm,jd){ return d2g(j2d(jy,jm,jd)); }
 function isLeapJalali(jy){ return jalCal(jy).leap===0; }
 var monthNamesFa=["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
 
-/* ✅ FIX #3: زمان محلی دستگاه کاربر (نه هاردکد تهران) */
 function getNowLocal(){
   var now=new Date();
   var jd=toJalali(now.getFullYear(), now.getMonth()+1, now.getDate());
   return {jy:jd[0], jm:jd[1], jd:jd[2], h:now.getHours(), min:now.getMinutes()};
 }
-/* ✅ FIX #3: تبدیل زمان محلی کاربر به UTC */
 function jalaliToUtcDate(jy,jm,jd,h,min){
   var g=toGregorian(jy,jm,jd);
   var localDate = new Date(g[0], g[1]-1, g[2], h, min, 0);
@@ -754,19 +752,21 @@ function isSunlit(satEci,sunEci){
 }
 
 /* ========================================================================
-   CORS PROXY HELPERS
-   استراتژی: مستقیم از مرورگر → Worker اختصاصی → پروکسی عمومی
+   CORS PROXY HELPERS — Vercel اختصاصی
 ======================================================================== */
-var CLOUDFLARE_PROXY = "https://rasadyar-proxy.yahoseinnnnn0313.workers.dev";
+var VERCEL_PROXY = "https://didban-app.vercel.app/api/proxy";
 
 function buildProxyAttempts(url){
   var encoded = encodeURIComponent(url);
   var attempts = [];
-  attempts.push(url);
-  if(CLOUDFLARE_PROXY && CLOUDFLARE_PROXY.indexOf("workers.dev") > -1){
-    attempts.push(CLOUDFLARE_PROXY + "?url=" + encoded);
+  // اول: Vercel اختصاصی (پایدارترین)
+  if(VERCEL_PROXY && VERCEL_PROXY.indexOf("vercel.app") > -1){
+    attempts.push(VERCEL_PROXY + "?url=" + encoded);
   }
-  attempts.push("https://cors.lol/" + url);
+  // دوم: مستقیم (برای کاربران خارج ایران)
+  attempts.push(url);
+  // سوم: پروکسی عمومی (آخرین راه‌حل)
+  attempts.push("https://api.codetabs.com/v1/proxy/?quest=" + encoded);
   return attempts;
 }
 async function fetchTextWithProxies(url, timeoutMs){
@@ -817,7 +817,6 @@ async function fetchAdsbLol(lat, lon, radiusNm){
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 
-/* ✅ FIX #1: منطق «موفق» شامل پاسخ‌های خالی هم می‌شه */
 async function fetchAllAircraft(lat, lon){
   var radiusNm=80;
   var sources=[
@@ -827,7 +826,6 @@ async function fetchAllAircraft(lat, lon){
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
     return s.fn().then(function(r){
-      // هر پاسخ موفق (حتی خالی) = منبع در دسترس
       ok.push(s.name + (r && r.length ? ' ('+r.length+')' : ' (خالی)'));
       return r;
     }).catch(function(e){
@@ -1150,7 +1148,6 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
 
-        /* ✅ FIX #2: خطا فقط وقتی نشون داده می‌شه که هیچ منبعی جواب نداده باشه */
         if(acData.sourcesOk.length===0){
           acErrorMsg='دسترسی به منابع داده هواپیما ممکن نشد. جزئیات: '+acData.sourcesFail.join(' | ');
         } else {
@@ -1527,4 +1524,4 @@ window.onload=function(){
 };
 </script>
 </body>
- </html>
+           </html>
