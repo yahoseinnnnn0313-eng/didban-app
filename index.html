@@ -761,17 +761,24 @@ function isSunlit(satEci,sunEci){
 }
 
 /* ========================================================================
-   UNIFIED CORS PROXY HELPERS  — updated with working proxies
+   CLOUDFLARE WORKER PROXY (اختصاصی)
 ======================================================================== */
+var CLOUDFLARE_PROXY = "https://rasadyar-proxy.yahoseinnnnn0313.workers.dev";
+
 function buildProxyAttempts(url){
-  // Updated list: some older proxies are dead; these are more reliable as of 2026
-  return [
-    url, // try direct first (some APIs may have CORS enabled)
-    "https://cors.lol/"+url,
-    "https://api.codetabs.com/v1/proxy/?quest="+encodeURIComponent(url),
-    "https://cors-anywhere.herokuapp.com/"+url,
-    "https://api.allorigins.win/raw?url="+encodeURIComponent(url)
-  ];
+  var encoded = encodeURIComponent(url);
+  var attempts = [];
+  // اول Worker اختصاصی
+  if(CLOUDFLARE_PROXY && CLOUDFLARE_PROXY.indexOf("workers.dev") > -1){
+    attempts.push(CLOUDFLARE_PROXY + "?url=" + encoded);
+  }
+  // پروکسی‌های عمومی به عنوان پشتیبان
+  attempts.push(
+    url,
+    "https://cors.lol/" + url,
+    "https://api.codetabs.com/v1/proxy/?quest=" + encoded
+  );
+  return attempts;
 }
 async function fetchTextWithProxies(url, timeoutMs){
   var attempts=buildProxyAttempts(url);
@@ -795,9 +802,7 @@ async function fetchJsonWithProxies(url, timeoutMs){
 }
 
 /* ========================================================================
-   AIRCRAFT DATA SOURCES  — updated: working sources only
-   NOTE: airplanes.live and adsb.one are SHUT DOWN (see docs).
-   We now use: OpenSky, adsb.fi, adsb.lol, and PocketWorld.
+   AIRCRAFT DATA SOURCES
 ======================================================================== */
 function normalizeAdsbAc(a){
   var altFt=(typeof a.alt_baro==='number') ? a.alt_baro : (typeof a.alt_geom==='number' ? a.alt_geom : null);
@@ -813,47 +818,20 @@ function normalizeAdsbAc(a){
   };
 }
 async function fetchAdsbFi(lat, lon, radiusNm){
-  // adsb.fi open data API — replaces adsb.lol as primary community source
-  var url="https://opendata.adsb.fi/api/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  var data=await fetchJsonWithProxies(url, 9000);
+  // adsb.fi جدید: endpoint v3
+  var url="https://opendata.adsb.fi/api/v3/lat/"+lat+"/lon/"+lon+"/dist/"+radiusNm;
+  var data=await fetchJsonWithProxies(url, 10000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 async function fetchAdsbLol(lat, lon, radiusNm){
-  // adsb.lol is still alive but needs a CORS proxy (which fetchJsonWithProxies provides)
   var url="https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm;
-  var data=await fetchJsonWithProxies(url, 9000);
+  var data=await fetchJsonWithProxies(url, 10000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
-}
-async function fetchPocketWorld(lat, lon){
-  // PocketWorld has open CORS — direct call should work; still routed through proxy helper for safety
-  var url="https://api.pocketworld.org/api/flights";
-  try{
-    var data=await fetchJsonWithProxies(url, 9000);
-    var list = Array.isArray(data) ? data : (data && data.flights) || [];
-    // PocketWorld returns global snapshot; filter by distance client-side
-    var out=[];
-    list.forEach(function(f){
-      if(f.lat==null || f.lon==null) return;
-      var be=bearingElevation(lat, lon, f.lat, f.lon, f.alt!=null ? f.alt*0.3048 : null);
-      if(be.dist/1000 > 150) return;
-      out.push({
-        icao:(f.hex||f.icao||'').toLowerCase(),
-        callsign:(f.flight||f.callsign||'نامشخص').trim(),
-        country:f.origin_country||null,
-        lat:f.lat, lon:f.lon,
-        altM: f.alt!=null ? Math.round(f.alt*0.3048) : null,
-        speedKmh: f.gs!=null ? Math.round(f.gs*1.852) : null,
-        heading: f.track!=null ? Math.round(f.track) : null,
-        onGround: false
-      });
-    });
-    return out.filter(function(a){return a.icao;});
-  }catch(e){ return []; }
 }
 async function fetchOpenSkyList(lat, lon, marginDeg){
   var lamin=lat-marginDeg, lamax=lat+marginDeg, lomin=lon-marginDeg, lomax=lon+marginDeg;
   var url="https://opensky-network.org/api/states/all?lamin="+lamin+"&lamax="+lamax+"&lomin="+lomin+"&lomax="+lomax;
-  var data=await fetchJsonWithProxies(url, 15000); // OpenSky needs a longer timeout
+  var data=await fetchJsonWithProxies(url, 15000);
   var states=(data && data.states) || [];
   return states.map(function(s){
     return {
@@ -870,12 +848,10 @@ async function fetchOpenSkyList(lat, lon, marginDeg){
 
 async function fetchAllAircraft(lat, lon){
   var radiusNm=80, marginDeg=1.5;
-  // Only include sources that are actually alive in 2026
   var sources=[
-    { name:'OpenSky',       fn:function(){ return fetchOpenSkyList(lat, lon, marginDeg); } },
-    { name:'adsb.fi',       fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
-    { name:'adsb.lol',      fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } },
-    { name:'PocketWorld',   fn:function(){ return fetchPocketWorld(lat, lon); } }
+    { name:'adsb.fi', fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
+    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } },
+    { name:'OpenSky', fn:function(){ return fetchOpenSkyList(lat, lon, marginDeg); } }
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
@@ -1193,14 +1169,12 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
       try{
         var acData=await fetchAllAircraft(lat, lon);
         var list=acData.list;
-        acSourcesOk=acData.sourcesOk;
-        acSourcesFail=acData.sourcesFail;
-        diag.acSourcesOk=acSourcesOk;
-        diag.acSourcesFail=acSourcesFail;
+        diag.acSourcesOk=acData.sourcesOk;
+        diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
 
-        if(list.length===0 && acSourcesOk.length===0){
-          acErrorMsg='همه منابع داده هواپیما در دسترس نبودند. جزئیات: '+acSourcesFail.join(' | ');
+        if(list.length===0 && acData.sourcesOk.length===0){
+          acErrorMsg='همه منابع داده هواپیما در دسترس نبودند. جزئیات: '+acData.sourcesFail.join(' | ');
         } else {
           list.forEach(function(a){
             if(a.onGround) return;
@@ -1552,7 +1526,7 @@ async function autoUpdateTle(){
   setAdminStatus('در حال دریافت داده از CelesTrak...', false);
   try{
     var url="https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle";
-    var text=await fetchTextWithProxies(url, 15000);
+    var text=await fetchTextWithProxies(url, 20000);
     if(!text || text.length<1000) throw new Error('پاسخ دریافتی خالی یا ناقص بود');
     setAdminStatus('داده دریافت شد ('+text.length+' کاراکتر). در حال ارسال به مخزن...', false);
     await pushTleToRepo(text);
@@ -1575,4 +1549,4 @@ window.onload=function(){
 };
 </script>
 </body>
-   </html>
+           </html>
