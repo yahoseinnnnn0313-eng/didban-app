@@ -357,7 +357,7 @@
       <p>رصدیار از معیارهای سخت‌گیرانه‌ای استفاده می‌کند تا فقط اجسامی که <b>واقعاً با چشم دیده می‌شوند</b> شناسایی شوند:</p>
       <p>• <b>ماهواره:</b> ارتفاع حداقل ۲۵ درجه از افق، قدر ظاهری حداکثر ۳ (روشن و قابل رؤیت در شهر)، فاصله حداکثر ۱۲۰۰ کیلومتر، آزیموت با خطای ±۸ درجه<br>
       • <b>هواپیما:</b> ارتفاع حداقل ۵ درجه از افق، فاصله حداکثر ۴۰ کیلومتر، آزیموت با خطای ±۱۰ درجه</p>
-      <p style="color:#ffb98a; margin-top:8px;">⚠️ توجه: به‌دلیل این سخت‌گیری، ممکن است در بسیاری از مشاهدات نتیجه «شیء ناشناس» باشد. این <b>نشانه‌ی درست کار کردن</b> سیستم است — یعنی هیچ ماهواره یا هواپیمای قابل مشاهده‌ای در آن جهت نبوده. بیشتر نورهای آسمان (شهاب‌سنگ، سیاره، ستاره‌ی متغیر، ماهواره‌های کم‌نور) در این دسته قرار می‌گیرند.</p>
+      <p style="color:#ffb98a; margin-top:8px;">⚠️ توجه: به‌دلیل این سخت‌گیری، ممکن است در بسیاری از مشاهدات نتیجه «شیء ناشناس» باشد. این <b>نشانه‌ی درست کار کردن</b> سیستم است — یعنی هیچ ماهواره یا هواپیمای قابل مشاهده‌ای در آن جهت نبوده.</p>
     </div>
     <div class="guide-section">
       <h4>۵. نمایش همه‌ی اهداف اطراف (۳۶۰ درجه)</h4>
@@ -958,7 +958,7 @@ function validateAndRun(){
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
 /* ========================================================================
-   SATELLITE PROCESSING — دو فهرست جدا
+   SATELLITE PROCESSING
 ======================================================================== */
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, timeOffsetsSec, diag, allSatCandidates, satResults){
   var CHUNK=600;
@@ -967,7 +967,6 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
   var observerGd={longitude:toRad(lon), latitude:toRad(lat), height:0};
   var bestByName={};
 
-  /* فیلترهای آزاد برای «نمایش همه اهداف» */
   var NEARBY_MIN_ALT = 5;
   var NEARBY_MAX_RANGE = 3500;
   var NEARBY_MAX_MAG = 7.0;
@@ -1053,10 +1052,8 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       type:info.type, country:info.country
     };
 
-    /* همه‌ی ماهواره‌های بالای افق → برای نمایش همه */
     allSatCandidates.push(Object.assign({}, full, {azDiff:b.azDiff}));
 
-    /* فقط اون‌هایی که با دید کاربر می‌خونن → برای نتیجه اصلی */
     if(b.azDiff <= azTolerance && b.altDeg > minAlt && b.mag <= maxMag && b.rangeKm <= maxSatRangeKm){
       var conf=calcConfidence(b.azDiff, azTolerance);
       conf=adjustConfidenceByMovement(conf, b.heading, moveDir);
@@ -1076,14 +1073,13 @@ function simpleBearing(lat1,lon1,lat2,lon2){
    MAIN ANALYSIS — حالت عملیاتی
 ======================================================================== */
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  /* 🎯 فیلترهای عملیاتی سخت‌گیرانه — فقط اجسام قابل مشاهده با چشم */
-  var azTolerance=8;                // دقت چشم انسان در تشخیص جهت
-  var minAlt=25;                    // بالاتر از آلودگی نوری و موانع شهری
-  var maxMag=3.0;                   // فقط ماهواره‌های پرنور (قابل رؤیت در شهر)
-  var maxSatRangeKm=1200;           // فاصله‌ی نزدیک برای رؤیت واضح
-  var maxAircraftDistKm=40;         // هواپیمای نزدیک
-  var aircraftAzTol=10;             // دقت آزیموت هواپیما
-  var aircraftMinElev=5;            // ارتفاع حداقلی هواپیما از افق
+  var azTolerance=8;
+  var minAlt=25;
+  var maxMag=3.0;
+  var maxSatRangeKm=1200;
+  var maxAircraftDistKm=40;
+  var aircraftAzTol=10;
+  var aircraftMinElev=5;
 
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[];
@@ -1169,7 +1165,6 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
 
-        /* فیلتر آزاد برای نمایش همه */
         var NEARBY_AC_DIST = 100;
         var NEARBY_AC_MIN_ELEV = 0.3;
 
@@ -1194,10 +1189,8 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
               lat:a.lat, lon:a.lon
             };
 
-            /* همه → برای نمایش همه */
             allAcCandidates.push(Object.assign({}, candidate, {azDiff:azDiff}));
 
-            /* فقط اون‌هایی که با دید کاربر می‌خونن → نتیجه اصلی */
             if(azDiff <= aircraftAzTol && be.elev >= aircraftMinElev && be.dist/1000 <= maxAircraftDistKm){
               diag.acAzMatch++;
               var conf=calcConfidence(azDiff, aircraftAzTol);
@@ -1274,7 +1267,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   else {
     cls='un';
     title='شیء ناشناس';
-    sub='هیچ ماهواره یا هواپیمای قابل مشاهده‌ای در آن لحظه از آن جهت دیده نمی‌شد. احتمالاً شهاب‌سنگ، سیاره، ستاره‌ی متغیر یا ماهواره‌ی کم‌نور بوده است.';
+    sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای با این مشخصات مطابقت نداشت.';
     icon='❓';
   }
 
@@ -1411,7 +1404,7 @@ function guessAirline(callsign){
 }
 
 /* ========================================================================
-   NEARBY ALL — نمایش ۳۶۰ درجه
+   NEARBY ALL
 ======================================================================== */
 function toggleNearbyAll(){
   nearbyActive=!nearbyActive;
@@ -1594,4 +1587,4 @@ window.onload=function(){
 };
 </script>
 </body>
-                          </html>
+ </html>
