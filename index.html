@@ -167,9 +167,6 @@
   .nearby-table th, .nearby-table td { padding:8px 6px; text-align:center; border-bottom:1px solid rgba(255,255,255,.08); }
   .nearby-table th { background:rgba(255,255,255,.08); color:#c8c8e8; }
 
-  /* ============================================ */
-  /*              PREDICTION PAGE                */
-  /* ============================================ */
   #predictionPage {
     display: none;
     position: fixed;
@@ -238,7 +235,6 @@
   }
   .pred-summary b { color: #f0abfc; }
 
-  /* Compact card-list format (option ب) */
   .pred-list {
     max-width: 520px;
     margin: 14px auto;
@@ -256,9 +252,8 @@
     padding: 10px 14px;
     background: linear-gradient(90deg, rgba(139,92,246,.25), rgba(236,72,153,.15));
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 13.5px;
   }
   .pred-row-num {
@@ -282,15 +277,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  .pred-row-time {
-    font-size: 12px;
-    color: #d8b4fe;
-    font-weight: 700;
-    font-family: monospace;
-    background: rgba(0,0,0,.25);
-    padding: 3px 8px;
-    border-radius: 6px;
   }
   .pred-row-body {
     padding: 10px 14px;
@@ -497,7 +483,6 @@
   </div>
 </div>
 
-<!-- ===================== PREDICTION PAGE ===================== -->
 <div id="predictionPage">
   <div class="pred-header">
     <h2>🔮 پیش‌بینی عبور ماهواره</h2>
@@ -624,7 +609,6 @@
   <div id="predResults"></div>
 </div>
 
-<!-- ===================== MODALS ===================== -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
     <button class="close-btn" onclick="closeModal('historyModal')">✕</button>
@@ -785,6 +769,9 @@ function formatJalaliDateTime(date){
 function formatTimeHM(date){
   return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
 }
+function formatTimeHMS(date){
+  return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0')+':'+String(date.getSeconds()).padStart(2,'0');
+}
 
 /* ========================================================================
    DATE PICKERS
@@ -836,7 +823,6 @@ function fillDatePicker(){
 function fillPredDatePickers(){
   buildJalaliSelectors('predStartYear','predStartMonth','predStartDay','predStartHour','predStartMinute',5);
   buildJalaliSelectors('predEndYear','predEndMonth','predEndDay','predEndHour','predEndMinute',5);
-  // Default end = start + 3 hours
   setTimeout(function(){
     var startY=parseInt(document.getElementById('predStartYear').value);
     var startM=parseInt(document.getElementById('predStartMonth').value);
@@ -848,8 +834,8 @@ function fillPredDatePickers(){
     var endJ=toJalali(endDate.getFullYear(), endDate.getMonth()+1, endDate.getDate());
     document.getElementById('predEndYear').value=endJ[0];
     document.getElementById('predEndMonth').value=endJ[1];
-    document.getElementById('predEndDay').innerHTML='';
     var eDay=document.getElementById('predEndDay');
+    eDay.innerHTML='';
     var em=endJ[1], ey=endJ[0];
     var maxDay = em<=6 ? 31 : (em<=11 ? 30 : (isLeapJalali(ey)?30:29));
     for(var d=1; d<=maxDay; d++){
@@ -1724,7 +1710,7 @@ function predShowError(msg){ var b=document.getElementById('predErrorBox'); b.in
 ======================================================================== */
 function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minElev, observerGd){
   var passes = [];
-  var step = 60000; // 1 minute
+  var step = 60000;
   var currentTime = startTime;
   var inPass = false;
   var passData = null;
@@ -1904,32 +1890,26 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
 
   var cardsHtml = '<div class="pred-list">';
   passes.forEach(function(p, idx){
-    var durSec = Math.round((p.endTime - p.startTime) / 1000);
-    var durMin = Math.floor(durSec / 60);
-    var durSecRem = durSec % 60;
-
     var info = guessSatInfo(p.name);
-    var maxElev = Math.round(p.peakElev);
 
+    /* سمت مشاهده: جهت شروع عبور */
     var startCompass = azimuthToCompass(p.startAz);
     var endCompass = azimuthToCompass(p.endAz);
-    var sideText = (startCompass === endCompass) ? startCompass : ('از ' + startCompass + ' به ' + endCompass);
 
-    var durationText = durMin + ':' + String(durSecRem).padStart(2,'0');
+    /* جهت حرکت: از جهت شروع به جهت پایان */
+    var moveText = 'از ' + startCompass + ' به ' + endCompass;
 
     cardsHtml += '<div class="pred-row">' +
       '<div class="pred-row-header">' +
         '<span class="pred-row-num">' + (idx + 1) + '</span>' +
         '<span class="pred-row-name">🛰️ ' + p.name + '</span>' +
-        '<span class="pred-row-time">' + formatTimeHM(new Date(p.startTime)) + '</span>' +
       '</div>' +
       '<div class="pred-row-body">' +
         '<div class="cell"><span class="lbl">کشور:</span><span class="val">' + info.country + '</span></div>' +
         '<div class="cell"><span class="lbl">نوع:</span><span class="val">' + info.type + '</span></div>' +
-        '<div class="cell"><span class="lbl">شروع:</span><span class="val">' + formatTimeHM(new Date(p.startTime)) + '</span></div>' +
-        '<div class="cell"><span class="lbl">مدت:</span><span class="val">' + durationText + '</span></div>' +
-        '<div class="cell"><span class="lbl">حداکثر ارتفاع:</span><span class="val">' + maxElev + '°</span></div>' +
-        '<div class="cell"><span class="lbl">سمت مشاهده:</span><span class="val">' + sideText + '</span></div>' +
+        '<div class="cell"><span class="lbl">زمان مشاهده:</span><span class="val">' + formatTimeHMS(new Date(p.startTime)) + '</span></div>' +
+        '<div class="cell"><span class="lbl">سمت مشاهده:</span><span class="val">' + startCompass + '</span></div>' +
+        '<div class="cell cell-full"><span class="lbl">جهت حرکت:</span><span class="val">' + moveText + '</span></div>' +
       '</div>' +
     '</div>';
   });
@@ -1955,27 +1935,18 @@ function downloadPredictionCSV(){
   if(!lastPredictionPasses || lastPredictionPasses.length === 0) return;
 
   var rows = [];
-  // Header
-  rows.push(['ردیف','نام ماهواره','کشور بهره‌بردار','نوع','تاریخ شمسی','ساعت شروع','مدت (دقیقه:ثانیه)','حداکثر ارتفاع','سمت مشاهده','جهت حرکت']);
-
-  var meta = lastPredictionMeta;
+  rows.push(['ردیف','نام ماهواره','کشور بهره‌بردار','نوع','تاریخ شمسی','زمان مشاهده','سمت مشاهده','جهت حرکت']);
 
   lastPredictionPasses.forEach(function(p, idx){
-    var durSec = Math.round((p.endTime - p.startTime) / 1000);
-    var durMin = Math.floor(durSec / 60);
-    var durSecRem = durSec % 60;
-    var durationText = durMin + ':' + String(durSecRem).padStart(2,'0');
-
     var info = guessSatInfo(p.name);
-    var maxElev = Math.round(p.peakElev);
     var startCompass = azimuthToCompass(p.startAz);
     var endCompass = azimuthToCompass(p.endAz);
-    var sideText = (startCompass === endCompass) ? startCompass : ('از ' + startCompass + ' به ' + endCompass);
+    var moveText = 'از ' + startCompass + ' به ' + endCompass;
 
     var pDate = new Date(p.startTime);
     var jd = toJalali(pDate.getFullYear(), pDate.getMonth()+1, pDate.getDate());
     var dateStr = jd[2] + ' ' + monthNamesFa[jd[1]-1] + ' ' + jd[0];
-    var timeStr = formatTimeHM(pDate);
+    var timeStr = formatTimeHMS(pDate);
 
     rows.push([
       idx + 1,
@@ -1984,14 +1955,11 @@ function downloadPredictionCSV(){
       info.type,
       dateStr,
       timeStr,
-      durationText,
-      maxElev + '°',
-      sideText,
-      sideText
+      startCompass,
+      moveText
     ]);
   });
 
-  // Build CSV with BOM for Excel UTF-8 support
   var csv = '\uFEFF' + rows.map(function(row){
     return row.map(function(cell){
       var s = String(cell);
