@@ -59,10 +59,19 @@
   .btn:active { transform: scale(0.97); }
   .btn-primary { background: linear-gradient(90deg,#2b7de9,#6dd5ff); color:#08172e; box-shadow:0 4px 18px rgba(43,125,233,.4); }
   .btn-outline { background: rgba(255,255,255,.08); color:#eee; border:1px solid rgba(255,255,255,.2); }
+  .btn-success { background: linear-gradient(90deg, #10b981, #34d399); color: #052e16; box-shadow: 0 4px 18px rgba(16,185,129,.4); }
+  .btn-danger { background: linear-gradient(90deg, #ef4444, #f87171); color: #fff; box-shadow: 0 4px 18px rgba(239,68,68,.4); }
   .btn-predict {
     background: linear-gradient(90deg, #8b5cf6, #ec4899);
     color: #fff;
     box-shadow: 0 4px 20px rgba(139,92,246,.5);
+    font-size: 16px;
+    padding: 15px;
+  }
+  .btn-live {
+    background: linear-gradient(90deg, #06b6d4, #3b82f6);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(6,182,212,.5);
     font-size: 16px;
     padding: 15px;
   }
@@ -193,6 +202,191 @@
   .nearby-table th, .nearby-table td { padding:8px 6px; text-align:center; border-bottom:1px solid rgba(255,255,255,.08); }
   .nearby-table th { background:rgba(255,255,255,.08); color:#c8c8e8; }
 
+  /* Calibration page */
+  #calibrationPage {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
+    z-index: 600;
+    overflow-y: auto;
+    padding: 14px 14px 40px;
+  }
+  .cal-header {
+    max-width: 520px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px;
+  }
+  .cal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    background: linear-gradient(90deg, #6dd5ff, #a78bfa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .cal-close-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  .cal-step-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #7ee8fa;
+    text-align: center;
+    margin: 4px 0 12px;
+  }
+  .cal-desc {
+    font-size: 13.5px;
+    color: #d0d0e8;
+    line-height: 2;
+    text-align: center;
+  }
+  .cal-desc b { color: #f0abfc; }
+  .cal-tips {
+    background: rgba(251,191,36,.08);
+    border: 1px solid rgba(251,191,36,.3);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #fde68a;
+    line-height: 1.9;
+    margin-top: 14px;
+  }
+  .cal-tips .tip-title {
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 6px;
+  }
+  .infinity-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    margin: 14px 0;
+  }
+  .infinity-svg {
+    width: 220px;
+    height: 120px;
+    filter: drop-shadow(0 0 12px rgba(109,213,255,.6));
+  }
+  .infinity-path {
+    fill: none;
+    stroke: rgba(109,213,255,.3);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .infinity-dot {
+    fill: #6dd5ff;
+    filter: drop-shadow(0 0 6px #6dd5ff);
+  }
+  .infinity-trail {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 0;
+    animation: drawTrail 3s linear infinite;
+  }
+  @keyframes drawTrail {
+    0%   { stroke-dashoffset: 400; }
+    50%  { stroke-dashoffset: 0;   }
+    100% { stroke-dashoffset: -400; }
+  }
+  .cal-progress-wrap { margin: 20px 0 12px; }
+  .cal-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #a0a0c8;
+    margin-bottom: 8px;
+  }
+  .cal-progress-bar {
+    height: 12px;
+    background: rgba(255,255,255,.08);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .cal-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    transition: width .25s ease, background-position .25s ease;
+    background-position: 100% 0;
+  }
+  .cal-progress-pct {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #7ee8fa;
+  }
+  .cal-quality {
+    text-align: center;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 14px 0;
+    transition: all .3s;
+  }
+  .cal-quality.bad    { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.4); color: #fca5a5; }
+  .cal-quality.medium { background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.4); color: #fcd34d; }
+  .cal-quality.good   { background: rgba(16,185,129,.15); border: 1px solid rgba(16,185,129,.4); color: #6ee7b7; }
+  .cal-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin: 14px 0;
+  }
+  .cal-stat {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .cal-stat .lbl {
+    font-size: 11px;
+    color: #8f8fb8;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .cal-stat .val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #7ee8fa;
+  }
+  .cal-hint {
+    text-align: center;
+    font-size: 13px;
+    color: #a0a0c8;
+    margin: 12px 0;
+    min-height: 20px;
+  }
+  .cal-success-anim {
+    text-align: center;
+    font-size: 60px;
+    animation: bounceScale .6s ease;
+  }
+  @keyframes bounceScale {
+    0%   { transform: scale(0); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* Prediction page */
   #predictionPage {
     display: none;
     position: fixed;
@@ -225,7 +419,6 @@
     font-size: 20px;
     cursor: pointer;
   }
-
   .pred-progress {
     max-width: 520px;
     margin: 20px auto;
@@ -248,7 +441,6 @@
     width: 0%;
     transition: width 0.2s;
   }
-
   .pred-summary {
     max-width: 520px;
     margin: 14px auto;
@@ -260,7 +452,6 @@
     line-height: 2;
   }
   .pred-summary b { color: #f0abfc; }
-
   .pred-list {
     max-width: 520px;
     margin: 14px auto;
@@ -327,10 +518,7 @@
     font-weight: 600;
     text-align: center;
   }
-  .pred-row-body .cell-full {
-    grid-column: 1 / -1;
-  }
-
+  .pred-row-body .cell-full { grid-column: 1 / -1; }
   .pred-empty {
     max-width: 520px;
     margin: 30px auto;
@@ -342,8 +530,315 @@
     color: #a0a0c8;
     font-size: 14px;
   }
-
   #predMap { max-width:520px; height:340px; margin:14px auto; border-radius:14px; }
+
+  /* =============================================== */
+  /*              LIVE SKY PAGE STYLES              */
+  /* =============================================== */
+  #liveSkyPage {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
+    z-index: 550;
+    overflow-y: auto;
+    padding: 14px 14px 40px;
+  }
+  .live-header {
+    max-width: 520px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px;
+  }
+  .live-header h2 {
+    margin: 0;
+    font-size: 20px;
+    background: linear-gradient(90deg, #06b6d4, #3b82f6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .live-close-btn {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .live-stats {
+    max-width: 520px;
+    margin: 12px auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .live-stat-card {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    text-align: center;
+    transition: all .3s;
+  }
+  .live-stat-card.active-sat {
+    background: rgba(59,130,246,.15);
+    border-color: rgba(59,130,246,.5);
+  }
+  .live-stat-card.active-ac {
+    background: rgba(16,185,129,.15);
+    border-color: rgba(16,185,129,.5);
+  }
+  .live-stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .live-stat-card .num {
+    font-size: 22px;
+    font-weight: 900;
+    color: #7ee8fa;
+    display: block;
+  }
+  .live-stat-card .lbl {
+    font-size: 11px;
+    color: #a0a0c8;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .live-toggle-row {
+    max-width: 520px;
+    margin: 12px auto;
+    display: flex;
+    gap: 8px;
+  }
+  .live-toggle {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 2px solid rgba(255,255,255,.1);
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all .2s;
+    user-select: none;
+  }
+  .live-toggle.sat-on {
+    background: rgba(59,130,246,.2);
+    border-color: #3b82f6;
+    color: #93c5fd;
+  }
+  .live-toggle.ac-on {
+    background: rgba(16,185,129,.2);
+    border-color: #10b981;
+    color: #6ee7b7;
+  }
+  .live-toggle .state {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .live-view-tabs {
+    max-width: 520px;
+    margin: 12px auto;
+    display: flex;
+    gap: 8px;
+  }
+  .live-tab {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .2s;
+  }
+  .live-tab.active {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    border-color: #06b6d4;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .live-filters {
+    max-width: 520px;
+    margin: 12px auto;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .live-filters label {
+    display: block;
+    color: #a0a0c8;
+    margin-bottom: 4px;
+    font-size: 11.5px;
+  }
+  .live-filters select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .live-view-wrap {
+    max-width: 520px;
+    margin: 14px auto;
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(circle at center, rgba(15,52,96,.6) 0%, rgba(15,23,42,.95) 70%);
+    border: 1px solid rgba(109,213,255,.2);
+    aspect-ratio: 1;
+    display: none;
+  }
+  .live-view-wrap.active { display: block; }
+
+  #liveMapView {
+    width: 100%;
+    height: 480px;
+    border-radius: 16px;
+    display: none;
+    margin: 14px auto;
+    max-width: 520px;
+  }
+  #liveMapView.active { display: block; }
+
+  #liveSkySvg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .live-sky-label {
+    position: absolute;
+    font-size: 11px;
+    color: #8f8fb8;
+    font-weight: 700;
+    pointer-events: none;
+  }
+
+  .live-legend {
+    max-width: 520px;
+    margin: 12px auto;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    font-size: 11.5px;
+    color: #c8c8e8;
+  }
+  .live-legend .item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .live-legend .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .live-target-list {
+    max-width: 520px;
+    margin: 14px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .live-target {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    font-size: 13px;
+    transition: border-color .2s;
+    cursor: pointer;
+  }
+  .live-target:hover { border-color: #06b6d4; }
+  .live-target .t-icon {
+    font-size: 22px;
+    width: 34px;
+    text-align: center;
+  }
+  .live-target .t-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+  }
+  .live-target .t-name {
+    font-weight: 700;
+    color: #f0f0f5;
+    font-size: 13.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .live-target .t-detail {
+    font-size: 11.5px;
+    color: #a0a0c8;
+  }
+  .live-target .t-az {
+    font-family: monospace;
+    font-size: 12px;
+    color: #7ee8fa;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .live-empty {
+    max-width: 520px;
+    margin: 20px auto;
+    padding: 30px 20px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px dashed rgba(255,255,255,.2);
+    text-align: center;
+    color: #a0a0c8;
+    font-size: 14px;
+  }
+
+  .live-update-indicator {
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 11px;
+    color: #6b7280;
+    padding: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .live-dot-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    margin-left: 5px;
+    animation: pulseLive 1.5s ease-in-out infinite;
+  }
+  @keyframes pulseLive {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.4; transform: scale(0.8); }
+  }
 </style>
 </head>
 <body>
@@ -447,12 +942,8 @@
   </div>
 
   <div class="card">
-    <label class="field-label">🧭 جهت مشاهده شیء</label>
-    <p style="font-size:12px; color:#a0a0c8; margin:0 0 10px 0; line-height:1.7;">
-      جهتی که شیء نورانی را در آن دیدید، نسبت به <b>شمال جغرافیایی</b> (شمال واقعی) انتخاب کنید.
-    </p>
-
-    <label class="field-label" style="font-size:13px; margin-top:10px;">از لیست انتخاب کنید:</label>
+    <label class="field-label">🧭 سمت مشاهده شیء</label>
+    <label class="field-label" style="font-size:13px;">از لیست انتخاب کنید:</label>
     <select id="directionSelect" onchange="onDirectionSelect(this.value)">
       <option value="">— لطفاً جهت را انتخاب کنید —</option>
       <option value="N">⬆️ شمال</option>
@@ -467,10 +958,8 @@
 
     <div style="text-align:center; margin: 16px 0 10px; color:#a0a0c8; font-size:12px;">— یا —</div>
 
-    <button type="button" class="btn btn-outline" onclick="enableCompass()">🧭 استفاده از قطب‌نمای گوشی</button>
+    <button type="button" class="btn btn-outline" onclick="startCompassFlow()">🧭 استفاده از قطب‌نمای گوشی</button>
     <div class="status-msg" id="compassStatus"></div>
-    <button type="button" class="btn btn-primary" id="compassConfirmBtn" style="display:none; margin-top:8px;" onclick="confirmCompass()">✅ تایید و قفل کردن جهت</button>
-
     <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
 
     <label class="field-label">➡️ جهت حرکت شیء</label>
@@ -493,6 +982,10 @@
 
   <div class="card">
     <button type="button" class="btn btn-predict" onclick="openPrediction()">🔮 پیش‌بینی عبور ماهواره</button>
+  </div>
+
+  <div class="card">
+    <button type="button" class="btn btn-live" onclick="openLiveSky()">🌌 آسمان زنده — مشاهده در لحظه</button>
   </div>
 
   <div class="action-links">
@@ -540,6 +1033,214 @@
   </div>
 </div>
 
+<!-- ===================== LIVE SKY PAGE ===================== -->
+<div id="liveSkyPage">
+  <div class="live-header">
+    <h2>🌌 آسمان زنده</h2>
+    <button class="live-close-btn" onclick="closeLiveSky()">✕</button>
+  </div>
+
+  <!-- Location selection (shown until started) -->
+  <div id="liveSetupPanel">
+    <div class="card">
+      <label class="field-label">📍 محل رصد</label>
+      <div class="two-col">
+        <div class="mode-card active" id="liveModeAutoCard" onclick="setLiveLocationMode('auto')">
+          <span class="icon">🎯</span> GPS
+        </div>
+        <div class="mode-card" id="liveModeManualCard" onclick="setLiveLocationMode('manual')">
+          <span class="icon">⌨️</span> دستی
+        </div>
+        <div class="mode-card" id="liveModeMapCard" onclick="setLiveLocationMode('map')">
+          <span class="icon">🗺️</span> نقشه
+        </div>
+      </div>
+
+      <div id="liveAutoLocPanel">
+        <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getLiveLocation()">📡 دریافت موقعیت من</button>
+        <div class="status-msg" id="liveLocStatus"></div>
+        <div class="coord-boxes" id="liveAutoCoordBoxes" style="display:none;">
+          <input type="text" id="liveAutoLat" readonly placeholder="X">
+          <input type="text" id="liveAutoLon" readonly placeholder="Y">
+        </div>
+      </div>
+
+      <div id="liveMapLocPanel" style="display:none;">
+        <div class="status-msg" style="color:#a0a0c8;">روی نقشه ضربه بزنید.</div>
+        <div id="livePickerMap" style="width:100%; height:280px; border-radius:12px; margin-top:8px;"></div>
+        <div class="coord-boxes" id="liveMapCoordBoxes" style="display:none; margin-top:10px;">
+          <input type="text" id="liveMapLat" readonly placeholder="X">
+          <input type="text" id="liveMapLon" readonly placeholder="Y">
+        </div>
+      </div>
+
+      <div id="liveManualLocPanel" style="display:none;">
+        <label class="field-label" style="font-size:12px;">نوع فرمت مختصات را انتخاب کنید</label>
+        <div class="coord-fmt-row">
+          <div class="mode-card" onclick="setLiveCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
+          <div class="mode-card" onclick="setLiveCoordFormat('dec', this)">Decimal Degree</div>
+          <div class="mode-card" onclick="setLiveCoordFormat('utm', this)">UTM</div>
+        </div>
+
+        <div id="liveDmsInputs" style="display:none; margin-top:12px;">
+          <label class="field-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
+          <div class="two-col">
+            <input type="number" id="liveLatD" placeholder="درجه">
+            <input type="number" id="liveLatM" placeholder="دقیقه">
+            <input type="number" id="liveLatS" placeholder="ثانیه">
+            <select id="liveLatDir"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
+          </div>
+          <label class="field-label" style="font-size:12px;">طول جغرافیایی (Y)</label>
+          <div class="two-col">
+            <input type="number" id="liveLonD" placeholder="درجه">
+            <input type="number" id="liveLonM" placeholder="دقیقه">
+            <input type="number" id="liveLonS" placeholder="ثانیه">
+            <select id="liveLonDir"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
+          </div>
+        </div>
+
+        <div id="liveDecInputs" style="display:none; margin-top:12px;">
+          <div class="coord-boxes">
+            <input type="text" id="liveDecLat" placeholder="X مثلا 35.6892">
+            <input type="text" id="liveDecLon" placeholder="Y مثلا 51.3890">
+          </div>
+        </div>
+
+        <div id="liveUtmInputs" style="display:none; margin-top:12px;">
+          <div class="coord-boxes">
+            <input type="number" id="liveUtmZone" placeholder="Zone">
+            <select id="liveUtmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
+          </div>
+          <div class="coord-boxes" style="margin-top:8px;">
+            <input type="text" id="liveUtmE" placeholder="Easting (X)">
+            <input type="text" id="liveUtmN" placeholder="Northing (Y)">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="error-box" id="liveErrorBox"></div>
+      <button type="button" class="btn btn-live" onclick="startLiveSky()">🔄 شروع رصد زنده</button>
+    </div>
+  </div>
+
+  <!-- Live view (shown after started) -->
+  <div id="liveViewPanel" style="display:none;">
+    <div class="live-update-indicator">
+      <span><span class="live-dot-pulse"></span> در حال مشاهده زنده</span>
+      <span id="liveLastUpdate">آخرین به‌روزرسانی: —</span>
+    </div>
+
+    <div class="live-stats">
+      <div class="live-stat-card active-sat" id="liveStatSatCard">
+        <span class="icon">🛰️</span>
+        <span class="num" id="liveStatSat">0</span>
+        <span class="lbl">ماهواره در دید</span>
+      </div>
+      <div class="live-stat-card active-ac" id="liveStatAcCard">
+        <span class="icon">✈️</span>
+        <span class="num" id="liveStatAc">0</span>
+        <span class="lbl">هواپیما در دید</span>
+      </div>
+    </div>
+
+    <div class="live-toggle-row">
+      <div class="live-toggle sat-on" id="toggleSatBtn" onclick="toggleLiveSat()">
+        <span class="state">🛰️</span>
+        ماهواره‌ها: <span id="toggleSatState">روشن</span>
+      </div>
+      <div class="live-toggle ac-on" id="toggleAcBtn" onclick="toggleLiveAc()">
+        <span class="state">✈️</span>
+        هواپیماها: <span id="toggleAcState">روشن</span>
+      </div>
+    </div>
+
+    <div class="live-view-tabs">
+      <div class="live-tab active" id="tabPolar" onclick="switchLiveTab('polar')">🌐 نمای قطبی</div>
+      <div class="live-tab" id="tabMap" onclick="switchLiveTab('map')">🗺️ نمای نقشه</div>
+    </div>
+
+    <div class="live-filters">
+      <div>
+        <label>حداقل ارتفاع از افق</label>
+        <select id="liveMinElev" onchange="updateLiveFilters()">
+          <option value="5">۵ درجه</option>
+          <option value="10" selected>۱۰ درجه</option>
+          <option value="20">۲۰ درجه</option>
+          <option value="30">۳۰ درجه</option>
+        </select>
+      </div>
+      <div>
+        <label>شعاع نمایش هواپیما</label>
+        <select id="liveRadius" onchange="updateLiveFilters()">
+          <option value="50">۵۰ کیلومتر</option>
+          <option value="100" selected>۱۰۰ کیلومتر</option>
+          <option value="200">۲۰۰ کیلومتر</option>
+          <option value="500">۵۰۰ کیلومتر</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="live-view-wrap active" id="livePolarView">
+      <svg id="liveSkySvg" viewBox="0 0 500 500" preserveAspectRatio="xMidYMid meet">
+        <!-- Circle backgrounds -->
+        <circle cx="250" cy="250" r="230" fill="none" stroke="rgba(109,213,255,.15)" stroke-width="1"/>
+        <circle cx="250" cy="250" r="180" fill="none" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
+        <circle cx="250" cy="250" r="130" fill="none" stroke="rgba(109,213,255,.1)" stroke-width="1"/>
+        <circle cx="250" cy="250" r="80" fill="none" stroke="rgba(109,213,255,.08)" stroke-width="1"/>
+        <circle cx="250" cy="250" r="30" fill="none" stroke="rgba(109,213,255,.06)" stroke-width="1"/>
+
+        <!-- Cross lines -->
+        <line x1="250" y1="20" x2="250" y2="480" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
+        <line x1="20" y1="250" x2="480" y2="250" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
+
+        <!-- Compass labels -->
+        <text x="250" y="15" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">شمال</text>
+        <text x="250" y="495" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">جنوب</text>
+        <text x="490" y="255" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">شرق</text>
+        <text x="10" y="255" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">غرب</text>
+
+        <!-- Elevation labels -->
+        <text x="250" y="200" fill="#8f8fb8" font-size="10" text-anchor="middle">۶۰°</text>
+        <text x="250" y="150" fill="#8f8fb8" font-size="10" text-anchor="middle">۴۵°</text>
+        <text x="250" y="100" fill="#8f8fb8" font-size="10" text-anchor="middle">۳۰°</text>
+        <text x="250" y="50"  fill="#8f8fb8" font-size="10" text-anchor="middle">۱۵°</text>
+
+        <!-- Observer -->
+        <circle cx="250" cy="250" r="8" fill="#3b82f6" stroke="#fff" stroke-width="2" style="filter:drop-shadow(0 0 8px #3b82f6);"/>
+        <circle cx="250" cy="250" r="14" fill="none" stroke="rgba(59,130,246,.4)" stroke-width="1.5">
+          <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Targets group -->
+        <g id="liveSkyTargets"></g>
+      </svg>
+    </div>
+
+    <div id="liveMapView"></div>
+
+    <div class="live-legend">
+      <span class="item"><span class="dot" style="background:#3b82f6;"></span> شما</span>
+      <span class="item"><span class="dot" style="background:#fbbf24;"></span> ISS</span>
+      <span class="item"><span class="dot" style="background:#93c5fd;"></span> ماهواره روشن</span>
+      <span class="item"><span class="dot" style="background:#60a5fa;"></span> ماهواره</span>
+      <span class="item"><span class="dot" style="background:#10b981;"></span> هواپیما</span>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <button type="button" class="btn btn-danger" onclick="stopLiveSky()">⏹ توقف رصد زنده</button>
+    </div>
+
+    <div style="max-width:520px;margin:14px auto 4px;color:#9fd0ff;font-weight:700;font-size:14px;">
+      🎯 اهداف در دید (مرتب‌شده):
+    </div>
+    <div class="live-target-list" id="liveTargetList"></div>
+  </div>
+</div>
+
+<!-- ===================== PREDICTION PAGE ===================== -->
 <div id="predictionPage">
   <div class="pred-header">
     <h2>🔮 پیش‌بینی عبور ماهواره</h2>
@@ -647,9 +1348,6 @@
       <select id="predEndHour"></select>
       <select id="predEndMinute"></select>
     </div>
-    <p style="font-size:11.5px; color:#a0a0c8; margin:10px 0 0; line-height:1.7;">
-      ⚠️ پیش‌بینی برای بازه‌های طولانی‌تر زمان بیشتری می‌برد.
-    </p>
   </div>
 
   <div class="card">
@@ -666,6 +1364,7 @@
   <div id="predResults"></div>
 </div>
 
+<!-- ===================== MODALS ===================== -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
     <button class="close-btn" onclick="closeModal('historyModal')">✕</button>
@@ -684,23 +1383,15 @@
     </div>
     <div class="guide-section">
       <h4>۱. ثبت مشاهده</h4>
-      <p>موقعیت، زمان، جهت مشاهده و جهت حرکت شیء را وارد کنید تا سامانه آن را با داده‌های ماهواره‌ای و هوانوردی مقایسه کند.</p>
+      <p>موقعیت، زمان، سمت مشاهده و جهت حرکت شیء را وارد کنید تا سامانه آن را با داده‌های ماهواره‌ای و هوانوردی مقایسه کند.</p>
     </div>
     <div class="guide-section">
-      <h4>۲. جهت مشاهده و شمال جغرافیایی</h4>
-      <p>جهت‌ها در رصدیار نسبت به <b>شمال جغرافیایی</b> (شمال واقعی) سنجیده می‌شوند، نه شمال مغناطیسی. شمال جغرافیایی نقطه‌ای است که محور چرخش زمین به سطح آن می‌رسد و در همه‌ی محاسبات نجومی و مداری، استاندارد است.</p>
+      <h4>۲. آسمان زنده</h4>
+      <p>با دکمه «آسمان زنده» می‌توانید در لحظه ببینید چه ماهواره‌ها و هواپیماهایی در آسمان شما در حال حرکت هستند. این نما به دو صورت قطبی (شبیه رادار) و نقشه قابل مشاهده است.</p>
     </div>
     <div class="guide-section">
-      <h4>۳. انتخاب جهت با قطب‌نما</h4>
-      <p>اگر جهت‌یاب ندارید، دکمه «استفاده از قطب‌نمای گوشی» را بزنید و گوشی را به سمت شیء نورانی بگیرید. سامانه نزدیک‌ترین جهت اصلی به آن را انتخاب می‌کند.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۴. پیش‌بینی عبور ماهواره</h4>
-      <p>می‌توانید ببینید در بازه‌ی زمانی مشخص، چه ماهواره‌هایی از بالای موقعیت شما عبور می‌کنند. سامانه فقط ماهواره‌هایی را نشان می‌دهد که حداقل ۱۵ درجه از افق بالاتر می‌روند. جهت حرکت ماهواره بر اساس نقطه‌ی شروع، اوج و پایان مسیر آن محاسبه می‌شود.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۵. دانلود نتایج</h4>
-      <p>بعد از پیش‌بینی، می‌توانید لیست کامل عبورها را به‌صورت فایل اکسل (CSV) دانلود کنید.</p>
+      <h4>۳. پیش‌بینی عبور ماهواره</h4>
+      <p>می‌توانید ببینید در بازه‌ی زمانی مشخص، چه ماهواره‌هایی از بالای موقعیت شما عبور می‌کنند.</p>
     </div>
   </div>
 </div>
@@ -742,17 +1433,12 @@
     <button type="button" class="btn btn-outline" style="margin-top:10px;" onclick="manualUpdateTle()">📥 ثبت این متن در پایگاه داده</button>
 
     <div class="diag-box" id="adminStatus" style="margin-top:16px; display:none;"></div>
-
-    <div class="guide-section" style="margin-top:18px;">
-      <h4>راهنمای ساخت GitHub Token</h4>
-      <p>وارد github.com شوید ← عکس پروفایل ← Settings ← Developer settings ← Personal access tokens (classic) ← Generate new token ← فقط تیک «repo» را بزنید.</p>
-    </div>
   </div>
 </div>
 
 <script>
 /* ========================================================================
-   JALALI (PERSIAN) CALENDAR
+   JALALI CALENDAR
 ======================================================================== */
 function div(a,b){ return ~~(a/b); }
 function mod(a,b){ return a - ~~(a/b)*b; }
@@ -789,10 +1475,7 @@ function d2g(jdn){
   var gy=div(j,1461)-100100+div(8-gm,6);
   return [gy,gm,gd];
 }
-function j2d(jy,jm,jd){
-  var r=jalCal(jy);
-  return g2d(r.gy,3,r.march)+(jm-1)*31-div(jm,7)*(jm-7)+jd-1;
-}
+function j2d(jy,jm,jd){ var r=jalCal(jy); return g2d(r.gy,3,r.march)+(jm-1)*31-div(jm,7)*(jm-7)+jd-1; }
 function d2j(jdn){
   var gy=d2g(jdn)[0], jy=gy-621, r, jdn1f, jd, jm, k;
   r=jalCal(jy);
@@ -828,19 +1511,18 @@ function formatTimeHMS(date){
 }
 
 /* ========================================================================
-   DIRECTION MAP — 8 main compass directions
+   DIRECTION MAP
 ======================================================================== */
 var DIRECTION_MAP = {
-  'N':  { az: 0,   fa: 'شمال',       arrow: '⬆️' },
-  'NE': { az: 45,  fa: 'شمال‌شرق',    arrow: '↗️' },
-  'E':  { az: 90,  fa: 'شرق',         arrow: '➡️' },
-  'SE': { az: 135, fa: 'جنوب‌شرق',    arrow: '↘️' },
-  'S':  { az: 180, fa: 'جنوب',        arrow: '⬇️' },
-  'SW': { az: 225, fa: 'جنوب‌غرب',    arrow: '↙️' },
-  'W':  { az: 270, fa: 'غرب',         arrow: '⬅️' },
-  'NW': { az: 315, fa: 'شمال‌غرب',    arrow: '↖️' }
+  'N':  { az: 0,   fa: 'شمال' },
+  'NE': { az: 45,  fa: 'شمال‌شرق' },
+  'E':  { az: 90,  fa: 'شرق' },
+  'SE': { az: 135, fa: 'جنوب‌شرق' },
+  'S':  { az: 180, fa: 'جنوب' },
+  'SW': { az: 225, fa: 'جنوب‌غرب' },
+  'W':  { az: 270, fa: 'غرب' },
+  'NW': { az: 315, fa: 'شمال‌غرب' }
 };
-
 var selectedAzimuth = null;
 var selectedDirectionKey = null;
 
@@ -873,13 +1555,8 @@ function updateSelectedDirDisplay(){
     box.innerHTML = 'هنوز جهتی انتخاب نشده است';
   }
 }
-
 function onDirectionSelect(key){
-  if(!key){
-    selectedDirectionKey = null;
-    updateSelectedDirDisplay();
-    return;
-  }
+  if(!key){ selectedDirectionKey = null; updateSelectedDirDisplay(); return; }
   selectedDirectionKey = key;
   selectedAzimuth = keyToAz(key);
   updateSelectedDirDisplay();
@@ -928,10 +1605,7 @@ function buildJalaliSelectors(yearId, monthId, dayId, hourId, minuteId, minStep)
   ySel.addEventListener('change', rebuildDays);
   mSel.addEventListener('change', rebuildDays);
 }
-
-function fillDatePicker(){
-  buildJalaliSelectors('jYear','jMonth','jDay','jHour','jMinute',1);
-}
+function fillDatePicker(){ buildJalaliSelectors('jYear','jMonth','jDay','jHour','jMinute',1); }
 function fillPredDatePickers(){
   buildJalaliSelectors('predStartYear','predStartMonth','predStartDay','predStartHour','predStartMinute',5);
   buildJalaliSelectors('predEndYear','predEndMonth','predEndDay','predEndHour','predEndMinute',5);
@@ -998,9 +1672,7 @@ function getLocation(){
       document.getElementById('autoLon').value=pos.coords.longitude.toFixed(6);
       document.getElementById('autoCoordBoxes').style.display='flex';
       document.getElementById('locStatus').innerText="✅ موقعیت دریافت شد.";
-    }, function(err){
-      document.getElementById('locStatus').innerText="خطا: "+err.message;
-    });
+    }, function(err){ document.getElementById('locStatus').innerText="خطا: "+err.message; });
   } else {
     document.getElementById('locStatus').innerText="مرورگر از GPS پشتیبانی نمی‌کند.";
   }
@@ -1074,51 +1746,176 @@ function getManualCoords(){
 }
 
 /* ========================================================================
-   COMPASS
+   COMPASS CALIBRATION
 ======================================================================== */
-var compassHandler=null, compassLocked=false;
+var calibActive = false;
+var calibHandler = null;
+var calibLastAlpha = null;
+var calibTotalRotation = 0;
+var calibStartTime = 0;
+var calibTimerInterval = null;
+var CALIB_TARGET_ROTATION = 720;
+var CALIB_MAX_DURATION = 30000;
+var CALIB_SUCCESS_THRESHOLD = 75;
+
+function startCompassFlow(){
+  if(!('DeviceOrientationEvent' in window)){
+    document.getElementById('compassStatus').innerText = "گوشی شما از قطب‌نما پشتیبانی نمی‌کند. لطفاً از لیست کشویی استفاده کنید.";
+    return;
+  }
+  document.getElementById('calibrationPage').style.display = 'block';
+  document.getElementById('calStep1').style.display = 'block';
+  document.getElementById('calStep2').style.display = 'none';
+  document.getElementById('calStep3').style.display = 'none';
+  window.scrollTo(0,0);
+}
+function cancelCalibration(){
+  stopCalibrationListener();
+  document.getElementById('calibrationPage').style.display = 'none';
+  document.getElementById('compassStatus').innerText = "کالیبراسیون لغو شد. می‌توانید از لیست کشویی استفاده کنید.";
+  window.scrollTo(0,0);
+}
+function retryCalibration(){
+  document.getElementById('calStep1').style.display = 'block';
+  document.getElementById('calStep2').style.display = 'none';
+  document.getElementById('calStep3').style.display = 'none';
+}
+function beginCalibration(){
+  document.getElementById('calStep1').style.display = 'none';
+  document.getElementById('calStep2').style.display = 'block';
+  calibActive = true;
+  calibLastAlpha = null;
+  calibTotalRotation = 0;
+  calibStartTime = Date.now();
+  updateCalibUI(0);
+  document.getElementById('calSuccessBox').style.display = 'none';
+  if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+    DeviceOrientationEvent.requestPermission().then(function(state){
+      if(state === 'granted'){ startCalibrationListener(); }
+      else { showCalibrationFailed('اجازه دسترسی داده نشد.'); }
+    }).catch(function(err){ showCalibrationFailed('خطا: ' + err.message); });
+  } else {
+    startCalibrationListener();
+  }
+}
+function startCalibrationListener(){
+  calibHandler = function(e){
+    if(!calibActive) return;
+    var alpha = e.alpha;
+    if(alpha === null || alpha === undefined) return;
+    if(calibLastAlpha !== null){
+      var delta = alpha - calibLastAlpha;
+      if(delta > 180) delta -= 360;
+      if(delta < -180) delta += 360;
+      calibTotalRotation += Math.abs(delta);
+    }
+    calibLastAlpha = alpha;
+    var progress = Math.min(100, (calibTotalRotation / CALIB_TARGET_ROTATION) * 100);
+    updateCalibUI(progress);
+    if(progress >= CALIB_SUCCESS_THRESHOLD){
+      calibActive = false;
+      showCalibrationSuccess();
+    }
+  };
+  if('ondeviceorientationabsolute' in window){
+    window.addEventListener('deviceorientationabsolute', calibHandler);
+  } else {
+    window.addEventListener('deviceorientation', calibHandler);
+  }
+  calibTimerInterval = setInterval(function(){
+    if(!calibActive) return;
+    var elapsed = (Date.now() - calibStartTime) / 1000;
+    document.getElementById('calStatTime').innerText = Math.floor(elapsed/60) + ':' + String(Math.floor(elapsed%60)).padStart(2,'0');
+    if(elapsed * 1000 >= CALIB_MAX_DURATION){
+      calibActive = false;
+      stopCalibrationListener();
+      document.getElementById('calStep2').style.display = 'none';
+      document.getElementById('calStep3').style.display = 'block';
+    }
+  }, 200);
+}
+function stopCalibrationListener(){
+  if(calibHandler){
+    window.removeEventListener('deviceorientationabsolute', calibHandler);
+    window.removeEventListener('deviceorientation', calibHandler);
+    calibHandler = null;
+  }
+  if(calibTimerInterval){
+    clearInterval(calibTimerInterval);
+    calibTimerInterval = null;
+  }
+  calibActive = false;
+}
+function updateCalibUI(progress){
+  progress = Math.max(0, Math.min(100, progress));
+  var pct = Math.round(progress);
+  document.getElementById('calProgressFill').style.width = pct + '%';
+  document.getElementById('calProgressPct').innerText = pct + '%';
+  document.getElementById('calProgressLabel').innerText = pct + '%';
+  document.getElementById('calStatRotation').innerText = Math.round(calibTotalRotation) + '°';
+  if(progress > 60){ document.getElementById('calStatStability').innerText = 'خوب'; }
+  else if(progress > 30){ document.getElementById('calStatStability').innerText = 'متوسط'; }
+  else { document.getElementById('calStatStability').innerText = 'ضعیف'; }
+  var quality = document.getElementById('calQuality');
+  var hint = document.getElementById('calHint');
+  if(pct < 40){
+    quality.className = 'cal-quality bad';
+    quality.innerText = '❌ حرکت بده — گوشی هنوز کالیبره نشده';
+    hint.innerText = 'گوشی رو به شکل عدد ۸ حرکت بده...';
+  } else if(pct < 75){
+    quality.className = 'cal-quality medium';
+    quality.innerText = '⚠️ تقریباً آماده — ادامه بده';
+    hint.innerText = 'عالیه! ادامه بده...';
+  } else {
+    quality.className = 'cal-quality good';
+    quality.innerText = '✅ کالیبراسیون موفق';
+    hint.innerText = 'کالیبراسیون کامل شد!';
+  }
+}
+function showCalibrationSuccess(){
+  stopCalibrationListener();
+  document.getElementById('calSuccessBox').style.display = 'block';
+  document.getElementById('calStatStability').innerText = 'خوب';
+}
+function showCalibrationFailed(msg){
+  stopCalibrationListener();
+  document.getElementById('calStep2').style.display = 'none';
+  document.getElementById('calStep3').style.display = 'block';
+  if(msg){
+    document.querySelector('#calStep3 p').innerHTML = msg + '<br>لطفاً دوباره تلاش کن یا از <b>لیست کشویی جهت‌ها</b> استفاده کن.';
+  }
+}
+function finishCalibrationSuccess(){
+  stopCalibrationListener();
+  document.getElementById('calibrationPage').style.display = 'none';
+  document.getElementById('compassStatus').innerText = "کالیبراسیون موفق! حالا گوشی رو به سمت شیء بگیر.";
+  enableCompass();
+  window.scrollTo(0,0);
+}
+var compassHandler = null;
 function enableCompass(){
-  compassLocked=false;
   function handle(e){
-    if(compassLocked) return;
     var h;
-    if(e.webkitCompassHeading!==undefined) h=e.webkitCompassHeading;
-    else if(e.alpha!==null) h=360-e.alpha;
-    if(h!==undefined){
+    if(e.webkitCompassHeading !== undefined) h = e.webkitCompassHeading;
+    else if(e.alpha !== null) h = 360 - e.alpha;
+    if(h !== undefined){
       selectedAzimuth = h;
       selectedDirectionKey = azimuthToKey(h);
       document.getElementById('directionSelect').value = selectedDirectionKey;
       updateSelectedDirDisplay();
-      document.getElementById('compassStatus').innerText="جهت زنده در حال دریافت است...";
-      document.getElementById('compassConfirmBtn').style.display='block';
+      document.getElementById('compassStatus').innerText = "جهت زنده: " + Math.round(h) + "° — " + azimuthToCompass(h);
     }
   }
-  compassHandler=handle;
-  if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
-    DeviceOrientationEvent.requestPermission().then(function(state){
-      if(state==='granted') window.addEventListener('deviceorientation', compassHandler);
-      else document.getElementById('compassStatus').innerText="اجازه دسترسی داده نشد.";
-    }).catch(function(){ document.getElementById('compassStatus').innerText="خطا در دسترسی."; });
-  } else if('ondeviceorientationabsolute' in window){
+  compassHandler = handle;
+  if('ondeviceorientationabsolute' in window){
     window.addEventListener('deviceorientationabsolute', compassHandler);
-  } else if(typeof DeviceOrientationEvent!=='undefined'){
-    window.addEventListener('deviceorientation', compassHandler);
   } else {
-    document.getElementById('compassStatus').innerText="گوشی از قطب‌نما پشتیبانی نمی‌کند.";
+    window.addEventListener('deviceorientation', compassHandler);
   }
-}
-function confirmCompass(){
-  compassLocked=true;
-  if(compassHandler){
-    window.removeEventListener('deviceorientation', compassHandler);
-    window.removeEventListener('deviceorientationabsolute', compassHandler);
-  }
-  document.getElementById('compassConfirmBtn').style.display='none';
-  document.getElementById('compassStatus').innerText="✅ جهت قفل شد.";
 }
 
 /* ========================================================================
-   MATH
+   MATH HELPERS
 ======================================================================== */
 function toRad(d){ return d*Math.PI/180; }
 function toDeg(r){ return r*180/Math.PI; }
@@ -1189,26 +1986,16 @@ function azimuthToCompass(az){
   if(az < 292.5) return 'غرب';
   return 'شمال‌غرب';
 }
-
-/* ✅ NEW: تشخیص هوشمند جهت حرکت با استفاده از startAz, peakAz, endAz */
 function computeMovementDirection(startAz, peakAz, endAz){
   startAz = ((startAz % 360) + 360) % 360;
   peakAz = ((peakAz % 360) + 360) % 360;
   endAz = ((endAz % 360) + 360) % 360;
-
   var diffStartEnd = Math.abs(endAz - startAz);
   if(diffStartEnd > 180) diffStartEnd = 360 - diffStartEnd;
-
   var startName = azimuthToCompass(startAz);
   var endName = azimuthToCompass(endAz);
   var peakName = azimuthToCompass(peakAz);
-
-  /* اگه اختلاف start و end کمتر از ۴۵ درجه باشه → مسیر قوسی کم‌اختلاف بود */
-  if(diffStartEnd < 45){
-    return 'در جهت ' + peakName;
-  }
-
-  /* اگه اختلاف زیاده → از شروع به پایان */
+  if(diffStartEnd < 45) return 'در جهت ' + peakName;
   return 'از ' + startName + ' به ' + endName;
 }
 
@@ -1294,32 +2081,23 @@ async function fetchAdsbLol(lat, lon, radiusNm){
   var data=await fetchJsonWithProxies(url, 15000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-async function fetchAllAircraft(lat, lon){
-  var radiusNm=100;
+async function fetchAllAircraft(lat, lon, radiusKm){
+  var radiusNm = Math.min(250, radiusKm * 0.54);
   var sources=[
-    { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
-    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
+    { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, Math.round(radiusNm)); } },
+    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, Math.round(radiusNm)); } }
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
-    return s.fn().then(function(r){
-      ok.push(s.name + (r && r.length ? ' ('+r.length+')' : ' (خالی)'));
-      return r;
-    }).catch(function(e){
-      fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص'));
-      return [];
-    });
+    return s.fn().then(function(r){ ok.push(s.name + (r && r.length ? ' ('+r.length+')' : ' (خالی)')); return r; })
+                 .catch(function(e){ fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص')); return []; });
   }));
   var merged={};
   results.forEach(function(list){
     (list||[]).forEach(function(a){
       if(!a.icao) return;
       if(!merged[a.icao]) merged[a.icao]=a;
-      else {
-        for(var k in a){
-          if(merged[a.icao][k]==null || merged[a.icao][k]==='') merged[a.icao][k]=a[k];
-        }
-      }
+      else { for(var k in a){ if(merged[a.icao][k]==null || merged[a.icao][k]==='') merged[a.icao][k]=a[k]; } }
     });
   });
   var list=[];
@@ -1417,7 +2195,7 @@ function validateAndRun(){
   var jmin=parseInt(document.getElementById('jMinute').value);
   var obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
   if(obsDate.getTime() > Date.now()+60000){ showError('زمان نمی‌تواند در آینده باشد.'); return; }
-  if(selectedAzimuth === null){ showError('لطفاً جهت مشاهده شیء را انتخاب کنید.'); return; }
+  if(selectedAzimuth === null){ showError('لطفاً سمت مشاهده شیء را انتخاب کنید.'); return; }
   var azimuth = selectedAzimuth;
   var moveDir=document.getElementById('moveDir').value;
   document.getElementById('formBox').style.display='none';
@@ -1542,7 +2320,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
 
     if(aircraftTimeUsable){
       try{
-        var acData=await fetchAllAircraft(lat, lon);
+        var acData=await fetchAllAircraft(lat, lon, 200);
         var list=acData.list;
         diag.acSourcesOk=acData.sourcesOk;
         diag.acSourcesFail=acData.sourcesFail;
@@ -1592,9 +2370,9 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   var hasSat=satResults.length>0, hasAc=acResults.length>0;
   var hero=document.getElementById('resultHero');
   var cls='un', title='شیء ناشناس', sub='', icon='❓';
-  if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+(satResults.length===1?' ماهواره در جهت مشاهده‌ی شما':' ماهواره با شرایط رؤیت شما مطابقت داشتند'); icon='🛰️'; }
-  else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+(acResults.length===1?' پرواز در جهت مشاهده‌ی شما':' پرواز با مشخصات شما مطابقت داشتند'); icon='✈️'; }
-  else if(hasSat && hasAc){ cls='mix'; title='هم ماهواره و هم هواپیما'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما در آن لحظه از آن جهت قابل مشاهده بودند'; icon='🛰️✈️'; }
+  if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+(satResults.length===1?' ماهواره در سمت مشاهده‌ی شما':' ماهواره با شرایط رؤیت شما مطابقت داشتند'); icon='🛰️'; }
+  else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+(acResults.length===1?' پرواز در سمت مشاهده‌ی شما':' پرواز با مشخصات شما مطابقت داشتند'); icon='✈️'; }
+  else if(hasSat && hasAc){ cls='mix'; title='هم ماهواره و هم هواپیما'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما در آن لحظه از آن سمت قابل مشاهده بودند'; icon='🛰️✈️'; }
   else { cls='un'; title='شیء ناشناس'; sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای با این مشخصات مطابقت نداشت.'; icon='❓'; }
   hero.className='result-hero '+cls;
   document.getElementById('resultIcon').innerText=icon;
@@ -1631,14 +2409,12 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   });
   if(errMsg){ cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: '+errMsg+'</p></div>'; }
   document.getElementById('objectsContainer').innerHTML = cardsHtml;
-
   var warnBox=document.getElementById('acTimeWarning');
   var warnParts=[];
   if(diag && diag.satFetchError) warnParts.push('⚠️ '+diag.satFetchError);
   if(diag && diag.acSkippedOldTime) warnParts.push('⏱️ بررسی هواپیما انجام نشد (زمان بیش از ۳۰ دقیقه پیش).');
   if(warnParts.length>0){ warnBox.style.display='block'; warnBox.innerHTML=warnParts.join('<br><br>'); }
   else { warnBox.style.display='none'; }
-
   if(diag){
     var d=document.getElementById('diagContent');
     d.innerHTML =
@@ -1648,7 +2424,6 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
       '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>';
   }
-
   var map=L.map('map').setView([lat, lon], 8);
   mapRef=map;
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(map);
@@ -1729,6 +2504,508 @@ function buildObjCard(icon, name, rows, confidence){
 }
 
 /* ========================================================================
+   LIVE SKY PAGE
+======================================================================== */
+var liveLocMode='auto';
+var liveCoordFormat=null;
+var livePickerMapObj=null, livePickerMarker=null;
+var liveMapObj=null;
+var liveActive = false;
+var liveSatEnabled = true;
+var liveAcEnabled = true;
+var liveMinElev = 10;
+var liveRadiusKm = 100;
+var liveCurrentTab = 'polar';
+var liveSatTimer = null;
+var liveAcTimer = null;
+var liveRecalcTimer = null;
+var liveSatRecords = [];  // {satrec, name, type, country}
+var liveSatCurrent = [];  // resolved positions
+var liveAcCurrent = [];
+var liveLastAcFetch = 0;
+
+function openLiveSky(){
+  document.getElementById('formBox').style.display='none';
+  document.getElementById('loadingBox').style.display='none';
+  document.getElementById('resultBox').style.display='none';
+  document.getElementById('liveSkyPage').style.display='block';
+  document.getElementById('liveSetupPanel').style.display='block';
+  document.getElementById('liveViewPanel').style.display='none';
+  window.scrollTo(0,0);
+}
+function closeLiveSky(){
+  stopLiveSky(true);
+  document.getElementById('liveSkyPage').style.display='none';
+  document.getElementById('formBox').style.display='block';
+  window.scrollTo(0,0);
+}
+function stopLiveSky(silent){
+  liveActive = false;
+  if(liveSatTimer){ clearInterval(liveSatTimer); liveSatTimer=null; }
+  if(liveAcTimer){ clearInterval(liveAcTimer); liveAcTimer=null; }
+  if(liveRecalcTimer){ clearInterval(liveRecalcTimer); liveRecalcTimer=null; }
+  if(liveMapObj){ liveMapObj.remove(); liveMapObj=null; }
+  if(!silent){
+    document.getElementById('liveViewPanel').style.display='none';
+    document.getElementById('liveSetupPanel').style.display='block';
+    document.getElementById('liveSkyTargets').innerHTML='';
+    document.getElementById('liveTargetList').innerHTML='';
+    window.scrollTo(0,0);
+  }
+}
+
+function setLiveLocationMode(mode){
+  liveLocMode=mode;
+  document.getElementById('liveModeAutoCard').classList.toggle('active', mode==='auto');
+  document.getElementById('liveModeManualCard').classList.toggle('active', mode==='manual');
+  document.getElementById('liveModeMapCard').classList.toggle('active', mode==='map');
+  document.getElementById('liveAutoLocPanel').style.display = mode==='auto' ? 'block':'none';
+  document.getElementById('liveManualLocPanel').style.display = mode==='manual' ? 'block':'none';
+  document.getElementById('liveMapLocPanel').style.display = mode==='map' ? 'block':'none';
+  if(mode==='map') setTimeout(initLivePickerMap, 50);
+}
+function initLivePickerMap(){
+  if(livePickerMapObj){ livePickerMapObj.invalidateSize(); return; }
+  livePickerMapObj=L.map('livePickerMap').setView([35.6892, 51.3890], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(livePickerMapObj);
+  livePickerMapObj.on('click', function(e){
+    var la=e.latlng.lat, lo=e.latlng.lng;
+    if(livePickerMarker) livePickerMapObj.removeLayer(livePickerMarker);
+    livePickerMarker=L.marker([la,lo]).addTo(livePickerMapObj);
+    document.getElementById('liveMapLat').value=la.toFixed(6);
+    document.getElementById('liveMapLon').value=lo.toFixed(6);
+    document.getElementById('liveMapCoordBoxes').style.display='flex';
+  });
+}
+function getLiveLocation(){
+  if(navigator.geolocation){
+    document.getElementById('liveLocStatus').innerText="در حال دریافت...";
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById('liveAutoLat').value=pos.coords.latitude.toFixed(6);
+      document.getElementById('liveAutoLon').value=pos.coords.longitude.toFixed(6);
+      document.getElementById('liveAutoCoordBoxes').style.display='flex';
+      document.getElementById('liveLocStatus').innerText="✅ دریافت شد.";
+    }, function(err){ document.getElementById('liveLocStatus').innerText="خطا: "+err.message; });
+  } else {
+    document.getElementById('liveLocStatus').innerText="مرورگر از GPS پشتیبانی نمی‌کند.";
+  }
+}
+function setLiveCoordFormat(fmt, el){
+  liveCoordFormat=fmt;
+  document.querySelectorAll('#liveManualLocPanel .coord-fmt-row .mode-card').forEach(function(c){ c.classList.remove('active'); });
+  if(el) el.classList.add('active');
+  document.getElementById('liveDmsInputs').style.display = fmt==='dms' ? 'block':'none';
+  document.getElementById('liveDecInputs').style.display = fmt==='dec' ? 'block':'none';
+  document.getElementById('liveUtmInputs').style.display = fmt==='utm' ? 'block':'none';
+}
+function getLiveLocationCoords(){
+  if(liveLocMode==='auto'){
+    var lat=parseFloat(document.getElementById('liveAutoLat').value);
+    var lon=parseFloat(document.getElementById('liveAutoLon').value);
+    if(isNaN(lat)||isNaN(lon)) return null;
+    return [lat, lon];
+  }
+  if(liveLocMode==='map'){
+    var lat=parseFloat(document.getElementById('liveMapLat').value);
+    var lon=parseFloat(document.getElementById('liveMapLon').value);
+    if(isNaN(lat)||isNaN(lon)) return null;
+    return [lat, lon];
+  }
+  if(liveLocMode==='manual'){
+    if(!liveCoordFormat) return null;
+    if(liveCoordFormat==='dec'){
+      var lat=parseFloat(document.getElementById('liveDecLat').value);
+      var lon=parseFloat(document.getElementById('liveDecLon').value);
+      if(isNaN(lat)||isNaN(lon)) return null;
+      return [lat, lon];
+    }
+    if(liveCoordFormat==='dms'){
+      var ld=parseFloat(document.getElementById('liveLatD').value)||0;
+      var lm=parseFloat(document.getElementById('liveLatM').value)||0;
+      var ls=parseFloat(document.getElementById('liveLatS').value)||0;
+      var latDir=document.getElementById('liveLatDir').value;
+      var od=parseFloat(document.getElementById('liveLonD').value)||0;
+      var om=parseFloat(document.getElementById('liveLonM').value)||0;
+      var os=parseFloat(document.getElementById('liveLonS').value)||0;
+      var lonDir=document.getElementById('liveLonDir').value;
+      if(document.getElementById('liveLatD').value===""||document.getElementById('liveLonD').value==="") return null;
+      return [(ld+lm/60+ls/3600)*(latDir==='S'?-1:1), (od+om/60+os/3600)*(lonDir==='W'?-1:1)];
+    }
+    if(liveCoordFormat==='utm'){
+      var zone=parseInt(document.getElementById('liveUtmZone').value);
+      var hem=document.getElementById('liveUtmHem').value;
+      var e=parseFloat(document.getElementById('liveUtmE').value);
+      var n=parseFloat(document.getElementById('liveUtmN').value);
+      if(isNaN(zone)||isNaN(e)||isNaN(n)) return null;
+      return utmToLatLon(zone, hem==='N', e, n);
+    }
+  }
+  return null;
+}
+function liveShowError(msg){ var b=document.getElementById('liveErrorBox'); b.innerText=msg; b.style.display='block'; }
+function liveClearError(){ document.getElementById('liveErrorBox').style.display='none'; }
+
+async function startLiveSky(){
+  liveClearError();
+  var coords = getLiveLocationCoords();
+  if(!coords){ liveShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
+  var lat = coords[0], lon = coords[1];
+
+  // Load TLE data if satellites enabled
+  try{
+    var tleText = await loadTleData();
+    var lines = tleText.trim().split("\n");
+    liveSatRecords = [];
+    for(var i=0;i+2<lines.length;i+=3){
+      try{
+        var name = lines[i].trim();
+        var un = name.toUpperCase();
+        // Filters: skip debris, rocket bodies, certain non-visual
+        if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) continue;
+        var satrec = satellite.twoline2satrec(lines[i+1], lines[i+2]);
+        // Check inclination allows pass over this lat
+        var incl = satrec.inclo * 180 / Math.PI;
+        var maxLat = Math.min(incl, 180 - incl);
+        if(Math.abs(lat) > maxLat + 5) continue;
+        // Skip very high orbits
+        var period = 2 * Math.PI / satrec.no;
+        var sma = Math.pow(398600.4418 * Math.pow(period*60, 2) / (4*Math.PI*Math.PI), 1/3);
+        var alt = sma - 6371;
+        if(alt > 2000 || alt < 150) continue;
+        var info = guessSatInfo(name);
+        liveSatRecords.push({ satrec: satrec, name: name, type: info.type, country: info.country });
+      }catch(e){}
+    }
+  }catch(e){
+    liveShowError('خطا در دریافت TLE: ' + e.message);
+    return;
+  }
+
+  // Switch UI
+  document.getElementById('liveSetupPanel').style.display='none';
+  document.getElementById('liveViewPanel').style.display='block';
+  liveActive = true;
+  liveLastAcFetch = 0;
+
+  // Initialize live map view
+  initLiveMap(lat, lon);
+
+  // Initial computations
+  recomputeLiveSatellites(lat, lon);
+  updateLiveAircraft(lat, lon);
+
+  // Setup timers
+  // Satellites: every 1 second
+  liveSatTimer = setInterval(function(){
+    if(!liveActive) return;
+    recomputeLiveSatellites(lat, lon);
+  }, 1000);
+
+  // Aircraft: every 10 seconds
+  liveAcTimer = setInterval(function(){
+    if(!liveActive) return;
+    updateLiveAircraft(lat, lon);
+  }, 10000);
+
+  // Rerender sky view every 1 second
+  liveRecalcTimer = setInterval(function(){
+    if(!liveActive) return;
+    renderLiveSkyView();
+  }, 1000);
+
+  window.scrollTo(0,0);
+}
+
+function initLiveMap(lat, lon){
+  if(liveMapObj){ liveMapObj.remove(); liveMapObj=null; }
+  liveMapObj = L.map('liveMapView').setView([lat, lon], 6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(liveMapObj);
+  var obsIcon = L.divIcon({html:'<div style="background:#3b82f6;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 0 12px #3b82f6;">👁️</div>', iconSize:[30,30], className:''});
+  L.marker([lat,lon], {icon: obsIcon}).addTo(liveMapObj).bindPopup('موقعیت شما');
+}
+
+function recomputeLiveSatellites(lat, lon){
+  var observerGd = {longitude: toRad(lon), latitude: toRad(lat), height: 0};
+  var now = new Date();
+  var sunAlt = sunAltitude(now, lat, lon);
+  var darkEnough = sunAlt <= -6;
+  var sunEci = sunEciKm(now);
+  var gmst = satellite.gstime(now);
+
+  var results = [];
+  for(var i=0; i<liveSatRecords.length; i++){
+    var rec = liveSatRecords[i];
+    try{
+      var pv = satellite.propagate(rec.satrec, now);
+      if(!pv.position) continue;
+      var ecf = satellite.eciToEcf(pv.position, gmst);
+      var look = satellite.ecfToLookAngles(observerGd, ecf);
+      var altDeg = toDeg(look.elevation);
+      var azDeg = toDeg(look.azimuth);
+      var rangeKm = look.rangeSat;
+      if(altDeg < 5) continue;
+      // Sunlight check
+      if(!isSunlit(pv.position, sunEci)) continue;
+      // Compute magnitude
+      var mag = estimateSatMag(rangeKm, rec.name);
+      if(mag > 6.5) continue;
+      // Position on Earth
+      var geo = satellite.eciToGeodetic(pv.position, gmst);
+      results.push({
+        name: rec.name,
+        type: rec.type,
+        country: rec.country,
+        alt: altDeg,
+        az: azDeg,
+        dist: rangeKm,
+        mag: mag,
+        lat: toDeg(geo.latitude),
+        lon: toDeg(geo.longitude),
+        isISS: rec.name.toUpperCase().indexOf('ISS') > -1 || rec.name.toUpperCase().indexOf('ZARYA') > -1
+      });
+    }catch(e){}
+  }
+  // Sort by brightness (lower mag = brighter) then by altitude
+  results.sort(function(a,b){
+    if(Math.abs(a.mag - b.mag) > 1) return a.mag - b.mag;
+    return b.alt - a.alt;
+  });
+  liveSatCurrent = results;
+  document.getElementById('liveStatSat').innerText = results.length;
+  updateLiveMapSatMarkers();
+}
+
+async function updateLiveAircraft(lat, lon){
+  try{
+    var acData = await fetchAllAircraft(lat, lon, liveRadiusKm);
+    var list = acData.list;
+    var results = [];
+    for(var i=0;i<list.length;i++){
+      var a = list[i];
+      if(a.onGround) continue;
+      var be = bearingElevation(lat, lon, a.lat, a.lon, a.altM);
+      if(be.elev < 1) continue;
+      if(be.dist/1000 > liveRadiusKm) continue;
+      results.push({
+        name: a.callsign || a.icao,
+        icao: a.icao,
+        country: a.country || 'نامشخص',
+        alt: a.altM,
+        speed: a.speedKmh,
+        heading: a.heading,
+        elev: be.elev,
+        az: be.bearing,
+        dist: be.dist,
+        lat: a.lat,
+        lon: a.lon
+      });
+    }
+    results.sort(function(a,b){ return a.dist - b.dist; });
+    liveAcCurrent = results;
+    document.getElementById('liveStatAc').innerText = results.length;
+    liveLastAcFetch = Date.now();
+    updateLiveMapAcMarkers();
+  }catch(e){}
+}
+
+function updateLiveMapSatMarkers(){
+  if(!liveMapObj) return;
+  if(!liveMapObj._satLayer){
+    liveMapObj._satLayer = L.layerGroup().addTo(liveMapObj);
+  }
+  liveMapObj._satLayer.clearLayers();
+  if(!liveSatEnabled) return;
+  liveSatCurrent.forEach(function(s){
+    var color = s.isISS ? '#fbbf24' : (s.mag < 3 ? '#93c5fd' : '#60a5fa');
+    var icon = L.divIcon({
+      html: '<div style="background:'+color+';width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 8px '+color+';"></div>',
+      iconSize: [14,14], className:''
+    });
+    L.marker([s.lat, s.lon], {icon: icon}).addTo(liveMapObj._satLayer).bindPopup(
+      '<b>'+s.name+'</b><br>'+s.type+' - '+s.country+
+      '<br>ارتفاع از افق: '+s.alt.toFixed(1)+'°'+
+      '<br>آزیموت: '+s.az.toFixed(0)+'°'+
+      '<br>قدر: '+s.mag.toFixed(1)
+    );
+  });
+}
+
+function updateLiveMapAcMarkers(){
+  if(!liveMapObj) return;
+  if(!liveMapObj._acLayer){
+    liveMapObj._acLayer = L.layerGroup().addTo(liveMapObj);
+  }
+  liveMapObj._acLayer.clearLayers();
+  if(!liveAcEnabled) return;
+  liveAcCurrent.forEach(function(a){
+    var icon = L.divIcon({
+      html: '<div style="background:#10b981;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 8px #10b981;"></div>',
+      iconSize: [12,12], className:''
+    });
+    L.marker([a.lat, a.lon], {icon: icon}).addTo(liveMapObj._acLayer).bindPopup(
+      '<b>'+a.name+'</b><br>'+a.country+
+      '<br>ارتفاع: '+a.alt+'m'+
+      '<br>سرعت: '+a.speed+' km/h'+
+      '<br>فاصله: '+(a.dist/1000).toFixed(1)+' km'
+    );
+  });
+}
+
+function renderLiveSkyView(){
+  if(!liveActive) return;
+  var svg = document.getElementById('liveSkySvg');
+  var group = document.getElementById('liveSkyTargets');
+  var targets = [];
+
+  if(liveSatEnabled){
+    liveSatCurrent.forEach(function(s){
+      if(s.alt < liveMinElev) return;
+      targets.push({
+        kind: 'sat',
+        color: s.isISS ? '#fbbf24' : (s.mag < 3 ? '#93c5fd' : '#60a5fa'),
+        name: s.name,
+        alt: s.alt,
+        az: s.az,
+        mag: s.mag
+      });
+    });
+  }
+  if(liveAcEnabled){
+    liveAcCurrent.forEach(function(a){
+      if(a.elev < liveMinElev) return;
+      targets.push({
+        kind: 'ac',
+        color: '#10b981',
+        name: a.name,
+        alt: a.elev,
+        az: a.az,
+        heading: a.heading
+      });
+    });
+  }
+
+  // Update map
+  if(liveCurrentTab === 'map'){
+    updateLiveMapSatMarkers();
+    updateLiveMapAcMarkers();
+  }
+
+  // Update SVG polar view
+  if(liveCurrentTab === 'polar'){
+    // Radius 230px (outer). elevation 0° = radius 230, elevation 90° = radius 0
+    // r = 230 * (1 - alt/90)
+    var maxR = 230;
+    var cx = 250, cy = 250;
+    var html = '';
+    targets.forEach(function(t){
+      var r = maxR * (1 - t.alt / 90);
+      // azimuth 0° (North) = up (angle -90° in screen coords)
+      // screen angle = az - 90 (in degrees)
+      var screenAngleRad = toRad(t.az - 90);
+      var x = cx + r * Math.cos(screenAngleRad);
+      var y = cy + r * Math.sin(screenAngleRad);
+      // size based on magnitude or type
+      var size = t.kind === 'ac' ? 5 : (t.mag < 3 ? 5 : (t.mag < 5 ? 4 : 3));
+      html += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+size+'" fill="'+t.color+'" style="filter:drop-shadow(0 0 5px '+t.color+');"></circle>';
+    });
+    group.innerHTML = html;
+  }
+
+  // Update list (sorted by "attractiveness")
+  updateLiveTargetList(targets);
+
+  // Update timestamp
+  var now = new Date();
+  document.getElementById('liveLastUpdate').innerText = 'آخرین به‌روزرسانی: ' + formatTimeHMS(now);
+}
+
+function updateLiveTargetList(targets){
+  var container = document.getElementById('liveTargetList');
+  if(targets.length === 0){
+    container.innerHTML = '<div class="live-empty">🔭 در این لحظه هیچ هدف قابل مشاهده‌ای در دید شما نیست.</div>';
+    return;
+  }
+  // Sort: ISS first, then bright sats, then planes, then rest
+  targets.sort(function(a,b){
+    var scoreA = a.kind === 'sat' ? (a.name.indexOf('ISS') > -1 ? 100 : 0) + (10 - (a.mag || 5)) * 5 + a.alt / 10 : 30 + (a.alt / 10);
+    var scoreB = b.kind === 'sat' ? (b.name.indexOf('ISS') > -1 ? 100 : 0) + (10 - (b.mag || 5)) * 5 + b.alt / 10 : 30 + (b.alt / 10);
+    return scoreB - scoreA;
+  });
+  var html = '';
+  targets.slice(0, 30).forEach(function(t){
+    var icon = t.kind === 'sat' ? '🛰️' : '✈️';
+    var detail = 'ارتفاع: ' + t.alt.toFixed(1) + '° | آزیموت: ' + t.az.toFixed(0) + '°';
+    if(t.kind === 'sat' && t.mag != null) detail += ' | قدر: ' + t.mag.toFixed(1);
+    if(t.kind === 'ac' && t.heading != null) detail += ' | جهت: ' + t.heading + '°';
+    html += '<div class="live-target">' +
+      '<div class="t-icon">'+icon+'</div>' +
+      '<div class="t-info">' +
+        '<div class="t-name">'+t.name+'</div>' +
+        '<div class="t-detail">'+detail+'</div>' +
+      '</div>' +
+      '<div class="t-az">'+t.az.toFixed(0)+'°</div>' +
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function switchLiveTab(tab){
+  liveCurrentTab = tab;
+  document.getElementById('tabPolar').classList.toggle('active', tab==='polar');
+  document.getElementById('tabMap').classList.toggle('active', tab==='map');
+  document.getElementById('livePolarView').style.display = tab==='polar' ? 'block' : 'none';
+  document.getElementById('livePolarView').classList.toggle('active', tab==='polar');
+  document.getElementById('liveMapView').style.display = tab==='map' ? 'block' : 'none';
+  document.getElementById('liveMapView').classList.toggle('active', tab==='map');
+  if(tab === 'map' && liveMapObj){ setTimeout(function(){ liveMapObj.invalidateSize(); }, 50); }
+}
+
+function toggleLiveSat(){
+  liveSatEnabled = !liveSatEnabled;
+  var btn = document.getElementById('toggleSatBtn');
+  var state = document.getElementById('toggleSatState');
+  btn.classList.toggle('sat-on', liveSatEnabled);
+  state.innerText = liveSatEnabled ? 'روشن' : 'خاموش';
+  if(!liveSatEnabled){
+    document.getElementById('liveStatSat').innerText = '0';
+    document.getElementById('liveStatSatCard').classList.remove('active-sat');
+  } else {
+    document.getElementById('liveStatSatCard').classList.add('active-sat');
+    document.getElementById('liveStatSat').innerText = liveSatCurrent.length;
+  }
+  renderLiveSkyView();
+}
+function toggleLiveAc(){
+  liveAcEnabled = !liveAcEnabled;
+  var btn = document.getElementById('toggleAcBtn');
+  var state = document.getElementById('toggleAcState');
+  btn.classList.toggle('ac-on', liveAcEnabled);
+  state.innerText = liveAcEnabled ? 'روشن' : 'خاموش';
+  if(!liveAcEnabled){
+    document.getElementById('liveStatAc').innerText = '0';
+    document.getElementById('liveStatAcCard').classList.remove('active-ac');
+  } else {
+    document.getElementById('liveStatAcCard').classList.add('active-ac');
+    document.getElementById('liveStatAc').innerText = liveAcCurrent.length;
+  }
+  renderLiveSkyView();
+}
+function updateLiveFilters(){
+  liveMinElev = parseFloat(document.getElementById('liveMinElev').value) || 10;
+  var newRadius = parseFloat(document.getElementById('liveRadius').value) || 100;
+  if(newRadius !== liveRadiusKm){
+    liveRadiusKm = newRadius;
+    // Re-fetch aircraft immediately if enabled
+    if(liveAcEnabled && liveActive){
+      // Trigger a new fetch
+      var coords = getLiveLocationCoords();
+      if(coords) updateLiveAircraft(coords[0], coords[1]);
+    }
+  }
+  renderLiveSkyView();
+}
+
+/* ========================================================================
    PREDICTION PAGE
 ======================================================================== */
 var predLocMode='auto';
@@ -1781,9 +3058,7 @@ function getPredLocation(){
       document.getElementById('predAutoLon').value=pos.coords.longitude.toFixed(6);
       document.getElementById('predAutoCoordBoxes').style.display='flex';
       document.getElementById('predLocStatus').innerText="✅ دریافت شد.";
-    }, function(err){
-      document.getElementById('predLocStatus').innerText="خطا: "+err.message;
-    });
+    }, function(err){ document.getElementById('predLocStatus').innerText="خطا: "+err.message; });
   } else {
     document.getElementById('predLocStatus').innerText="مرورگر از GPS پشتیبانی نمی‌کند.";
   }
@@ -1842,21 +3117,16 @@ function getPredLocationCoords(){
 }
 function predShowError(msg){ var b=document.getElementById('predErrorBox'); b.innerText=msg; b.style.display='block'; }
 
-/* ========================================================================
-   PASS FINDER — با ذخیره‌سازی peakAz
-======================================================================== */
 function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minElev, observerGd){
   var passes = [];
   var step = 60000;
   var currentTime = startTime;
   var inPass = false;
   var passData = null;
-
   while(currentTime <= endTime){
     var tDate = new Date(currentTime);
     var pv = satellite.propagate(satrec, tDate);
     var elev = -90, az = 0, visible = false;
-
     if(pv.position){
       var gmst = satellite.gstime(tDate);
       var ecf = satellite.eciToEcf(pv.position, gmst);
@@ -1865,33 +3135,17 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
       az = toDeg(look.azimuth);
       if(elev > minElev){
         var sunAlt = sunAltitude(tDate, lat, lon);
-        if(sunAlt <= -6 && isSunlit(pv.position, sunEciKm(tDate))){
-          visible = true;
-        }
+        if(sunAlt <= -6 && isSunlit(pv.position, sunEciKm(tDate))){ visible = true; }
       }
     }
-
     if(visible){
       if(!inPass){
         inPass = true;
-        passData = {
-          name: name,
-          startTime: currentTime,
-          startAz: az,
-          peakElev: elev,
-          peakTime: currentTime,
-          peakAz: az,          // ✅ آزیموت نقطه‌ی اوج
-          endTime: currentTime,
-          endAz: az
-        };
+        passData = {name:name, startTime:currentTime, startAz:az, peakElev:elev, peakTime:currentTime, peakAz:az, endTime:currentTime, endAz:az};
       } else {
         passData.endTime = currentTime;
         passData.endAz = az;
-        if(elev > passData.peakElev){
-          passData.peakElev = elev;
-          passData.peakTime = currentTime;
-          passData.peakAz = az;   // ✅ ذخیره‌ی آزیموت در لحظه‌ی اوج
-        }
+        if(elev > passData.peakElev){ passData.peakElev = elev; passData.peakTime = currentTime; passData.peakAz = az; }
       }
     } else if(inPass){
       if(passData.peakElev >= minElev + 5) passes.push(passData);
@@ -1927,14 +3181,8 @@ async function runPrediction(){
   var endMin=parseInt(document.getElementById('predEndMinute').value);
   var endDate = jalaliToUtcDate(endY, endM, endD, endH, endMin);
 
-  if(endDate.getTime() <= startDate.getTime()){
-    predShowError('زمان پایان باید بعد از زمان شروع باشد.');
-    return;
-  }
-  if(startDate.getTime() < Date.now() - 3600000){
-    predShowError('زمان شروع نمی‌تواند خیلی در گذشته باشد.');
-    return;
-  }
+  if(endDate.getTime() <= startDate.getTime()){ predShowError('زمان پایان باید بعد از زمان شروع باشد.'); return; }
+  if(startDate.getTime() < Date.now() - 3600000){ predShowError('زمان شروع نمی‌تواند خیلی در گذشته باشد.'); return; }
 
   var progressBox = document.getElementById('predProgress');
   var progressText = document.getElementById('predProgressText');
@@ -1950,7 +3198,6 @@ async function runPrediction(){
     var lines = tleText.trim().split("\n");
     var totalSats = Math.floor(lines.length / 3);
     progressText.innerText = 'در حال بررسی ' + totalSats + ' ماهواره...';
-
     var observerGd = {longitude: toRad(lon), latitude: toRad(lat), height: 0};
     var allPasses = [];
     var processed = 0;
@@ -1962,25 +3209,20 @@ async function runPrediction(){
       try{
         var name = lines[i].trim();
         var satrec = satellite.twoline2satrec(lines[i+1], lines[i+2]);
-
         var incl = satrec.inclo * 180 / Math.PI;
         var maxLat = Math.min(incl, 180 - incl);
         if(Math.abs(lat) > maxLat + 5){ processed++; continue; }
-
         var period = 2 * Math.PI / satrec.no;
         var sma = Math.pow(398600.4418 * Math.pow(period*60, 2) / (4*Math.PI*Math.PI), 1/3);
         var alt = sma - 6371;
         if(alt > 2000 || alt < 150){ processed++; continue; }
-
         var un = name.toUpperCase();
         if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) { processed++; continue; }
         if(un.indexOf('NAVSTAR') > -1 || un.indexOf('GLONASS') > -1) { processed++; continue; }
         if(un.indexOf('GALILEO') > -1 || un.indexOf('BEIDOU') > -1) { processed++; continue; }
-
         var satPasses = findPassesForSatellite(satrec, name, lat, lon, startMs, endMs, PREDICTION_MIN_ELEV, observerGd);
         for(var p = 0; p < satPasses.length; p++){ allPasses.push(satPasses[p]); }
       } catch(e){}
-
       processed++;
       if(processed % CHUNK_SIZE === 0){
         var pct = Math.round((processed / totalSats) * 100);
@@ -1994,21 +3236,16 @@ async function runPrediction(){
     progressText.innerText = 'تمام شد!';
     progressFill.style.width = '100%';
     progressDetail.innerText = allPasses.length + ' عبور پیدا شد.';
-
     setTimeout(function(){
       progressBox.style.display='none';
       renderPredictionResults(allPasses, lat, lon, startDate, endDate);
     }, 500);
-
   }catch(e){
     progressBox.style.display='none';
     predShowError('خطا در پیش‌بینی: ' + e.message);
   }
 }
 
-/* ========================================================================
-   RENDER PREDICTION RESULTS — با computeMovementDirection
-======================================================================== */
 var lastPredictionPasses = null;
 var lastPredictionMeta = null;
 
@@ -2016,33 +3253,25 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   var container = document.getElementById('predResults');
   lastPredictionPasses = passes;
   lastPredictionMeta = {lat:lat, lon:lon, startDate:startDate, endDate:endDate};
-
   if(passes.length === 0){
-    container.innerHTML = '<div class="pred-empty">🔭<br><br>در این بازه‌ی زمانی، هیچ ماهواره‌ی قابل مشاهده‌ای از این موقعیت عبور نمی‌کند.<br><br>سعی کنید بازه‌ی زمانی را بیشتر کنید.</div>';
+    container.innerHTML = '<div class="pred-empty">🔭<br><br>در این بازه‌ی زمانی، هیچ ماهواره‌ی قابل مشاهده‌ای از این موقعیت عبور نمی‌کند.</div>';
     return;
   }
-
   var summaryHtml = '<div class="pred-summary">' +
     '<div>📍 مختصات: <b>' + lat.toFixed(4) + ', ' + lon.toFixed(4) + '</b></div>' +
     '<div>🕐 از: <b>' + formatJalaliDateTime(new Date(startDate)) + '</b></div>' +
     '<div>🕐 تا: <b>' + formatJalaliDateTime(new Date(endDate)) + '</b></div>' +
     '<div>🛰️ تعداد عبور قابل مشاهده: <b>' + passes.length + '</b></div>' +
     '</div>';
-
   var downloadHtml = '<div class="card" style="max-width:520px; margin:14px auto;">' +
     '<button type="button" class="btn btn-download" onclick="downloadPredictionCSV()">📥 دانلود نتایج (Excel / CSV)</button>' +
     '</div>';
-
   var mapHtml = '<div id="predMap"></div>';
-
   var cardsHtml = '<div class="pred-list">';
   passes.forEach(function(p, idx){
     var info = guessSatInfo(p.name);
     var startCompass = azimuthToCompass(p.startAz);
-
-    /* ✅ محاسبه‌ی هوشمند جهت حرکت */
     var moveText = computeMovementDirection(p.startAz, p.peakAz, p.endAz);
-
     cardsHtml += '<div class="pred-row">' +
       '<div class="pred-row-header">' +
         '<span class="pred-row-num">' + (idx + 1) + '</span>' +
@@ -2058,9 +3287,7 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
     '</div>';
   });
   cardsHtml += '</div>';
-
   container.innerHTML = summaryHtml + downloadHtml + mapHtml + cardsHtml;
-
   setTimeout(function(){
     if(document.getElementById('predMap')){
       if(predResultMap){ predResultMap.remove(); predResultMap = null; }
@@ -2217,7 +3444,8 @@ window.onload=function(){
   fillPredDatePickers();
   setLocationMode('auto');
   setPredLocationMode('auto');
+  setLiveLocationMode('auto');
 };
 </script>
 </body>
-     </html>
+ </html>
