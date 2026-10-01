@@ -50,6 +50,8 @@
     background: rgba(0,0,0,.25); color:#fff; font-family:inherit; font-size:14px;
   }
   input::placeholder { color:#8888a8; }
+  select { cursor: pointer; }
+  select option { background: #1c1c34; color: #fff; padding: 10px; }
   .btn {
     width:100%; padding:13px; border:none; border-radius:12px; font-size:15px; font-weight:700;
     cursor:pointer; font-family:inherit; transition: transform .15s, box-shadow .15s;
@@ -93,7 +95,31 @@
   .dt-grid select { padding:9px 4px; font-size:13px; }
   .dt-grid-time { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
 
-  .compass-btn { margin-top:8px; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .selected-dir {
+    text-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(109,213,255,.1);
+    border: 1px solid rgba(109,213,255,.3);
+    color: #7ee8fa;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 14px;
+  }
+  .selected-dir.empty {
+    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.1);
+    color: #8888a8;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .selected-dir .az-value {
+    font-size: 12px;
+    font-weight: 500;
+    color: #a0a0c8;
+    display: block;
+    margin-top: 4px;
+  }
 
   .action-links { max-width:520px; margin: 18px auto 0; display:flex; flex-direction:column; gap:8px; }
   .link-card {
@@ -277,6 +303,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: center;
   }
   .pred-row-body {
     padding: 10px 14px;
@@ -286,13 +313,23 @@
     font-size: 12.5px;
   }
   .pred-row-body .cell {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
+    align-items: center;
   }
-  .pred-row-body .cell .lbl { color: #8f8fb8; }
-  .pred-row-body .cell .val { color: #f0f0f5; font-weight: 600; text-align: left; }
-  .pred-row-body .cell-full { grid-column: 1 / -1; }
+  .pred-row-body .cell .lbl {
+    color: #8f8fb8;
+    text-align: right;
+  }
+  .pred-row-body .cell .val {
+    color: #f0f0f5;
+    font-weight: 600;
+    text-align: center;
+  }
+  .pred-row-body .cell-full {
+    grid-column: 1 / -1;
+  }
 
   .pred-empty {
     max-width: 520px;
@@ -410,13 +447,33 @@
   </div>
 
   <div class="card">
-    <label class="field-label">🧭 جهت مشاهده شی</label>
-    <input type="number" id="azimuth" min="0" max="360" placeholder="درجه از شمال، مثلا 90">
-    <button type="button" class="btn btn-outline compass-btn" onclick="enableCompass()">🧭 استفاده از قطب‌نمای گوشی</button>
+    <label class="field-label">🧭 جهت مشاهده شیء</label>
+    <p style="font-size:12px; color:#a0a0c8; margin:0 0 10px 0; line-height:1.7;">
+      جهتی که شیء نورانی را در آن دیدید، نسبت به <b>شمال جغرافیایی</b> (شمال واقعی) انتخاب کنید.
+    </p>
+
+    <label class="field-label" style="font-size:13px; margin-top:10px;">از لیست انتخاب کنید:</label>
+    <select id="directionSelect" onchange="onDirectionSelect(this.value)">
+      <option value="">— لطفاً جهت را انتخاب کنید —</option>
+      <option value="N">⬆️ شمال</option>
+      <option value="NE">↗️ شمال‌شرق</option>
+      <option value="E">➡️ شرق</option>
+      <option value="SE">↘️ جنوب‌شرق</option>
+      <option value="S">⬇️ جنوب</option>
+      <option value="SW">↙️ جنوب‌غرب</option>
+      <option value="W">⬅️ غرب</option>
+      <option value="NW">↖️ شمال‌غرب</option>
+    </select>
+
+    <div style="text-align:center; margin: 16px 0 10px; color:#a0a0c8; font-size:12px;">— یا —</div>
+
+    <button type="button" class="btn btn-outline" onclick="enableCompass()">🧭 استفاده از قطب‌نمای گوشی</button>
     <div class="status-msg" id="compassStatus"></div>
     <button type="button" class="btn btn-primary" id="compassConfirmBtn" style="display:none; margin-top:8px;" onclick="confirmCompass()">✅ تایید و قفل کردن جهت</button>
 
-    <label class="field-label">➡️ جهت حرکت شی</label>
+    <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
+
+    <label class="field-label">➡️ جهت حرکت شیء</label>
     <select id="moveDir">
       <option>از شمال به جنوب</option>
       <option>از جنوب به شمال</option>
@@ -630,16 +687,20 @@
       <p>موقعیت، زمان، جهت مشاهده و جهت حرکت شیء را وارد کنید تا سامانه آن را با داده‌های ماهواره‌ای و هوانوردی مقایسه کند.</p>
     </div>
     <div class="guide-section">
-      <h4>۲. پیش‌بینی عبور ماهواره</h4>
-      <p>با استفاده از دکمه «پیش‌بینی عبور ماهواره»، می‌توانید ببینید در بازه‌ی زمانی مشخص، چه ماهواره‌هایی از بالای موقعیت شما عبور می‌کنند. سامانه فقط ماهواره‌هایی را نشان می‌دهد که حداقل <b>۱۵ درجه</b> از افق بالاتر می‌روند تا در شهر هم به‌راحتی دیده شوند.</p>
+      <h4>۲. جهت مشاهده و شمال جغرافیایی</h4>
+      <p>جهت‌ها در رصدیار نسبت به <b>شمال جغرافیایی</b> (شمال واقعی) سنجیده می‌شوند، نه شمال مغناطیسی. شمال جغرافیایی نقطه‌ای است که محور چرخش زمین به سطح آن می‌رسد و در همه‌ی محاسبات نجومی و مداری، استاندارد است.</p>
     </div>
     <div class="guide-section">
-      <h4>۳. دانلود نتایج</h4>
+      <h4>۳. انتخاب جهت با قطب‌نما</h4>
+      <p>اگر جهت‌یاب ندارید، دکمه «استفاده از قطب‌نمای گوشی» را بزنید و گوشی را به سمت شیء نورانی بگیرید. سامانه نزدیک‌ترین جهت اصلی به آن را انتخاب می‌کند.</p>
+    </div>
+    <div class="guide-section">
+      <h4>۴. پیش‌بینی عبور ماهواره</h4>
+      <p>می‌توانید ببینید در بازه‌ی زمانی مشخص، چه ماهواره‌هایی از بالای موقعیت شما عبور می‌کنند. سامانه فقط ماهواره‌هایی را نشان می‌دهد که حداقل ۱۵ درجه از افق بالاتر می‌روند. جهت حرکت ماهواره بر اساس نقطه‌ی شروع، اوج و پایان مسیر آن محاسبه می‌شود.</p>
+    </div>
+    <div class="guide-section">
+      <h4>۵. دانلود نتایج</h4>
       <p>بعد از پیش‌بینی، می‌توانید لیست کامل عبورها را به‌صورت فایل اکسل (CSV) دانلود کنید.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۴. معیارهای دقت</h4>
-      <p>رصدیار از معیارهای سخت‌گیرانه‌ای برای «حالت عملیاتی» استفاده می‌کند تا فقط اجسامی که با چشم دیده می‌شوند شناسایی شوند.</p>
     </div>
   </div>
 </div>
@@ -664,7 +725,7 @@
 
     <div class="guide-section">
       <h4>به‌روزرسانی پایگاه داده ماهواره‌ها</h4>
-      <p>این پایگاه داده روی خود مخزن گیت‌هاب ذخیره می‌شود تا کاربران عادی هرگز نیازی به تماس زنده با CelesTrak نداشته باشند.</p>
+      <p>این پایگاه داده روی خود مخزن گیت‌هاب ذخیره می‌شود.</p>
     </div>
 
     <label class="field-label" style="font-size:13px;">نام کاربری گیت‌هاب (owner)</label>
@@ -685,10 +746,6 @@
     <div class="guide-section" style="margin-top:18px;">
       <h4>راهنمای ساخت GitHub Token</h4>
       <p>وارد github.com شوید ← عکس پروفایل ← Settings ← Developer settings ← Personal access tokens (classic) ← Generate new token ← فقط تیک «repo» را بزنید.</p>
-    </div>
-    <div class="guide-section">
-      <h4>راهنمای دریافت TLE دستی</h4>
-      <p>با فیلترشکن روشن به آدرس زیر بروید و کل متن را کپی کنید:<br><span style="color:#7ee8fa; word-break:break-all;">https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle</span></p>
     </div>
   </div>
 </div>
@@ -766,11 +823,66 @@ function formatJalaliDateTime(date){
   var jd=toJalali(date.getFullYear(), date.getMonth()+1, date.getDate());
   return jd[2]+' '+monthNamesFa[jd[1]-1]+' '+jd[0]+' - '+String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
 }
-function formatTimeHM(date){
-  return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
-}
 function formatTimeHMS(date){
   return String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0')+':'+String(date.getSeconds()).padStart(2,'0');
+}
+
+/* ========================================================================
+   DIRECTION MAP — 8 main compass directions
+======================================================================== */
+var DIRECTION_MAP = {
+  'N':  { az: 0,   fa: 'شمال',       arrow: '⬆️' },
+  'NE': { az: 45,  fa: 'شمال‌شرق',    arrow: '↗️' },
+  'E':  { az: 90,  fa: 'شرق',         arrow: '➡️' },
+  'SE': { az: 135, fa: 'جنوب‌شرق',    arrow: '↘️' },
+  'S':  { az: 180, fa: 'جنوب',        arrow: '⬇️' },
+  'SW': { az: 225, fa: 'جنوب‌غرب',    arrow: '↙️' },
+  'W':  { az: 270, fa: 'غرب',         arrow: '⬅️' },
+  'NW': { az: 315, fa: 'شمال‌غرب',    arrow: '↖️' }
+};
+
+var selectedAzimuth = null;
+var selectedDirectionKey = null;
+
+function azimuthToKey(az){
+  az = ((az % 360) + 360) % 360;
+  if(az < 22.5 || az >= 337.5) return 'N';
+  if(az < 67.5) return 'NE';
+  if(az < 112.5) return 'E';
+  if(az < 157.5) return 'SE';
+  if(az < 202.5) return 'S';
+  if(az < 247.5) return 'SW';
+  if(az < 292.5) return 'W';
+  return 'NW';
+}
+function keyToAz(key){ return DIRECTION_MAP[key] ? DIRECTION_MAP[key].az : null; }
+
+function updateSelectedDirDisplay(){
+  var box = document.getElementById('selectedDirDisplay');
+  if(selectedDirectionKey && DIRECTION_MAP[selectedDirectionKey]){
+    var info = DIRECTION_MAP[selectedDirectionKey];
+    box.className = 'selected-dir';
+    box.innerHTML = '✅ جهت انتخاب‌شده: ' + info.fa + '<span class="az-value">آزیموت میانه: ' + info.az + '°</span>';
+  } else if(selectedAzimuth !== null){
+    var key = azimuthToKey(selectedAzimuth);
+    var info = DIRECTION_MAP[key];
+    box.className = 'selected-dir';
+    box.innerHTML = '✅ جهت انتخاب‌شده: ' + info.fa + ' (طبق قطب‌نما)<span class="az-value">آزیموت دقیق: ' + Math.round(selectedAzimuth) + '°</span>';
+  } else {
+    box.className = 'selected-dir empty';
+    box.innerHTML = 'هنوز جهتی انتخاب نشده است';
+  }
+}
+
+function onDirectionSelect(key){
+  if(!key){
+    selectedDirectionKey = null;
+    updateSelectedDirDisplay();
+    return;
+  }
+  selectedDirectionKey = key;
+  selectedAzimuth = keyToAz(key);
+  updateSelectedDirDisplay();
 }
 
 /* ========================================================================
@@ -973,8 +1085,11 @@ function enableCompass(){
     if(e.webkitCompassHeading!==undefined) h=e.webkitCompassHeading;
     else if(e.alpha!==null) h=360-e.alpha;
     if(h!==undefined){
-      document.getElementById('azimuth').value=Math.round(h);
-      document.getElementById('compassStatus').innerText="جهت زنده در حال دریافت...";
+      selectedAzimuth = h;
+      selectedDirectionKey = azimuthToKey(h);
+      document.getElementById('directionSelect').value = selectedDirectionKey;
+      updateSelectedDirDisplay();
+      document.getElementById('compassStatus').innerText="جهت زنده در حال دریافت است...";
       document.getElementById('compassConfirmBtn').style.display='block';
     }
   }
@@ -1073,6 +1188,28 @@ function azimuthToCompass(az){
   if(az < 247.5) return 'جنوب‌غرب';
   if(az < 292.5) return 'غرب';
   return 'شمال‌غرب';
+}
+
+/* ✅ NEW: تشخیص هوشمند جهت حرکت با استفاده از startAz, peakAz, endAz */
+function computeMovementDirection(startAz, peakAz, endAz){
+  startAz = ((startAz % 360) + 360) % 360;
+  peakAz = ((peakAz % 360) + 360) % 360;
+  endAz = ((endAz % 360) + 360) % 360;
+
+  var diffStartEnd = Math.abs(endAz - startAz);
+  if(diffStartEnd > 180) diffStartEnd = 360 - diffStartEnd;
+
+  var startName = azimuthToCompass(startAz);
+  var endName = azimuthToCompass(endAz);
+  var peakName = azimuthToCompass(peakAz);
+
+  /* اگه اختلاف start و end کمتر از ۴۵ درجه باشه → مسیر قوسی کم‌اختلاف بود */
+  if(diffStartEnd < 45){
+    return 'در جهت ' + peakName;
+  }
+
+  /* اگه اختلاف زیاده → از شروع به پایان */
+  return 'از ' + startName + ' به ' + endName;
 }
 
 /* ========================================================================
@@ -1280,9 +1417,8 @@ function validateAndRun(){
   var jmin=parseInt(document.getElementById('jMinute').value);
   var obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
   if(obsDate.getTime() > Date.now()+60000){ showError('زمان نمی‌تواند در آینده باشد.'); return; }
-  var azimuth=parseFloat(document.getElementById('azimuth').value);
-  if(isNaN(azimuth)){ showError('لطفاً آزیموت را وارد کنید.'); return; }
-  if(azimuth<0||azimuth>360){ showError('آزیموت باید ۰ تا ۳۶۰ باشد.'); return; }
+  if(selectedAzimuth === null){ showError('لطفاً جهت مشاهده شیء را انتخاب کنید.'); return; }
+  var azimuth = selectedAzimuth;
   var moveDir=document.getElementById('moveDir').value;
   document.getElementById('formBox').style.display='none';
   document.getElementById('loadingBox').style.display='block';
@@ -1354,8 +1490,9 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
 }
 
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  var azTolerance=8, minAlt=25, maxMag=3.0, maxSatRangeKm=1200;
-  var maxAircraftDistKm=40, aircraftAzTol=10, aircraftMinElev=5;
+  var azTolerance=22.5;
+  var minAlt=25, maxMag=3.0, maxSatRangeKm=1200;
+  var maxAircraftDistKm=40, aircraftAzTol=22.5, aircraftMinElev=5;
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[];
   var acErrorMsg=null;
@@ -1465,7 +1602,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   document.getElementById('resultSub').innerText=sub;
   document.getElementById('infoLoc').innerText=lat.toFixed(4)+', '+lon.toFixed(4);
   document.getElementById('infoTime').innerText=jd+' '+monthNamesFa[jm-1]+' '+jy+' - '+String(jh).padStart(2,'0')+':'+String(jmin).padStart(2,'0');
-  document.getElementById('infoAz').innerText=azimuth+'° / '+moveDir;
+  document.getElementById('infoAz').innerText=azimuth+'° ('+azimuthToCompass(azimuth)+') / '+moveDir;
   satResults.sort(function(a,b){return b.confidence-a.confidence;});
   acResults.sort(function(a,b){return b.confidence-a.confidence;});
   var cardsHtml='';
@@ -1476,7 +1613,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       ['فاصله از شما', s.dist+' کیلومتر'],
       ['ارتفاع مداری', s.orbitAltKm+' کیلومتر'],
       ['ارتفاع زاویه‌ای از افق', s.alt+'°'],
-      ['آزیموت', s.az+'°'],
+      ['آزیموت', s.az+'° ('+azimuthToCompass(parseFloat(s.az))+')'],
       ['قدر ظاهری تخمینی', s.mag]
     ], s.confidence);
   });
@@ -1706,7 +1843,7 @@ function getPredLocationCoords(){
 function predShowError(msg){ var b=document.getElementById('predErrorBox'); b.innerText=msg; b.style.display='block'; }
 
 /* ========================================================================
-   PASS FINDER
+   PASS FINDER — با ذخیره‌سازی peakAz
 ======================================================================== */
 function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minElev, observerGd){
   var passes = [];
@@ -1737,11 +1874,24 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
     if(visible){
       if(!inPass){
         inPass = true;
-        passData = {name:name, startTime:currentTime, startAz:az, peakElev:elev, peakTime:currentTime, endTime:currentTime, endAz:az};
+        passData = {
+          name: name,
+          startTime: currentTime,
+          startAz: az,
+          peakElev: elev,
+          peakTime: currentTime,
+          peakAz: az,          // ✅ آزیموت نقطه‌ی اوج
+          endTime: currentTime,
+          endAz: az
+        };
       } else {
         passData.endTime = currentTime;
         passData.endAz = az;
-        if(elev > passData.peakElev){ passData.peakElev = elev; passData.peakTime = currentTime; }
+        if(elev > passData.peakElev){
+          passData.peakElev = elev;
+          passData.peakTime = currentTime;
+          passData.peakAz = az;   // ✅ ذخیره‌ی آزیموت در لحظه‌ی اوج
+        }
       }
     } else if(inPass){
       if(passData.peakElev >= minElev + 5) passes.push(passData);
@@ -1756,9 +1906,6 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
 
 var PREDICTION_MIN_ELEV = 15;
 
-/* ========================================================================
-   RUN PREDICTION
-======================================================================== */
 async function runPrediction(){
   document.getElementById('predErrorBox').style.display='none';
   document.getElementById('predResults').innerHTML='';
@@ -1860,7 +2007,7 @@ async function runPrediction(){
 }
 
 /* ========================================================================
-   RENDER PREDICTION RESULTS
+   RENDER PREDICTION RESULTS — با computeMovementDirection
 ======================================================================== */
 var lastPredictionPasses = null;
 var lastPredictionMeta = null;
@@ -1891,13 +2038,10 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   var cardsHtml = '<div class="pred-list">';
   passes.forEach(function(p, idx){
     var info = guessSatInfo(p.name);
-
-    /* سمت مشاهده: جهت شروع عبور */
     var startCompass = azimuthToCompass(p.startAz);
-    var endCompass = azimuthToCompass(p.endAz);
 
-    /* جهت حرکت: از جهت شروع به جهت پایان */
-    var moveText = 'از ' + startCompass + ' به ' + endCompass;
+    /* ✅ محاسبه‌ی هوشمند جهت حرکت */
+    var moveText = computeMovementDirection(p.startAz, p.peakAz, p.endAz);
 
     cardsHtml += '<div class="pred-row">' +
       '<div class="pred-row-header">' +
@@ -1928,38 +2072,20 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   }, 100);
 }
 
-/* ========================================================================
-   DOWNLOAD CSV
-======================================================================== */
 function downloadPredictionCSV(){
   if(!lastPredictionPasses || lastPredictionPasses.length === 0) return;
-
   var rows = [];
   rows.push(['ردیف','نام ماهواره','کشور بهره‌بردار','نوع','تاریخ شمسی','زمان مشاهده','سمت مشاهده','جهت حرکت']);
-
   lastPredictionPasses.forEach(function(p, idx){
     var info = guessSatInfo(p.name);
     var startCompass = azimuthToCompass(p.startAz);
-    var endCompass = azimuthToCompass(p.endAz);
-    var moveText = 'از ' + startCompass + ' به ' + endCompass;
-
+    var moveText = computeMovementDirection(p.startAz, p.peakAz, p.endAz);
     var pDate = new Date(p.startTime);
     var jd = toJalali(pDate.getFullYear(), pDate.getMonth()+1, pDate.getDate());
     var dateStr = jd[2] + ' ' + monthNamesFa[jd[1]-1] + ' ' + jd[0];
     var timeStr = formatTimeHMS(pDate);
-
-    rows.push([
-      idx + 1,
-      p.name,
-      info.country,
-      info.type,
-      dateStr,
-      timeStr,
-      startCompass,
-      moveText
-    ]);
+    rows.push([idx + 1, p.name, info.country, info.type, dateStr, timeStr, startCompass, moveText]);
   });
-
   var csv = '\uFEFF' + rows.map(function(row){
     return row.map(function(cell){
       var s = String(cell);
@@ -1969,7 +2095,6 @@ function downloadPredictionCSV(){
       return s;
     }).join(',');
   }).join('\n');
-
   var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -2095,4 +2220,4 @@ window.onload=function(){
 };
 </script>
 </body>
- </html>
+     </html>
