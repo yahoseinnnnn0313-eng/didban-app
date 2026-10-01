@@ -60,7 +60,6 @@
   .btn-primary { background: linear-gradient(90deg,#2b7de9,#6dd5ff); color:#08172e; box-shadow:0 4px 18px rgba(43,125,233,.4); }
   .btn-outline { background: rgba(255,255,255,.08); color:#eee; border:1px solid rgba(255,255,255,.2); }
   .btn-success { background: linear-gradient(90deg, #10b981, #34d399); color: #052e16; box-shadow: 0 4px 18px rgba(16,185,129,.4); }
-  .btn-danger { background: linear-gradient(90deg, #ef4444, #f87171); color: #fff; box-shadow: 0 4px 18px rgba(239,68,68,.4); }
   .btn-predict {
     background: linear-gradient(90deg, #8b5cf6, #ec4899);
     color: #fff;
@@ -202,339 +201,63 @@
   .nearby-table th, .nearby-table td { padding:8px 6px; text-align:center; border-bottom:1px solid rgba(255,255,255,.08); }
   .nearby-table th { background:rgba(255,255,255,.08); color:#c8c8e8; }
 
-  /* Calibration page */
-  #calibrationPage {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
-    z-index: 600;
-    overflow-y: auto;
-    padding: 14px 14px 40px;
-  }
-  .cal-header {
-    max-width: 520px;
-    margin: 0 auto 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 4px;
-  }
-  .cal-header h2 {
-    margin: 0;
-    font-size: 20px;
-    background: linear-gradient(90deg, #6dd5ff, #a78bfa);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .cal-close-btn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.2);
-    background: rgba(255,255,255,.08);
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  .cal-step-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #7ee8fa;
-    text-align: center;
-    margin: 4px 0 12px;
-  }
-  .cal-desc {
-    font-size: 13.5px;
-    color: #d0d0e8;
-    line-height: 2;
-    text-align: center;
-  }
-  .cal-desc b { color: #f0abfc; }
-  .cal-tips {
-    background: rgba(251,191,36,.08);
-    border: 1px solid rgba(251,191,36,.3);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 12.5px;
-    color: #fde68a;
-    line-height: 1.9;
-    margin-top: 14px;
-  }
-  .cal-tips .tip-title {
-    font-weight: 700;
-    color: #fbbf24;
-    margin-bottom: 6px;
-  }
-  .infinity-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0;
-    margin: 14px 0;
-  }
-  .infinity-svg {
-    width: 220px;
-    height: 120px;
-    filter: drop-shadow(0 0 12px rgba(109,213,255,.6));
-  }
-  .infinity-path {
-    fill: none;
-    stroke: rgba(109,213,255,.3);
-    stroke-width: 3;
-    stroke-linecap: round;
-  }
-  .infinity-dot {
-    fill: #6dd5ff;
-    filter: drop-shadow(0 0 6px #6dd5ff);
-  }
-  .infinity-trail {
-    fill: none;
-    stroke: url(#gradient);
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-dasharray: 400;
-    stroke-dashoffset: 0;
-    animation: drawTrail 3s linear infinite;
-  }
-  @keyframes drawTrail {
-    0%   { stroke-dashoffset: 400; }
-    50%  { stroke-dashoffset: 0;   }
-    100% { stroke-dashoffset: -400; }
-  }
-  .cal-progress-wrap { margin: 20px 0 12px; }
-  .cal-progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #a0a0c8;
-    margin-bottom: 8px;
-  }
-  .cal-progress-bar {
-    height: 12px;
-    background: rgba(255,255,255,.08);
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid rgba(255,255,255,.1);
-  }
-  .cal-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
-    background-size: 200% 100%;
-    border-radius: 6px;
-    transition: width .25s ease, background-position .25s ease;
-    background-position: 100% 0;
-  }
-  .cal-progress-pct {
-    text-align: center;
-    margin-top: 8px;
-    font-size: 22px;
-    font-weight: 900;
-    color: #7ee8fa;
-  }
-  .cal-quality {
-    text-align: center;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    margin: 14px 0;
-    transition: all .3s;
-  }
-  .cal-quality.bad    { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.4); color: #fca5a5; }
-  .cal-quality.medium { background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.4); color: #fcd34d; }
-  .cal-quality.good   { background: rgba(16,185,129,.15); border: 1px solid rgba(16,185,129,.4); color: #6ee7b7; }
-  .cal-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin: 14px 0;
-  }
-  .cal-stat {
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 10px;
-    padding: 10px 6px;
-    text-align: center;
-  }
-  .cal-stat .lbl {
-    font-size: 11px;
-    color: #8f8fb8;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .cal-stat .val {
-    font-size: 14px;
-    font-weight: 700;
-    color: #7ee8fa;
-  }
-  .cal-hint {
-    text-align: center;
-    font-size: 13px;
-    color: #a0a0c8;
-    margin: 12px 0;
-    min-height: 20px;
-  }
-  .cal-success-anim {
-    text-align: center;
-    font-size: 60px;
-    animation: bounceScale .6s ease;
-  }
-  @keyframes bounceScale {
-    0%   { transform: scale(0); }
-    50%  { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
+  /* Calibration */
+  #calibrationPage { display:none; position:fixed; inset:0; background:linear-gradient(160deg,#0f0c29,#302b63,#24243e); z-index:600; overflow-y:auto; padding:14px 14px 40px; }
+  .cal-header { max-width:520px; margin:0 auto 14px; display:flex; align-items:center; justify-content:space-between; padding:12px 4px; }
+  .cal-header h2 { margin:0; font-size:20px; background:linear-gradient(90deg,#6dd5ff,#a78bfa); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .cal-close-btn { width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:20px; cursor:pointer; }
+  .cal-step-title { font-size:15px; font-weight:700; color:#7ee8fa; text-align:center; margin:4px 0 12px; }
+  .cal-desc { font-size:13.5px; color:#d0d0e8; line-height:2; text-align:center; }
+  .cal-desc b { color:#f0abfc; }
+  .cal-tips { background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.3); border-radius:12px; padding:12px 16px; font-size:12.5px; color:#fde68a; line-height:1.9; margin-top:14px; }
+  .cal-tips .tip-title { font-weight:700; color:#fbbf24; margin-bottom:6px; }
+  .infinity-wrap { display:flex; justify-content:center; align-items:center; padding:20px 0; margin:14px 0; }
+  .infinity-svg { width:220px; height:120px; filter:drop-shadow(0 0 12px rgba(109,213,255,.6)); }
+  .infinity-path { fill:none; stroke:rgba(109,213,255,.3); stroke-width:3; stroke-linecap:round; }
+  .infinity-dot { fill:#6dd5ff; filter:drop-shadow(0 0 6px #6dd5ff); }
+  .infinity-trail { fill:none; stroke:url(#gradient); stroke-width:4; stroke-linecap:round; stroke-dasharray:400; stroke-dashoffset:0; animation:drawTrail 3s linear infinite; }
+  @keyframes drawTrail { 0%{stroke-dashoffset:400;} 50%{stroke-dashoffset:0;} 100%{stroke-dashoffset:-400;} }
+  .cal-progress-wrap { margin:20px 0 12px; }
+  .cal-progress-label { display:flex; justify-content:space-between; font-size:12px; color:#a0a0c8; margin-bottom:8px; }
+  .cal-progress-bar { height:12px; background:rgba(255,255,255,.08); border-radius:6px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,.1); }
+  .cal-progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981); background-size:200% 100%; border-radius:6px; transition:width .25s ease,background-position .25s ease; background-position:100% 0; }
+  .cal-progress-pct { text-align:center; margin-top:8px; font-size:22px; font-weight:900; color:#7ee8fa; }
+  .cal-quality { text-align:center; padding:14px; border-radius:12px; font-size:14px; font-weight:700; margin:14px 0; transition:all .3s; }
+  .cal-quality.bad    { background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.4); color:#fca5a5; }
+  .cal-quality.medium { background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.4); color:#fcd34d; }
+  .cal-quality.good   { background:rgba(16,185,129,.15); border:1px solid rgba(16,185,129,.4); color:#6ee7b7; }
+  .cal-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:14px 0; }
+  .cal-stat { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:10px 6px; text-align:center; }
+  .cal-stat .lbl { font-size:11px; color:#8f8fb8; display:block; margin-bottom:4px; }
+  .cal-stat .val { font-size:14px; font-weight:700; color:#7ee8fa; }
+  .cal-hint { text-align:center; font-size:13px; color:#a0a0c8; margin:12px 0; min-height:20px; }
+  .cal-success-anim { text-align:center; font-size:60px; animation:bounceScale .6s ease; }
+  @keyframes bounceScale { 0%{transform:scale(0);} 50%{transform:scale(1.2);} 100%{transform:scale(1);} }
 
   /* Prediction page */
-  #predictionPage {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
-    z-index: 500;
-    overflow-y: auto;
-    padding: 14px 14px 40px;
-  }
-  .pred-header {
-    max-width: 520px;
-    margin: 0 auto 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 4px;
-  }
-  .pred-header h2 {
-    margin: 0;
-    font-size: 20px;
-    background: linear-gradient(90deg, #a78bfa, #f472b6);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .pred-close-btn {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.2);
-    background: rgba(255,255,255,.08);
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  .pred-progress {
-    max-width: 520px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    text-align: center;
-  }
-  .pred-progress-bar {
-    height: 6px;
-    background: rgba(255,255,255,.1);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 12px;
-  }
-  .pred-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #ec4899);
-    width: 0%;
-    transition: width 0.2s;
-  }
-  .pred-summary {
-    max-width: 520px;
-    margin: 14px auto;
-    padding: 14px 18px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(139,92,246,.15), rgba(236,72,153,.15));
-    border: 1px solid rgba(139,92,246,.4);
-    font-size: 13px;
-    line-height: 2;
-  }
-  .pred-summary b { color: #f0abfc; }
-  .pred-list {
-    max-width: 520px;
-    margin: 14px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .pred-row {
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .pred-row-header {
-    padding: 10px 14px;
-    background: linear-gradient(90deg, rgba(139,92,246,.25), rgba(236,72,153,.15));
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13.5px;
-  }
-  .pred-row-num {
-    background: rgba(0,0,0,.3);
-    color: #d8b4fe;
-    min-width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 0 6px;
-  }
-  .pred-row-name {
-    flex: 1;
-    font-weight: 700;
-    color: #f0f0f5;
-    font-size: 13.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
-  }
-  .pred-row-body {
-    padding: 10px 14px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 14px;
-    font-size: 12.5px;
-  }
-  .pred-row-body .cell {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    align-items: center;
-  }
-  .pred-row-body .cell .lbl {
-    color: #8f8fb8;
-    text-align: right;
-  }
-  .pred-row-body .cell .val {
-    color: #f0f0f5;
-    font-weight: 600;
-    text-align: center;
-  }
-  .pred-row-body .cell-full { grid-column: 1 / -1; }
-  .pred-empty {
-    max-width: 520px;
-    margin: 30px auto;
-    padding: 30px 20px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.04);
-    border: 1px dashed rgba(255,255,255,.2);
-    text-align: center;
-    color: #a0a0c8;
-    font-size: 14px;
-  }
+  #predictionPage { display:none; position:fixed; inset:0; background:linear-gradient(160deg,#0f0c29,#302b63,#24243e); z-index:500; overflow-y:auto; padding:14px 14px 40px; }
+  .pred-header { max-width:520px; margin:0 auto 14px; display:flex; align-items:center; justify-content:space-between; padding:12px 4px; }
+  .pred-header h2 { margin:0; font-size:20px; background:linear-gradient(90deg,#a78bfa,#f472b6); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .pred-close-btn { width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:20px; cursor:pointer; }
+  .pred-progress { max-width:520px; margin:20px auto; padding:20px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); text-align:center; }
+  .pred-progress-bar { height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden; margin-top:12px; }
+  .pred-progress-fill { height:100%; background:linear-gradient(90deg,#8b5cf6,#ec4899); width:0%; transition:width 0.2s; }
+  .pred-summary { max-width:520px; margin:14px auto; padding:14px 18px; border-radius:14px; background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(236,72,153,.15)); border:1px solid rgba(139,92,246,.4); font-size:13px; line-height:2; }
+  .pred-summary b { color:#f0abfc; }
+  .pred-list { max-width:520px; margin:14px auto; display:flex; flex-direction:column; gap:8px; }
+  .pred-row { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden; }
+  .pred-row-header { padding:10px 14px; background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(236,72,153,.15)); display:flex; align-items:center; gap:10px; font-size:13.5px; }
+  .pred-row-num { background:rgba(0,0,0,.3); color:#d8b4fe; min-width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; padding:0 6px; }
+  .pred-row-name { flex:1; font-weight:700; color:#f0f0f5; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
+  .pred-row-body { padding:10px 14px; display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; font-size:12.5px; }
+  .pred-row-body .cell { display:grid; grid-template-columns:1fr 1fr; gap:6px; align-items:center; }
+  .pred-row-body .cell .lbl { color:#8f8fb8; text-align:right; }
+  .pred-row-body .cell .val { color:#f0f0f5; font-weight:600; text-align:center; }
+  .pred-row-body .cell-full { grid-column:1 / -1; }
+  .pred-empty { max-width:520px; margin:30px auto; padding:30px 20px; border-radius:14px; background:rgba(255,255,255,.04); border:1px dashed rgba(255,255,255,.2); text-align:center; color:#a0a0c8; font-size:14px; }
   #predMap { max-width:520px; height:340px; margin:14px auto; border-radius:14px; }
 
-  /* =============================================== */
-  /*              LIVE SKY PAGE STYLES              */
-  /* =============================================== */
+  /* ==================== LIVE SKY PAGE ==================== */
   #liveSkyPage {
     display: none;
     position: fixed;
@@ -568,253 +291,6 @@
     cursor: pointer;
   }
 
-  .live-stats {
-    max-width: 520px;
-    margin: 12px auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .live-stat-card {
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    text-align: center;
-    transition: all .3s;
-  }
-  .live-stat-card.active-sat {
-    background: rgba(59,130,246,.15);
-    border-color: rgba(59,130,246,.5);
-  }
-  .live-stat-card.active-ac {
-    background: rgba(16,185,129,.15);
-    border-color: rgba(16,185,129,.5);
-  }
-  .live-stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
-  .live-stat-card .num {
-    font-size: 22px;
-    font-weight: 900;
-    color: #7ee8fa;
-    display: block;
-  }
-  .live-stat-card .lbl {
-    font-size: 11px;
-    color: #a0a0c8;
-    display: block;
-    margin-top: 2px;
-  }
-
-  .live-toggle-row {
-    max-width: 520px;
-    margin: 12px auto;
-    display: flex;
-    gap: 8px;
-  }
-  .live-toggle {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
-    border: 2px solid rgba(255,255,255,.1);
-    text-align: center;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    transition: all .2s;
-    user-select: none;
-  }
-  .live-toggle.sat-on {
-    background: rgba(59,130,246,.2);
-    border-color: #3b82f6;
-    color: #93c5fd;
-  }
-  .live-toggle.ac-on {
-    background: rgba(16,185,129,.2);
-    border-color: #10b981;
-    color: #6ee7b7;
-  }
-  .live-toggle .state {
-    font-size: 20px;
-    display: block;
-    margin-bottom: 2px;
-  }
-
-  .live-view-tabs {
-    max-width: 520px;
-    margin: 12px auto;
-    display: flex;
-    gap: 8px;
-  }
-  .live-tab {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    text-align: center;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all .2s;
-  }
-  .live-tab.active {
-    background: linear-gradient(135deg, #06b6d4, #3b82f6);
-    border-color: #06b6d4;
-    color: #fff;
-    font-weight: 700;
-  }
-
-  .live-filters {
-    max-width: 520px;
-    margin: 12px auto;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    font-size: 12px;
-  }
-  .live-filters label {
-    display: block;
-    color: #a0a0c8;
-    margin-bottom: 4px;
-    font-size: 11.5px;
-  }
-  .live-filters select {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-
-  .live-view-wrap {
-    max-width: 520px;
-    margin: 14px auto;
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    background: radial-gradient(circle at center, rgba(15,52,96,.6) 0%, rgba(15,23,42,.95) 70%);
-    border: 1px solid rgba(109,213,255,.2);
-    aspect-ratio: 1;
-    display: none;
-  }
-  .live-view-wrap.active { display: block; }
-
-  #liveMapView {
-    width: 100%;
-    height: 480px;
-    border-radius: 16px;
-    display: none;
-    margin: 14px auto;
-    max-width: 520px;
-  }
-  #liveMapView.active { display: block; }
-
-  #liveSkySvg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .live-sky-label {
-    position: absolute;
-    font-size: 11px;
-    color: #8f8fb8;
-    font-weight: 700;
-    pointer-events: none;
-  }
-
-  .live-legend {
-    max-width: 520px;
-    margin: 12px auto;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    font-size: 11.5px;
-    color: #c8c8e8;
-  }
-  .live-legend .item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .live-legend .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .live-target-list {
-    max-width: 520px;
-    margin: 14px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .live-target {
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 10px;
-    align-items: center;
-    font-size: 13px;
-    transition: border-color .2s;
-    cursor: pointer;
-  }
-  .live-target:hover { border-color: #06b6d4; }
-  .live-target .t-icon {
-    font-size: 22px;
-    width: 34px;
-    text-align: center;
-  }
-  .live-target .t-info {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    overflow: hidden;
-  }
-  .live-target .t-name {
-    font-weight: 700;
-    color: #f0f0f5;
-    font-size: 13.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .live-target .t-detail {
-    font-size: 11.5px;
-    color: #a0a0c8;
-  }
-  .live-target .t-az {
-    font-family: monospace;
-    font-size: 12px;
-    color: #7ee8fa;
-    font-weight: 700;
-    text-align: left;
-  }
-
-  .live-empty {
-    max-width: 520px;
-    margin: 20px auto;
-    padding: 30px 20px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.04);
-    border: 1px dashed rgba(255,255,255,.2);
-    text-align: center;
-    color: #a0a0c8;
-    font-size: 14px;
-  }
-
   .live-update-indicator {
     max-width: 520px;
     margin: 0 auto;
@@ -838,6 +314,154 @@
   @keyframes pulseLive {
     0%, 100% { opacity: 1; transform: scale(1); }
     50%      { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* Single satellite stat card */
+  .live-stats-single {
+    max-width: 520px;
+    margin: 12px auto;
+  }
+  .live-stat-card {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    text-align: center;
+    transition: all .3s;
+  }
+  .live-stat-card.active-sat {
+    background: rgba(59,130,246,.15);
+    border-color: rgba(59,130,246,.5);
+  }
+  .live-stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .live-stat-card .num {
+    font-size: 26px;
+    font-weight: 900;
+    color: #7ee8fa;
+    display: block;
+  }
+  .live-stat-card .lbl {
+    font-size: 12px;
+    color: #a0a0c8;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* Time slider */
+  .live-time-slider-wrap {
+    max-width: 520px;
+    margin: 14px auto;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .live-time-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #d0d0e8;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .live-time-label span:last-child {
+    color: #7ee8fa;
+    font-family: monospace;
+  }
+  #liveTimeSlider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,.1);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    direction: ltr;
+  }
+  #liveTimeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(6,182,212,.8);
+    cursor: pointer;
+  }
+  #liveTimeSlider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(6,182,212,.8);
+    cursor: pointer;
+  }
+  .live-time-marks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: #6b7280;
+    margin-top: 8px;
+    direction: ltr;
+  }
+
+  #liveMapView {
+    width: 100%;
+    max-width: 520px;
+    height: 480px;
+    border-radius: 16px;
+    margin: 14px auto;
+    border: 1px solid rgba(6,182,212,.3);
+  }
+
+  /* Map legend */
+  .live-map-legend {
+    max-width: 520px;
+    margin: 12px auto;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    font-size: 12.5px;
+    color: #c8c8e8;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-icon {
+    font-size: 18px;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,.4));
+  }
+
+  /* Guidance */
+  .live-guidance {
+    max-width: 520px;
+    margin: 14px auto;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(6,182,212,.08), rgba(59,130,246,.08));
+    border: 1px solid rgba(6,182,212,.25);
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: #d0d0e8;
+  }
+  .live-guidance h4 {
+    margin: 0 0 8px;
+    color: #7ee8fa;
+    font-size: 14px;
+  }
+  .live-guidance p {
+    margin: 0;
+    padding-right: 0;
   }
 </style>
 </head>
@@ -1125,118 +749,60 @@
     </div>
   </div>
 
-  <!-- Live view (shown after started) -->
+  <!-- Live view -->
   <div id="liveViewPanel" style="display:none;">
     <div class="live-update-indicator">
       <span><span class="live-dot-pulse"></span> در حال مشاهده زنده</span>
       <span id="liveLastUpdate">آخرین به‌روزرسانی: —</span>
     </div>
 
-    <div class="live-stats">
-      <div class="live-stat-card active-sat" id="liveStatSatCard">
+    <div class="live-stats-single">
+      <div class="live-stat-card active-sat">
         <span class="icon">🛰️</span>
         <span class="num" id="liveStatSat">0</span>
         <span class="lbl">ماهواره در دید</span>
       </div>
-      <div class="live-stat-card active-ac" id="liveStatAcCard">
-        <span class="icon">✈️</span>
-        <span class="num" id="liveStatAc">0</span>
-        <span class="lbl">هواپیما در دید</span>
-      </div>
     </div>
 
-    <div class="live-toggle-row">
-      <div class="live-toggle sat-on" id="toggleSatBtn" onclick="toggleLiveSat()">
-        <span class="state">🛰️</span>
-        ماهواره‌ها: <span id="toggleSatState">روشن</span>
+    <div class="live-time-slider-wrap">
+      <div class="live-time-label">
+        <span>🕐 زمان رصد:</span>
+        <span id="liveTimeDisplay">الان</span>
       </div>
-      <div class="live-toggle ac-on" id="toggleAcBtn" onclick="toggleLiveAc()">
-        <span class="state">✈️</span>
-        هواپیماها: <span id="toggleAcState">روشن</span>
+      <input type="range" id="liveTimeSlider" min="0" max="60" value="0" step="1" oninput="onLiveTimeChange(this.value)">
+      <div class="live-time-marks">
+        <span>۶۰ دقیقه قبل</span>
+        <span>الان</span>
       </div>
-    </div>
-
-    <div class="live-view-tabs">
-      <div class="live-tab active" id="tabPolar" onclick="switchLiveTab('polar')">🌐 نمای قطبی</div>
-      <div class="live-tab" id="tabMap" onclick="switchLiveTab('map')">🗺️ نمای نقشه</div>
-    </div>
-
-    <div class="live-filters">
-      <div>
-        <label>حداقل ارتفاع از افق</label>
-        <select id="liveMinElev" onchange="updateLiveFilters()">
-          <option value="5">۵ درجه</option>
-          <option value="10" selected>۱۰ درجه</option>
-          <option value="20">۲۰ درجه</option>
-          <option value="30">۳۰ درجه</option>
-        </select>
-      </div>
-      <div>
-        <label>شعاع نمایش هواپیما</label>
-        <select id="liveRadius" onchange="updateLiveFilters()">
-          <option value="50">۵۰ کیلومتر</option>
-          <option value="100" selected>۱۰۰ کیلومتر</option>
-          <option value="200">۲۰۰ کیلومتر</option>
-          <option value="500">۵۰۰ کیلومتر</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="live-view-wrap active" id="livePolarView">
-      <svg id="liveSkySvg" viewBox="0 0 500 500" preserveAspectRatio="xMidYMid meet">
-        <!-- Circle backgrounds -->
-        <circle cx="250" cy="250" r="230" fill="none" stroke="rgba(109,213,255,.15)" stroke-width="1"/>
-        <circle cx="250" cy="250" r="180" fill="none" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
-        <circle cx="250" cy="250" r="130" fill="none" stroke="rgba(109,213,255,.1)" stroke-width="1"/>
-        <circle cx="250" cy="250" r="80" fill="none" stroke="rgba(109,213,255,.08)" stroke-width="1"/>
-        <circle cx="250" cy="250" r="30" fill="none" stroke="rgba(109,213,255,.06)" stroke-width="1"/>
-
-        <!-- Cross lines -->
-        <line x1="250" y1="20" x2="250" y2="480" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
-        <line x1="20" y1="250" x2="480" y2="250" stroke="rgba(109,213,255,.12)" stroke-width="1"/>
-
-        <!-- Compass labels -->
-        <text x="250" y="15" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">شمال</text>
-        <text x="250" y="495" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">جنوب</text>
-        <text x="490" y="255" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">شرق</text>
-        <text x="10" y="255" fill="#7ee8fa" font-size="14" font-weight="700" text-anchor="middle">غرب</text>
-
-        <!-- Elevation labels -->
-        <text x="250" y="200" fill="#8f8fb8" font-size="10" text-anchor="middle">۶۰°</text>
-        <text x="250" y="150" fill="#8f8fb8" font-size="10" text-anchor="middle">۴۵°</text>
-        <text x="250" y="100" fill="#8f8fb8" font-size="10" text-anchor="middle">۳۰°</text>
-        <text x="250" y="50"  fill="#8f8fb8" font-size="10" text-anchor="middle">۱۵°</text>
-
-        <!-- Observer -->
-        <circle cx="250" cy="250" r="8" fill="#3b82f6" stroke="#fff" stroke-width="2" style="filter:drop-shadow(0 0 8px #3b82f6);"/>
-        <circle cx="250" cy="250" r="14" fill="none" stroke="rgba(59,130,246,.4)" stroke-width="1.5">
-          <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0;1" dur="2s" repeatCount="indefinite"/>
-        </circle>
-
-        <!-- Targets group -->
-        <g id="liveSkyTargets"></g>
-      </svg>
     </div>
 
     <div id="liveMapView"></div>
 
-    <div class="live-legend">
-      <span class="item"><span class="dot" style="background:#3b82f6;"></span> شما</span>
-      <span class="item"><span class="dot" style="background:#fbbf24;"></span> ISS</span>
-      <span class="item"><span class="dot" style="background:#93c5fd;"></span> ماهواره روشن</span>
-      <span class="item"><span class="dot" style="background:#60a5fa;"></span> ماهواره</span>
-      <span class="item"><span class="dot" style="background:#10b981;"></span> هواپیما</span>
+    <div class="live-map-legend">
+      <div class="legend-item">
+        <span class="legend-icon">🛰️</span>
+        <span>ماهواره</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">✈️</span>
+        <span>هواپیما</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-icon">👁️</span>
+        <span>موقعیت شما</span>
+      </div>
     </div>
 
-    <div class="card" style="text-align:center;">
-      <button type="button" class="btn btn-danger" onclick="stopLiveSky()">⏹ توقف رصد زنده</button>
+    <div class="live-guidance">
+      <h4>📋 راهنمای آسمان زنده</h4>
+      <p>
+        • نقشه به صورت زنده ماهواره‌ها و هواپیماهای در حال عبور از بالای موقعیت شما را نشان می‌دهد.<br>
+        • برای دیدن وضعیت آسمان در گذشته، نوار زمان را به سمت چپ بکشید (تا ۶۰ دقیقه قبل).<br>
+        • موقعیت ماهواره‌ها در زمان گذشته دقیق محاسبه می‌شود.<br>
+        • هواپیماها در زمان گذشته به‌صورت تقریبی نمایش داده می‌شوند.<br>
+        • برای مشاهده‌ی جزئیات هر شیء، روی نشانگر آن ضربه بزنید.
+      </p>
     </div>
-
-    <div style="max-width:520px;margin:14px auto 4px;color:#9fd0ff;font-weight:700;font-size:14px;">
-      🎯 اهداف در دید (مرتب‌شده):
-    </div>
-    <div class="live-target-list" id="liveTargetList"></div>
   </div>
 </div>
 
@@ -1387,7 +953,7 @@
     </div>
     <div class="guide-section">
       <h4>۲. آسمان زنده</h4>
-      <p>با دکمه «آسمان زنده» می‌توانید در لحظه ببینید چه ماهواره‌ها و هواپیماهایی در آسمان شما در حال حرکت هستند. این نما به دو صورت قطبی (شبیه رادار) و نقشه قابل مشاهده است.</p>
+      <p>با دکمه «آسمان زنده» می‌توانید در لحظه ببینید چه ماهواره‌ها و هواپیماهایی در آسمان شما در حال حرکت هستند. نوار زمان امکان مشاهده وضعیت آسمان در گذشته را نیز فراهم می‌کند.</p>
     </div>
     <div class="guide-section">
       <h4>۳. پیش‌بینی عبور ماهواره</h4>
@@ -1760,7 +1326,7 @@ var CALIB_SUCCESS_THRESHOLD = 75;
 
 function startCompassFlow(){
   if(!('DeviceOrientationEvent' in window)){
-    document.getElementById('compassStatus').innerText = "گوشی شما از قطب‌نما پشتیبانی نمی‌کند. لطفاً از لیست کشویی استفاده کنید.";
+    document.getElementById('compassStatus').innerText = "گوشی شما از قطب‌نما پشتیبانی نمی‌کند.";
     return;
   }
   document.getElementById('calibrationPage').style.display = 'block';
@@ -1772,7 +1338,7 @@ function startCompassFlow(){
 function cancelCalibration(){
   stopCalibrationListener();
   document.getElementById('calibrationPage').style.display = 'none';
-  document.getElementById('compassStatus').innerText = "کالیبراسیون لغو شد. می‌توانید از لیست کشویی استفاده کنید.";
+  document.getElementById('compassStatus').innerText = "کالیبراسیون لغو شد.";
   window.scrollTo(0,0);
 }
 function retryCalibration(){
@@ -1860,11 +1426,11 @@ function updateCalibUI(progress){
   var hint = document.getElementById('calHint');
   if(pct < 40){
     quality.className = 'cal-quality bad';
-    quality.innerText = '❌ حرکت بده — گوشی هنوز کالیبره نشده';
+    quality.innerText = '❌ حرکت بده';
     hint.innerText = 'گوشی رو به شکل عدد ۸ حرکت بده...';
   } else if(pct < 75){
     quality.className = 'cal-quality medium';
-    quality.innerText = '⚠️ تقریباً آماده — ادامه بده';
+    quality.innerText = '⚠️ تقریباً آماده';
     hint.innerText = 'عالیه! ادامه بده...';
   } else {
     quality.className = 'cal-quality good';
@@ -1888,7 +1454,7 @@ function showCalibrationFailed(msg){
 function finishCalibrationSuccess(){
   stopCalibrationListener();
   document.getElementById('calibrationPage').style.display = 'none';
-  document.getElementById('compassStatus').innerText = "کالیبراسیون موفق! حالا گوشی رو به سمت شیء بگیر.";
+  document.getElementById('compassStatus').innerText = "کالیبراسیون موفق!";
   enableCompass();
   window.scrollTo(0,0);
 }
@@ -2034,7 +1600,7 @@ async function fetchJsonWithProxies(url, timeoutMs){
 }
 
 /* ========================================================================
-   TLE LOADING
+   TLE
 ======================================================================== */
 var cachedTleText = null;
 async function loadTleData(){
@@ -2082,10 +1648,10 @@ async function fetchAdsbLol(lat, lon, radiusNm){
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
 async function fetchAllAircraft(lat, lon, radiusKm){
-  var radiusNm = Math.min(250, radiusKm * 0.54);
+  var radiusNm = Math.min(250, Math.max(10, Math.round(radiusKm * 0.54)));
   var sources=[
-    { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, Math.round(radiusNm)); } },
-    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, Math.round(radiusNm)); } }
+    { name:'adsb.fi',  fn:function(){ return fetchAdsbFi(lat, lon, radiusNm); } },
+    { name:'adsb.lol', fn:function(){ return fetchAdsbLol(lat, lon, radiusNm); } }
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
@@ -2504,25 +2070,26 @@ function buildObjCard(icon, name, rows, confidence){
 }
 
 /* ========================================================================
-   LIVE SKY PAGE
+   LIVE SKY PAGE — Simplified
 ======================================================================== */
 var liveLocMode='auto';
 var liveCoordFormat=null;
 var livePickerMapObj=null, livePickerMarker=null;
 var liveMapObj=null;
 var liveActive = false;
-var liveSatEnabled = true;
-var liveAcEnabled = true;
-var liveMinElev = 10;
-var liveRadiusKm = 100;
-var liveCurrentTab = 'polar';
 var liveSatTimer = null;
 var liveAcTimer = null;
-var liveRecalcTimer = null;
-var liveSatRecords = [];  // {satrec, name, type, country}
-var liveSatCurrent = [];  // resolved positions
-var liveAcCurrent = [];
-var liveLastAcFetch = 0;
+var liveSatRecords = [];       // parsed TLE records
+var liveSatCurrent = [];       // resolved sat positions at display time
+var liveAcCurrent = [];        // current aircraft (used as base for extrapolation)
+var liveTimeOffsetMin = 0;     // 0 = now, up to 60 min ago
+var liveLat = 0, liveLon = 0;
+var liveCurrentDisplayTime = null;
+
+// Fixed filter values
+var LIVE_MIN_ELEV = 10;
+var LIVE_AC_RADIUS_KM = 150;
+var LIVE_MAX_SAT_MAG = 6.5;
 
 function openLiveSky(){
   document.getElementById('formBox').style.display='none';
@@ -2534,26 +2101,17 @@ function openLiveSky(){
   window.scrollTo(0,0);
 }
 function closeLiveSky(){
-  stopLiveSky(true);
+  stopLive();
   document.getElementById('liveSkyPage').style.display='none';
   document.getElementById('formBox').style.display='block';
   window.scrollTo(0,0);
 }
-function stopLiveSky(silent){
+function stopLive(){
   liveActive = false;
   if(liveSatTimer){ clearInterval(liveSatTimer); liveSatTimer=null; }
   if(liveAcTimer){ clearInterval(liveAcTimer); liveAcTimer=null; }
-  if(liveRecalcTimer){ clearInterval(liveRecalcTimer); liveRecalcTimer=null; }
-  if(liveMapObj){ liveMapObj.remove(); liveMapObj=null; }
-  if(!silent){
-    document.getElementById('liveViewPanel').style.display='none';
-    document.getElementById('liveSetupPanel').style.display='block';
-    document.getElementById('liveSkyTargets').innerHTML='';
-    document.getElementById('liveTargetList').innerHTML='';
-    window.scrollTo(0,0);
-  }
+  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
 }
-
 function setLiveLocationMode(mode){
   liveLocMode=mode;
   document.getElementById('liveModeAutoCard').classList.toggle('active', mode==='auto');
@@ -2649,9 +2207,9 @@ async function startLiveSky(){
   liveClearError();
   var coords = getLiveLocationCoords();
   if(!coords){ liveShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
-  var lat = coords[0], lon = coords[1];
+  liveLat = coords[0];
+  liveLon = coords[1];
 
-  // Load TLE data if satellites enabled
   try{
     var tleText = await loadTleData();
     var lines = tleText.trim().split("\n");
@@ -2660,20 +2218,16 @@ async function startLiveSky(){
       try{
         var name = lines[i].trim();
         var un = name.toUpperCase();
-        // Filters: skip debris, rocket bodies, certain non-visual
         if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) continue;
         var satrec = satellite.twoline2satrec(lines[i+1], lines[i+2]);
-        // Check inclination allows pass over this lat
         var incl = satrec.inclo * 180 / Math.PI;
         var maxLat = Math.min(incl, 180 - incl);
-        if(Math.abs(lat) > maxLat + 5) continue;
-        // Skip very high orbits
+        if(Math.abs(liveLat) > maxLat + 5) continue;
         var period = 2 * Math.PI / satrec.no;
         var sma = Math.pow(398600.4418 * Math.pow(period*60, 2) / (4*Math.PI*Math.PI), 1/3);
         var alt = sma - 6371;
         if(alt > 2000 || alt < 150) continue;
-        var info = guessSatInfo(name);
-        liveSatRecords.push({ satrec: satrec, name: name, type: info.type, country: info.country });
+        liveSatRecords.push({ satrec: satrec, name: name });
       }catch(e){}
     }
   }catch(e){
@@ -2681,328 +2235,197 @@ async function startLiveSky(){
     return;
   }
 
-  // Switch UI
   document.getElementById('liveSetupPanel').style.display='none';
   document.getElementById('liveViewPanel').style.display='block';
   liveActive = true;
-  liveLastAcFetch = 0;
+  liveTimeOffsetMin = 0;
+  document.getElementById('liveTimeSlider').value = 0;
+  updateLiveTimeDisplay();
 
-  // Initialize live map view
-  initLiveMap(lat, lon);
+  // Init map
+  initLiveMap(liveLat, liveLon);
 
-  // Initial computations
-  recomputeLiveSatellites(lat, lon);
-  updateLiveAircraft(lat, lon);
+  // Initial data
+  recomputeLiveSatellites(0);
+  updateLiveAircraft();
 
-  // Setup timers
-  // Satellites: every 1 second
+  // Satellite recalculation every 1 second (only when slider = now)
   liveSatTimer = setInterval(function(){
     if(!liveActive) return;
-    recomputeLiveSatellites(lat, lon);
+    if(liveTimeOffsetMin === 0){
+      recomputeLiveSatellites(0);
+    }
+    updateMarkerLayer();
+    document.getElementById('liveLastUpdate').innerText = 'آخرین به‌روزرسانی: ' + formatTimeHMS(new Date());
   }, 1000);
 
-  // Aircraft: every 10 seconds
+  // Aircraft fetch every 10 seconds
   liveAcTimer = setInterval(function(){
     if(!liveActive) return;
-    updateLiveAircraft(lat, lon);
+    if(liveTimeOffsetMin === 0){
+      updateLiveAircraft();
+    }
   }, 10000);
-
-  // Rerender sky view every 1 second
-  liveRecalcTimer = setInterval(function(){
-    if(!liveActive) return;
-    renderLiveSkyView();
-  }, 1000);
 
   window.scrollTo(0,0);
 }
 
 function initLiveMap(lat, lon){
-  if(liveMapObj){ liveMapObj.remove(); liveMapObj=null; }
+  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
   liveMapObj = L.map('liveMapView').setView([lat, lon], 6);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(liveMapObj);
-  var obsIcon = L.divIcon({html:'<div style="background:#3b82f6;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 0 12px #3b82f6;">👁️</div>', iconSize:[30,30], className:''});
+  var obsIcon = L.divIcon({
+    html:'<div style="font-size:26px;text-shadow:0 0 10px #3b82f6;">👁️</div>',
+    iconSize:[26,26],
+    iconAnchor:[13,13],
+    className:''
+  });
   L.marker([lat,lon], {icon: obsIcon}).addTo(liveMapObj).bindPopup('موقعیت شما');
 }
 
-function recomputeLiveSatellites(lat, lon){
-  var observerGd = {longitude: toRad(lon), latitude: toRad(lat), height: 0};
-  var now = new Date();
-  var sunAlt = sunAltitude(now, lat, lon);
-  var darkEnough = sunAlt <= -6;
-  var sunEci = sunEciKm(now);
-  var gmst = satellite.gstime(now);
+function recomputeLiveSatellites(offsetMin){
+  var offsetMs = -offsetMin * 60 * 1000;
+  var displayTime = new Date(Date.now() + offsetMs);
+  liveCurrentDisplayTime = displayTime;
+  var observerGd = {longitude: toRad(liveLon), latitude: toRad(liveLat), height: 0};
+  var sunEci = sunEciKm(displayTime);
+  var gmst = satellite.gstime(displayTime);
 
   var results = [];
   for(var i=0; i<liveSatRecords.length; i++){
     var rec = liveSatRecords[i];
     try{
-      var pv = satellite.propagate(rec.satrec, now);
+      var pv = satellite.propagate(rec.satrec, displayTime);
       if(!pv.position) continue;
       var ecf = satellite.eciToEcf(pv.position, gmst);
       var look = satellite.ecfToLookAngles(observerGd, ecf);
       var altDeg = toDeg(look.elevation);
-      var azDeg = toDeg(look.azimuth);
-      var rangeKm = look.rangeSat;
-      if(altDeg < 5) continue;
-      // Sunlight check
+      if(altDeg < LIVE_MIN_ELEV) continue;
       if(!isSunlit(pv.position, sunEci)) continue;
-      // Compute magnitude
+      var rangeKm = look.rangeSat;
       var mag = estimateSatMag(rangeKm, rec.name);
-      if(mag > 6.5) continue;
-      // Position on Earth
+      if(mag > LIVE_MAX_SAT_MAG) continue;
       var geo = satellite.eciToGeodetic(pv.position, gmst);
       results.push({
         name: rec.name,
-        type: rec.type,
-        country: rec.country,
-        alt: altDeg,
-        az: azDeg,
-        dist: rangeKm,
-        mag: mag,
         lat: toDeg(geo.latitude),
         lon: toDeg(geo.longitude),
-        isISS: rec.name.toUpperCase().indexOf('ISS') > -1 || rec.name.toUpperCase().indexOf('ZARYA') > -1
+        alt: altDeg,
+        az: toDeg(look.azimuth),
+        mag: mag,
+        dist: rangeKm
       });
     }catch(e){}
   }
-  // Sort by brightness (lower mag = brighter) then by altitude
-  results.sort(function(a,b){
-    if(Math.abs(a.mag - b.mag) > 1) return a.mag - b.mag;
-    return b.alt - a.alt;
-  });
   liveSatCurrent = results;
   document.getElementById('liveStatSat').innerText = results.length;
-  updateLiveMapSatMarkers();
 }
 
-async function updateLiveAircraft(lat, lon){
+async function updateLiveAircraft(){
   try{
-    var acData = await fetchAllAircraft(lat, lon, liveRadiusKm);
+    var acData = await fetchAllAircraft(liveLat, liveLon, LIVE_AC_RADIUS_KM);
     var list = acData.list;
     var results = [];
     for(var i=0;i<list.length;i++){
       var a = list[i];
       if(a.onGround) continue;
-      var be = bearingElevation(lat, lon, a.lat, a.lon, a.altM);
+      var be = bearingElevation(liveLat, liveLon, a.lat, a.lon, a.altM);
       if(be.elev < 1) continue;
-      if(be.dist/1000 > liveRadiusKm) continue;
+      if(be.dist/1000 > LIVE_AC_RADIUS_KM) continue;
       results.push({
         name: a.callsign || a.icao,
-        icao: a.icao,
-        country: a.country || 'نامشخص',
-        alt: a.altM,
-        speed: a.speedKmh,
-        heading: a.heading,
-        elev: be.elev,
-        az: be.bearing,
-        dist: be.dist,
-        lat: a.lat,
-        lon: a.lon
+        lat: a.lat, lon: a.lon,
+        altM: a.altM, speed: a.speedKmh, heading: a.heading,
+        elev: be.elev, az: be.bearing, dist: be.dist
       });
     }
-    results.sort(function(a,b){ return a.dist - b.dist; });
     liveAcCurrent = results;
-    document.getElementById('liveStatAc').innerText = results.length;
-    liveLastAcFetch = Date.now();
-    updateLiveMapAcMarkers();
   }catch(e){}
 }
 
-function updateLiveMapSatMarkers(){
+function extrapolateAircraftToTime(offsetMin){
+  // If offsetMin === 0, return as-is
+  if(offsetMin === 0) return liveAcCurrent.slice();
+  var secondsAgo = offsetMin * 60;
+  return liveAcCurrent.map(function(a){
+    if(!a.speed || a.speed < 10) return a;
+    if(a.heading == null) return a;
+    var distKm = a.speed * secondsAgo / 3600;   // how far it traveled in the past
+    var backBearing = (a.heading + 180) % 360;
+    var newPos = projectPoint(a.lat, a.lon, backBearing, distKm);
+    return Object.assign({}, a, { lat: newPos[0], lon: newPos[1] });
+  });
+}
+
+var liveSatLayer = null;
+var liveAcLayer = null;
+
+function updateMarkerLayer(){
   if(!liveMapObj) return;
-  if(!liveMapObj._satLayer){
-    liveMapObj._satLayer = L.layerGroup().addTo(liveMapObj);
-  }
-  liveMapObj._satLayer.clearLayers();
-  if(!liveSatEnabled) return;
+  if(!liveSatLayer) liveSatLayer = L.layerGroup().addTo(liveMapObj);
+  if(!liveAcLayer) liveAcLayer = L.layerGroup().addTo(liveMapObj);
+  liveSatLayer.clearLayers();
+  liveAcLayer.clearLayers();
+
+  // Satellites with 🛰️ emoji
   liveSatCurrent.forEach(function(s){
-    var color = s.isISS ? '#fbbf24' : (s.mag < 3 ? '#93c5fd' : '#60a5fa');
     var icon = L.divIcon({
-      html: '<div style="background:'+color+';width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 8px '+color+';"></div>',
-      iconSize: [14,14], className:''
+      html: '<div style="font-size:22px;text-shadow:0 0 6px rgba(59,130,246,.9);">🛰️</div>',
+      iconSize:[22,22],
+      iconAnchor:[11,11],
+      className: ''
     });
-    L.marker([s.lat, s.lon], {icon: icon}).addTo(liveMapObj._satLayer).bindPopup(
-      '<b>'+s.name+'</b><br>'+s.type+' - '+s.country+
+    L.marker([s.lat, s.lon], {icon: icon}).addTo(liveSatLayer).bindPopup(
+      '<b>'+s.name+'</b>'+
       '<br>ارتفاع از افق: '+s.alt.toFixed(1)+'°'+
       '<br>آزیموت: '+s.az.toFixed(0)+'°'+
       '<br>قدر: '+s.mag.toFixed(1)
     );
   });
-}
 
-function updateLiveMapAcMarkers(){
-  if(!liveMapObj) return;
-  if(!liveMapObj._acLayer){
-    liveMapObj._acLayer = L.layerGroup().addTo(liveMapObj);
-  }
-  liveMapObj._acLayer.clearLayers();
-  if(!liveAcEnabled) return;
-  liveAcCurrent.forEach(function(a){
+  // Aircraft with ✈️ emoji
+  var acList = extrapolateAircraftToTime(liveTimeOffsetMin);
+  acList.forEach(function(a){
     var icon = L.divIcon({
-      html: '<div style="background:#10b981;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 8px #10b981;"></div>',
-      iconSize: [12,12], className:''
+      html: '<div style="font-size:20px;text-shadow:0 0 6px rgba(16,185,129,.9);">✈️</div>',
+      iconSize:[20,20],
+      iconAnchor:[10,10],
+      className: ''
     });
-    L.marker([a.lat, a.lon], {icon: icon}).addTo(liveMapObj._acLayer).bindPopup(
-      '<b>'+a.name+'</b><br>'+a.country+
-      '<br>ارتفاع: '+a.alt+'m'+
-      '<br>سرعت: '+a.speed+' km/h'+
-      '<br>فاصله: '+(a.dist/1000).toFixed(1)+' km'
+    L.marker([a.lat, a.lon], {icon: icon}).addTo(liveAcLayer).bindPopup(
+      '<b>'+a.name+'</b>' +
+      (a.altM != null ? '<br>ارتفاع: '+a.altM+'m' : '') +
+      (a.speed != null ? '<br>سرعت: '+a.speed+' km/h' : '') +
+      (a.dist != null ? '<br>فاصله: '+(a.dist/1000).toFixed(1)+' km' : '')
     );
   });
 }
 
-function renderLiveSkyView(){
-  if(!liveActive) return;
-  var svg = document.getElementById('liveSkySvg');
-  var group = document.getElementById('liveSkyTargets');
-  var targets = [];
-
-  if(liveSatEnabled){
-    liveSatCurrent.forEach(function(s){
-      if(s.alt < liveMinElev) return;
-      targets.push({
-        kind: 'sat',
-        color: s.isISS ? '#fbbf24' : (s.mag < 3 ? '#93c5fd' : '#60a5fa'),
-        name: s.name,
-        alt: s.alt,
-        az: s.az,
-        mag: s.mag
-      });
-    });
-  }
-  if(liveAcEnabled){
-    liveAcCurrent.forEach(function(a){
-      if(a.elev < liveMinElev) return;
-      targets.push({
-        kind: 'ac',
-        color: '#10b981',
-        name: a.name,
-        alt: a.elev,
-        az: a.az,
-        heading: a.heading
-      });
-    });
-  }
-
-  // Update map
-  if(liveCurrentTab === 'map'){
-    updateLiveMapSatMarkers();
-    updateLiveMapAcMarkers();
-  }
-
-  // Update SVG polar view
-  if(liveCurrentTab === 'polar'){
-    // Radius 230px (outer). elevation 0° = radius 230, elevation 90° = radius 0
-    // r = 230 * (1 - alt/90)
-    var maxR = 230;
-    var cx = 250, cy = 250;
-    var html = '';
-    targets.forEach(function(t){
-      var r = maxR * (1 - t.alt / 90);
-      // azimuth 0° (North) = up (angle -90° in screen coords)
-      // screen angle = az - 90 (in degrees)
-      var screenAngleRad = toRad(t.az - 90);
-      var x = cx + r * Math.cos(screenAngleRad);
-      var y = cy + r * Math.sin(screenAngleRad);
-      // size based on magnitude or type
-      var size = t.kind === 'ac' ? 5 : (t.mag < 3 ? 5 : (t.mag < 5 ? 4 : 3));
-      html += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+size+'" fill="'+t.color+'" style="filter:drop-shadow(0 0 5px '+t.color+');"></circle>';
-    });
-    group.innerHTML = html;
-  }
-
-  // Update list (sorted by "attractiveness")
-  updateLiveTargetList(targets);
-
-  // Update timestamp
-  var now = new Date();
-  document.getElementById('liveLastUpdate').innerText = 'آخرین به‌روزرسانی: ' + formatTimeHMS(now);
-}
-
-function updateLiveTargetList(targets){
-  var container = document.getElementById('liveTargetList');
-  if(targets.length === 0){
-    container.innerHTML = '<div class="live-empty">🔭 در این لحظه هیچ هدف قابل مشاهده‌ای در دید شما نیست.</div>';
-    return;
-  }
-  // Sort: ISS first, then bright sats, then planes, then rest
-  targets.sort(function(a,b){
-    var scoreA = a.kind === 'sat' ? (a.name.indexOf('ISS') > -1 ? 100 : 0) + (10 - (a.mag || 5)) * 5 + a.alt / 10 : 30 + (a.alt / 10);
-    var scoreB = b.kind === 'sat' ? (b.name.indexOf('ISS') > -1 ? 100 : 0) + (10 - (b.mag || 5)) * 5 + b.alt / 10 : 30 + (b.alt / 10);
-    return scoreB - scoreA;
-  });
-  var html = '';
-  targets.slice(0, 30).forEach(function(t){
-    var icon = t.kind === 'sat' ? '🛰️' : '✈️';
-    var detail = 'ارتفاع: ' + t.alt.toFixed(1) + '° | آزیموت: ' + t.az.toFixed(0) + '°';
-    if(t.kind === 'sat' && t.mag != null) detail += ' | قدر: ' + t.mag.toFixed(1);
-    if(t.kind === 'ac' && t.heading != null) detail += ' | جهت: ' + t.heading + '°';
-    html += '<div class="live-target">' +
-      '<div class="t-icon">'+icon+'</div>' +
-      '<div class="t-info">' +
-        '<div class="t-name">'+t.name+'</div>' +
-        '<div class="t-detail">'+detail+'</div>' +
-      '</div>' +
-      '<div class="t-az">'+t.az.toFixed(0)+'°</div>' +
-    '</div>';
-  });
-  container.innerHTML = html;
-}
-
-function switchLiveTab(tab){
-  liveCurrentTab = tab;
-  document.getElementById('tabPolar').classList.toggle('active', tab==='polar');
-  document.getElementById('tabMap').classList.toggle('active', tab==='map');
-  document.getElementById('livePolarView').style.display = tab==='polar' ? 'block' : 'none';
-  document.getElementById('livePolarView').classList.toggle('active', tab==='polar');
-  document.getElementById('liveMapView').style.display = tab==='map' ? 'block' : 'none';
-  document.getElementById('liveMapView').classList.toggle('active', tab==='map');
-  if(tab === 'map' && liveMapObj){ setTimeout(function(){ liveMapObj.invalidateSize(); }, 50); }
-}
-
-function toggleLiveSat(){
-  liveSatEnabled = !liveSatEnabled;
-  var btn = document.getElementById('toggleSatBtn');
-  var state = document.getElementById('toggleSatState');
-  btn.classList.toggle('sat-on', liveSatEnabled);
-  state.innerText = liveSatEnabled ? 'روشن' : 'خاموش';
-  if(!liveSatEnabled){
-    document.getElementById('liveStatSat').innerText = '0';
-    document.getElementById('liveStatSatCard').classList.remove('active-sat');
+function onLiveTimeChange(val){
+  liveTimeOffsetMin = parseInt(val) || 0;
+  updateLiveTimeDisplay();
+  if(liveTimeOffsetMin === 0){
+    // Recalculate for now
+    recomputeLiveSatellites(0);
+    updateLiveAircraft().then(function(){ updateMarkerLayer(); });
   } else {
-    document.getElementById('liveStatSatCard').classList.add('active-sat');
-    document.getElementById('liveStatSat').innerText = liveSatCurrent.length;
+    // Recalculate for past time
+    recomputeLiveSatellites(liveTimeOffsetMin);
+    updateMarkerLayer();
   }
-  renderLiveSkyView();
 }
-function toggleLiveAc(){
-  liveAcEnabled = !liveAcEnabled;
-  var btn = document.getElementById('toggleAcBtn');
-  var state = document.getElementById('toggleAcState');
-  btn.classList.toggle('ac-on', liveAcEnabled);
-  state.innerText = liveAcEnabled ? 'روشن' : 'خاموش';
-  if(!liveAcEnabled){
-    document.getElementById('liveStatAc').innerText = '0';
-    document.getElementById('liveStatAcCard').classList.remove('active-ac');
+
+function updateLiveTimeDisplay(){
+  var el = document.getElementById('liveTimeDisplay');
+  if(liveTimeOffsetMin === 0){
+    el.innerText = 'الان';
   } else {
-    document.getElementById('liveStatAcCard').classList.add('active-ac');
-    document.getElementById('liveStatAc').innerText = liveAcCurrent.length;
+    var past = new Date(Date.now() - liveTimeOffsetMin * 60 * 1000);
+    var hh = String(past.getHours()).padStart(2,'0');
+    var mm = String(past.getMinutes()).padStart(2,'0');
+    var ss = String(past.getSeconds()).padStart(2,'0');
+    el.innerText = hh+':'+mm+':'+ss+' ('+liveTimeOffsetMin+' دقیقه قبل)';
   }
-  renderLiveSkyView();
-}
-function updateLiveFilters(){
-  liveMinElev = parseFloat(document.getElementById('liveMinElev').value) || 10;
-  var newRadius = parseFloat(document.getElementById('liveRadius').value) || 100;
-  if(newRadius !== liveRadiusKm){
-    liveRadiusKm = newRadius;
-    // Re-fetch aircraft immediately if enabled
-    if(liveAcEnabled && liveActive){
-      // Trigger a new fetch
-      var coords = getLiveLocationCoords();
-      if(coords) updateLiveAircraft(coords[0], coords[1]);
-    }
-  }
-  renderLiveSkyView();
 }
 
 /* ========================================================================
