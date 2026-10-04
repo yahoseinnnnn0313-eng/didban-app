@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-/* ============ DESIGN SYSTEM ============ */
 :root {
   --bg-0: #05060f;
   --bg-1: #0a0e1f;
@@ -29,24 +28,14 @@
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --glow-1: 0 0 24px rgba(34, 211, 238, 0.35);
-  --glow-2: 0 0 24px rgba(168, 85, 247, 0.35);
-  --glow-3: 0 0 24px rgba(236, 72, 153, 0.4);
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 22px;
   --radius-xl: 28px;
 }
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-
+html, body { margin: 0; padding: 0; min-height: 100vh; }
 body {
   font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
   color: var(--text);
@@ -57,90 +46,56 @@ body {
     radial-gradient(700px 700px at 50% 100%, rgba(34, 211, 238, 0.08), transparent 60%),
     linear-gradient(180deg, #05060f 0%, #0a0e1f 50%, #05060f 100%);
   background-attachment: fixed;
-  padding: 0;
-  min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.7;
   font-size: 14.5px;
   -webkit-font-smoothing: antialiased;
 }
-
-/* Star field overlay */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background-image:
     radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.7), transparent),
     radial-gradient(1px 1px at 60% 70%, rgba(180,200,255,.5), transparent),
     radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,.4), transparent),
     radial-gradient(1px 1px at 35% 80%, rgba(200,220,255,.6), transparent),
     radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 15% 55%, rgba(180,200,255,.4), transparent),
-    radial-gradient(2px 2px at 45% 15%, rgba(255,255,255,.6), transparent),
-    radial-gradient(1px 1px at 75% 85%, rgba(255,255,255,.3), transparent);
+    radial-gradient(2px 2px at 45% 15%, rgba(255,255,255,.6), transparent);
   background-size: 800px 800px;
-  pointer-events: none;
-  opacity: 0.55;
-  z-index: 0;
+  pointer-events: none; opacity: 0.55; z-index: 0;
   animation: starDrift 120s linear infinite;
 }
 @keyframes starDrift {
-  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
-  to   { background-position: 800px 800px, 800px 800px, 800px 800px, 800px 800px, 800px 800px, 800px 800px, 800px 800px, 800px 800px; }
+  from { background-position: 0 0; }
+  to   { background-position: 800px 800px; }
 }
-
-/* ============ LAYOUT ============ */
-.app-shell {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 24px 18px 80px;
-}
-
-@media (min-width: 900px) {
-  .app-shell { max-width: 720px; }
-}
-
-/* ============ TYPOGRAPHY ============ */
+.app-shell { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 24px 18px 80px; }
+@media (min-width: 900px) { .app-shell { max-width: 720px; } }
 h1, h2, h3, h4 { margin: 0; font-weight: 800; letter-spacing: -0.01em; }
 h1 { font-size: 32px; line-height: 1.2; }
 h2 { font-size: 22px; line-height: 1.3; }
 h3 { font-size: 17px; line-height: 1.4; }
 h4 { font-size: 14px; line-height: 1.5; }
 p { margin: 0; }
-
 .text-gradient {
   background: linear-gradient(120deg, #67e8f9 0%, #a5b4fc 45%, #f0abfc 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
 }
-
 .text-muted { color: var(--text-dim); }
 .text-small { font-size: 12.5px; }
 .text-tiny { font-size: 11.5px; }
 
-/* ============ SVG ICONS ============ */
 .icon-svg {
-  display: inline-block;
-  vertical-align: middle;
-  width: 24px; height: 24px;
-  flex-shrink: 0;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: inline-block; vertical-align: middle;
+  width: 24px; height: 24px; flex-shrink: 0;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
 }
-
 .icon-svg.icon-lg { width: 32px; height: 32px; }
 .icon-svg.icon-xl { width: 48px; height: 48px; }
 .icon-svg.icon-sm { width: 18px; height: 18px; }
 
-/* ============ CARD ============ */
 .card {
   position: relative;
   background: var(--surface);
@@ -155,156 +110,106 @@ p { margin: 0; }
 }
 .card::before {
   content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(120, 200, 255, 0.35), transparent);
   pointer-events: none;
 }
 
-.card-flat {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-}
-
-/* ============ BUTTONS ============ */
 .btn {
-  width: 100%;
-  padding: 14px 20px;
-  border: none;
-  border-radius: var(--radius);
-  font-family: inherit;
-  font-size: 14.5px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  width: 100%; padding: 14px 20px; border: none;
+  border-radius: var(--radius); font-family: inherit;
+  font-size: 14.5px; font-weight: 700; letter-spacing: 0.01em;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  position: relative;
-  overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px; position: relative; overflow: hidden;
 }
 .btn:active { transform: scale(0.975); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .btn-primary {
   background: linear-gradient(135deg, #22d3ee 0%, #6366f1 100%);
   color: #05060f;
   box-shadow: 0 8px 24px rgba(34, 211, 238, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 .btn-primary:hover { filter: brightness(1.08); }
-
 .btn-violet {
   background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   color: #fff;
-  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
 }
-.btn-violet:hover { filter: brightness(1.08); }
-
 .btn-cyan {
   background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
   color: #fff;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
 }
-.btn-cyan:hover { filter: brightness(1.08); }
-
 .btn-success {
   background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
   color: #052e16;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
 }
-
 .btn-outline {
-  background: rgba(120, 160, 220, 0.08);
-  color: var(--text);
+  background: rgba(120, 160, 220, 0.08); color: var(--text);
   border: 1px solid var(--border);
   backdrop-filter: blur(10px);
 }
-.btn-outline:hover {
-  border-color: var(--border-hi);
-  background: rgba(120, 160, 220, 0.14);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-dim);
-  font-weight: 500;
-  padding: 10px;
-}
+.btn-outline:hover { border-color: var(--border-hi); background: rgba(120, 160, 220, 0.14); }
+.btn-ghost { background: transparent; color: var(--text-dim); font-weight: 500; padding: 10px; }
 .btn-ghost:hover { color: var(--text); }
 
-/* ============ FORM ELEMENTS ============ */
 .field-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-dim);
-  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-dim); margin-bottom: 10px;
   letter-spacing: 0.01em;
 }
 .field-label .icon-svg { color: var(--accent-1); }
 
 input[type=text], input[type=number], input[type=password], select, textarea {
-  width: 100%;
-  padding: 12px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--text);
+  width: 100%; padding: 12px 14px;
+  font-family: inherit; font-size: 14px; color: var(--text);
   background: rgba(8, 12, 28, 0.6);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-  appearance: none;
-  -webkit-appearance: none;
+  appearance: none; -webkit-appearance: none;
 }
 input::placeholder, textarea::placeholder { color: var(--text-mute); }
 input:focus, select:focus, textarea:focus {
   border-color: var(--accent-1);
   box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
 }
+input.invalid, select.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  animation: shake 0.4s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
 select {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b94b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left 14px center;
-  padding-left: 34px;
-  cursor: pointer;
+  background-repeat: no-repeat; background-position: left 14px center;
+  padding-left: 34px; cursor: pointer;
 }
 select option { background: #10162e; color: var(--text); padding: 10px; }
 
-/* ============ SEGMENTED CONTROL (mode cards) ============ */
 .seg {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: 8px;
-  background: rgba(8, 12, 28, 0.5);
-  padding: 6px;
-  border-radius: var(--radius);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 8px; background: rgba(8, 12, 28, 0.5);
+  padding: 6px; border-radius: var(--radius);
   border: 1px solid var(--border);
 }
 .seg-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 12px 8px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text-dim);
-  font-size: 12.5px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.2s ease;
-  user-select: none;
-  position: relative;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; padding: 12px 8px;
+  border-radius: var(--radius-sm); cursor: pointer;
+  color: var(--text-dim); font-size: 12.5px; font-weight: 600;
+  text-align: center; transition: all 0.2s ease;
+  user-select: none; position: relative;
 }
 .seg-item .icon-svg { width: 22px; height: 22px; }
 .seg-item.active {
@@ -314,23 +219,14 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
 }
 
-/* ============ DATE GRID ============ */
-.dt-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
+.dt-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .dt-grid select { padding: 10px 6px; font-size: 13px; text-align: center; padding-left: 6px; background-position: 8px center; }
-.dt-time {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 8px;
-}
+.dt-time { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.coord-boxes { display: flex; gap: 10px; margin-top: 10px; }
+.coord-boxes input { text-align: center; }
 
-/* ============ STATUS MESSAGES ============ */
-.status-msg { font-size: 12.5px; color: var(--success); margin-top: 8px; min-height: 18px; display: flex; align-items: center; gap: 6px; }
-.status-msg .icon-svg { width: 14px; height: 14px; }
+.status-msg { font-size: 12.5px; color: var(--success); margin-top: 8px; min-height: 18px; }
+
 .error-box {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.4);
@@ -340,22 +236,17 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   font-size: 13px;
   margin-top: 12px;
   display: none;
+  line-height: 1.7;
 }
+.error-box.show { display: block; animation: shake 0.4s ease; }
+.error-box strong { color: #fecaca; font-weight: 700; }
+.error-box .err-item { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0; }
+.error-box .err-item .icon-svg { flex-shrink: 0; margin-top: 3px; width: 14px; height: 14px; }
 
-/* ============ HEADER ============ */
-.app-header {
-  text-align: center;
-  padding: 8px 0 20px;
-  position: relative;
-}
-.app-header .logo-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 14px;
-}
+.app-header { text-align: center; padding: 8px 0 20px; position: relative; }
+.app-header .logo-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
 .logo-mark {
-  width: 88px;
-  height: 88px;
+  width: 88px; height: 88px;
   filter: drop-shadow(0 0 30px rgba(34, 211, 238, 0.4));
   animation: logoFloat 5s ease-in-out infinite;
 }
@@ -363,168 +254,157 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
-.app-header h1 {
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  margin-bottom: 6px;
-}
-.app-header .subtitle {
-  color: var(--text-dim);
-  font-size: 13px;
-  font-weight: 400;
-}
+.app-header h1 { font-size: 34px; font-weight: 900; letter-spacing: 0.01em; margin-bottom: 6px; }
+.app-header .subtitle { color: var(--text-dim); font-size: 12.5px; font-weight: 400; line-height: 1.6; padding: 0 12px; }
 
-/* ============ MAIN MENU CARDS ============ */
-.menu-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 8px;
-}
+/* Menu Stack */
+.menu-stack { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 .menu-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  border-radius: var(--radius-lg);
+  position: relative; display: flex; align-items: center; gap: 16px;
+  padding: 20px; border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1px solid var(--border);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  cursor: pointer;
-  overflow: hidden;
+  cursor: pointer; overflow: hidden;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .menu-card:active { transform: scale(0.985); }
 .menu-card::before {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: radial-gradient(400px 200px at 100% 0%, var(--hover-tint, rgba(34, 211, 238, 0.15)), transparent 70%);
-  opacity: 0.8;
-  pointer-events: none;
+  opacity: 0.8; pointer-events: none;
 }
 .menu-card:hover { border-color: var(--border-hi); box-shadow: 0 0 30px rgba(34, 211, 238, 0.1); }
-
 .menu-icon-wrap {
-  width: 60px;
-  height: 60px;
-  flex-shrink: 0;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 60px; height: 60px; flex-shrink: 0;
+  border-radius: 18px; display: flex; align-items: center; justify-content: center;
   background: var(--icon-bg, linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(99, 102, 241, 0.25)));
   border: 1px solid var(--icon-border, rgba(34, 211, 238, 0.3));
   box-shadow: 0 0 24px var(--icon-glow, rgba(34, 211, 238, 0.25));
-  position: relative;
-  z-index: 1;
+  position: relative; z-index: 1;
 }
 .menu-icon-wrap .icon-svg { width: 32px; height: 32px; color: var(--icon-color, #67e8f9); stroke-width: 1.6; }
-
 .menu-content { flex: 1; min-width: 0; position: relative; z-index: 1; }
 .menu-content h3 { margin-bottom: 4px; font-size: 16.5px; font-weight: 700; }
 .menu-content p { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
-
 .menu-arrow {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-mute);
-  transition: transform 0.2s, color 0.2s;
-  position: relative;
-  z-index: 1;
+  width: 28px; height: 28px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-mute); transition: transform 0.2s, color 0.2s;
+  position: relative; z-index: 1;
 }
 .menu-card:hover .menu-arrow { transform: translateX(-4px); color: var(--accent-1); }
 
-/* Menu card color variants */
 .menu-search    { --hover-tint: rgba(34, 211, 238, 0.15); --icon-bg: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.25)); --icon-border: rgba(34, 211, 238, 0.4); --icon-glow: rgba(34, 211, 238, 0.3); --icon-color: #67e8f9; }
 .menu-predict   { --hover-tint: rgba(168, 85, 247, 0.15); --icon-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.22)); --icon-border: rgba(168, 85, 247, 0.4); --icon-glow: rgba(168, 85, 247, 0.3); --icon-color: #d8b4fe; }
 .menu-live      { --hover-tint: rgba(16, 185, 129, 0.15); --icon-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.22)); --icon-border: rgba(16, 185, 129, 0.4); --icon-glow: rgba(16, 185, 129, 0.3); --icon-color: #6ee7b7; }
-.menu-about     { --hover-tint: rgba(251, 191, 36, 0.15); --icon-bg: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(245, 158, 11, 0.22)); --icon-border: rgba(251, 191, 36, 0.35); --icon-glow: rgba(251, 191, 36, 0.25); --icon-color: #fcd34d; }
-.menu-admin     { --hover-tint: rgba(99, 102, 241, 0.15); --icon-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.22)); --icon-border: rgba(99, 102, 241, 0.4); --icon-glow: rgba(99, 102, 241, 0.28); --icon-color: #a5b4fc; }
 
-/* ============ SUB-PAGE HEADER ============ */
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 0 18px;
-  margin-bottom: 8px;
+/* Small dual menu cards */
+.menu-dual {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-top: 14px;
 }
-.back-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: var(--surface-2);
+.menu-card-sm {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; padding: 20px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
   cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.menu-card-sm::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(200px 120px at 50% 0%, var(--hover-tint, rgba(34, 211, 238, 0.15)), transparent 70%);
+  pointer-events: none;
+}
+.menu-card-sm:active { transform: scale(0.97); }
+.menu-card-sm:hover { border-color: var(--border-hi); }
+.menu-card-sm .icon-wrap {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--icon-bg);
+  border: 1px solid var(--icon-border);
+  box-shadow: 0 0 18px var(--icon-glow);
+}
+.menu-card-sm .icon-wrap .icon-svg { width: 22px; height: 22px; color: var(--icon-color); stroke-width: 1.7; }
+.menu-card-sm .label {
+  font-size: 12.5px; font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+}
+.menu-card-sm.about   { --hover-tint: rgba(251, 191, 36, 0.15); --icon-bg: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.22)); --icon-border: rgba(251, 191, 36, 0.35); --icon-glow: rgba(251, 191, 36, 0.25); --icon-color: #fcd34d; }
+.menu-card-sm.admin   { --hover-tint: rgba(99, 102, 241, 0.15); --icon-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.22)); --icon-border: rgba(99, 102, 241, 0.4); --icon-glow: rgba(99, 102, 241, 0.28); --icon-color: #a5b4fc; }
+
+/* Page header */
+.page-header { display: flex; align-items: center; gap: 14px; padding: 10px 0 18px; margin-bottom: 8px; }
+.back-btn {
+  width: 42px; height: 42px; border-radius: 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
 .back-btn:hover { border-color: var(--border-hi); background: rgba(120, 160, 220, 0.12); }
 .back-btn .icon-svg { width: 20px; height: 20px; transform: rotate(180deg); }
-
-.page-title-wrap { flex: 1; min-width: 0; }
+.page-title-wrap { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; }
+.page-title-wrap .titles { flex: 1; min-width: 0; }
 .page-title-wrap h2 { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
 .page-title-wrap p { font-size: 12px; color: var(--text-dim); }
+.guide-trigger {
+  width: 42px; height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(99, 102, 241, 0.15));
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  color: #67e8f9;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.15);
+}
+.guide-trigger:hover {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(99, 102, 241, 0.25));
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  transform: scale(1.05);
+}
+.guide-trigger .icon-svg { width: 20px; height: 20px; }
 
-/* ============ SECTION GUIDANCE BOX ============ */
-.guide-box {
-  position: relative;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.06) 0%, rgba(99, 102, 241, 0.06) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-  margin-bottom: 16px;
-  overflow: hidden;
+/* Guide modal content */
+.guide-modal-body {
+  font-size: 13.5px;
+  line-height: 2.1;
+  color: #c8d0ea;
 }
-.guide-box::before {
-  content: '';
-  position: absolute;
-  right: -40px;
-  top: -40px;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.15), transparent 65%);
-  pointer-events: none;
-}
-.guide-box .guide-head {
+.guide-modal-body h4 {
+  color: #67e8f9;
+  margin: 16px 0 8px;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: var(--accent-1);
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
+  gap: 8px;
 }
-.guide-box .guide-head .icon-svg { color: var(--accent-1); }
-.guide-box .guide-body {
-  color: #b8c0e0;
-  font-size: 13px;
-  line-height: 2;
-  font-weight: 400;
-}
-.guide-box .guide-body strong { color: #e0e7ff; font-weight: 600; }
+.guide-modal-body h4:first-child { margin-top: 0; }
+.guide-modal-body p { margin-bottom: 10px; }
+.guide-modal-body strong { color: #e0e7ff; font-weight: 700; }
+.guide-modal-body ul { padding-right: 20px; margin: 8px 0; }
+.guide-modal-body li { margin-bottom: 6px; }
 
-/* ============ RESULT HERO ============ */
+/* Result hero */
 .result-hero {
   border-radius: var(--radius-lg);
   padding: 26px 22px;
   text-align: center;
   margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
   border: 1px solid var(--border);
 }
 .result-hero.sat { background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.15)); border-color: rgba(34, 211, 238, 0.35); }
@@ -540,20 +420,15 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .result-hero h2 { margin-bottom: 6px; font-size: 22px; font-weight: 800; }
 .result-hero p.sub { color: #dcdcf5; font-size: 13px; line-height: 1.7; }
 
-/* ============ INFO LINE ============ */
 .info-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: var(--text-dim);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--text-dim);
   padding: 10px 4px;
   border-bottom: 1px solid rgba(120, 150, 220, 0.08);
 }
 .info-line:last-child { border-bottom: none; }
 .info-line span:last-child { color: var(--text); font-weight: 600; }
 
-/* ============ OBJECT CARD ============ */
 .obj-card {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -562,43 +437,27 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   margin-bottom: 12px;
 }
 .obj-card h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15.5px;
-  font-weight: 700;
-  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 15.5px; font-weight: 700; margin-bottom: 12px;
 }
 .obj-card h3 .icon-svg { color: var(--accent-1); width: 22px; height: 22px; }
 .obj-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  padding: 7px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; padding: 7px 0;
   border-bottom: 1px dashed rgba(120, 150, 220, 0.1);
 }
 .obj-row:last-child { border-bottom: none; }
 .obj-row .lbl { color: var(--text-mute); }
 .obj-row .val { font-weight: 600; color: var(--text); }
 .estimate-tag {
-  display: inline-block;
-  font-size: 10px;
-  background: rgba(120, 200, 255, 0.12);
-  color: var(--accent-1);
-  padding: 2px 7px;
-  border-radius: 6px;
-  margin-right: 6px;
-  font-weight: 600;
+  display: inline-block; font-size: 10px;
+  background: rgba(120, 200, 255, 0.12); color: var(--accent-1);
+  padding: 2px 7px; border-radius: 6px;
+  margin-right: 6px; font-weight: 600;
 }
-
-/* ============ CONFIDENCE RING ============ */
 .conf-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin: 16px 0 4px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin: 16px 0 4px;
   padding-top: 14px;
   border-top: 1px dashed rgba(120, 150, 220, 0.12);
 }
@@ -607,24 +466,22 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .conf-ring .num {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 15px;
-  color: var(--text);
+  font-weight: 800; font-size: 15px; color: var(--text);
 }
 .conf-label { font-size: 12px; color: var(--text-mute); }
 
-/* ============ MAP ============ */
 .map-box {
-  width: 100%;
-  height: 340px;
+  width: 100%; height: 340px;
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--border);
   margin-top: 14px;
+  background: #0a0e1f;
+  position: relative;
 }
-.leaflet-container { background: #0a0e1f !important; font-family: inherit !important; }
+.map-box .leaflet-container { background: #0a0e1f !important; font-family: inherit !important; }
 .leaflet-popup-content-wrapper {
-  background: #16193a !important;
-  color: #e6ecff !important;
+  background: #16193a !important; color: #e6ecff !important;
   border: 1px solid rgba(120, 200, 255, 0.3) !important;
   border-radius: 12px !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
@@ -634,18 +491,24 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .leaflet-control-attribution { background: rgba(0, 0, 0, 0.5) !important; color: #8b94b8 !important; }
 .leaflet-control-attribution a { color: #67e8f9 !important; }
 .leaflet-bar a {
-  background: #16193a !important;
-  color: #e6ecff !important;
+  background: #16193a !important; color: #e6ecff !important;
   border-color: rgba(120, 200, 255, 0.3) !important;
 }
 .leaflet-bar a:hover { background: #22264a !important; }
 
-/* ============ LOADING ============ */
-#loadingBox { display: none; text-align: center; padding: 60px 20px; }
+#loadingBox {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(5,6,15,0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 800;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+}
 .radar {
   width: 100px; height: 100px;
-  margin: 0 auto 24px;
-  position: relative;
+  margin: 0 auto 24px; position: relative;
   border-radius: 50%;
   background:
     radial-gradient(circle at center, rgba(34, 211, 238, 0.15) 0%, transparent 65%),
@@ -654,16 +517,13 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   box-shadow: inset 0 0 30px rgba(34, 211, 238, 0.1), 0 0 40px rgba(34, 211, 238, 0.2);
 }
 .radar::before, .radar::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
+  content: ''; position: absolute; border-radius: 50%;
   border: 1px solid rgba(34, 211, 238, 0.15);
 }
 .radar::before { inset: 20%; }
 .radar::after { inset: 40%; }
 .radar-sweep {
-  position: absolute;
-  top: 50%; left: 50%;
+  position: absolute; top: 50%; left: 50%;
   width: 50%; height: 2px;
   background: linear-gradient(90deg, #67e8f9, transparent);
   transform-origin: 0 50%;
@@ -675,23 +535,18 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 #loadingBox .loading-title { color: #a8c8ff; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
 #loadingBox .loading-sub { color: var(--text-mute); font-size: 12.5px; }
 
-/* ============ MODAL ============ */
 .modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
+  display: none; position: fixed; inset: 0;
   background: rgba(5, 6, 15, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
-  padding: 20px 16px;
+  z-index: 1000; padding: 20px 16px;
   overflow-y: auto;
 }
 .modal-overlay.show { display: block; animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .modal-box {
-  max-width: 520px;
-  margin: 40px auto;
+  max-width: 520px; margin: 40px auto;
   background: linear-gradient(180deg, #10162e 0%, #0a0e1f 100%);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
@@ -701,77 +556,41 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   position: relative;
 }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.modal-box h2 { font-size: 20px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+.modal-box h2 {
+  font-size: 20px; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+  padding-left: 40px;
+}
+.modal-box h2 .icon-svg { color: var(--accent-1); }
 .modal-close {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text);
-  cursor: pointer;
+  position: absolute; top: 18px; left: 18px;
+  width: 34px; height: 34px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--surface-2);
+  color: var(--text); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.2s;
 }
 .modal-close:hover { border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
 .modal-close .icon-svg { width: 16px; height: 16px; }
 
-/* ============ CALIBRATION ============ */
 #calibrationPage {
-  display: none;
-  position: fixed;
-  inset: 0;
+  display: none; position: fixed; inset: 0;
   background: var(--bg-0);
   background-image:
     radial-gradient(800px 600px at 50% 0%, rgba(99, 102, 241, 0.15), transparent 60%),
     radial-gradient(600px 500px at 50% 100%, rgba(34, 211, 238, 0.1), transparent 60%);
-  z-index: 700;
-  overflow-y: auto;
+  z-index: 700; overflow-y: auto;
   padding: 24px 18px 40px;
 }
 .calib-wrap { max-width: 520px; margin: 0 auto; }
-.infinity-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 22px 0;
-  margin: 16px 0;
-}
+.infinity-wrap { display: flex; justify-content: center; align-items: center; padding: 22px 0; margin: 16px 0; }
 .infinity-svg { width: 240px; height: 130px; filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.5)); }
 .infinity-path { fill: none; stroke: rgba(34, 211, 238, 0.25); stroke-width: 3; stroke-linecap: round; }
-.infinity-trail {
-  fill: none;
-  stroke: url(#gradLine);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  animation: drawTrail 3s linear infinite;
-}
-@keyframes drawTrail {
-  0%   { stroke-dashoffset: 500; }
-  100% { stroke-dashoffset: -500; }
-}
-.infinity-dot {
-  fill: #67e8f9;
-  filter: drop-shadow(0 0 8px #22d3ee);
-}
-.calib-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent-1);
-  text-align: center;
-  margin-bottom: 12px;
-  letter-spacing: 0.02em;
-}
-.calib-desc {
-  font-size: 13.5px;
-  color: #d0d0e8;
-  line-height: 2;
-  text-align: center;
-}
+.infinity-trail { fill: none; stroke: url(#gradLine); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 500; stroke-dashoffset: 500; animation: drawTrail 3s linear infinite; }
+@keyframes drawTrail { 0% { stroke-dashoffset: 500; } 100% { stroke-dashoffset: -500; } }
+.infinity-dot { fill: #67e8f9; filter: drop-shadow(0 0 8px #22d3ee); }
+.calib-title { font-size: 15px; font-weight: 700; color: var(--accent-1); text-align: center; margin-bottom: 12px; letter-spacing: 0.02em; }
+.calib-desc { font-size: 13.5px; color: #d0d0e8; line-height: 2; text-align: center; }
 .calib-desc strong { color: #a5b4fc; font-weight: 700; }
 .calib-tips {
   background: rgba(251, 191, 36, 0.06);
@@ -779,37 +598,23 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   border-radius: var(--radius);
   padding: 14px 18px;
   font-size: 12.5px;
-  color: #fde68a;
-  line-height: 2;
+  color: #fde68a; line-height: 2;
   margin-top: 14px;
 }
 .calib-tips .tip-title {
-  font-weight: 700;
-  color: #fbbf24;
+  font-weight: 700; color: #fbbf24;
   margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: flex; align-items: center; gap: 6px;
 }
 .calib-progress-wrap { margin: 22px 0 12px; }
-.calib-progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
+.calib-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
 .calib-progress-bar {
-  height: 12px;
-  background: rgba(8, 12, 28, 0.7);
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
+  height: 12px; background: rgba(8, 12, 28, 0.7);
+  border-radius: 6px; overflow: hidden; position: relative;
   border: 1px solid var(--border);
 }
 .calib-progress-fill {
-  height: 100%;
-  width: 0%;
+  height: 100%; width: 0%;
   background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
   background-size: 200% 100%;
   border-radius: 6px;
@@ -817,161 +622,67 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   background-position: 100% 0;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
 }
-.calib-progress-pct {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--accent-1);
-  letter-spacing: -0.02em;
-}
-.calib-quality {
-  text-align: center;
-  padding: 14px;
-  border-radius: var(--radius);
-  font-size: 13.5px;
-  font-weight: 700;
-  margin: 14px 0;
-  transition: all 0.3s;
-}
+.calib-progress-pct { text-align: center; margin-top: 12px; font-size: 26px; font-weight: 900; color: var(--accent-1); letter-spacing: -0.02em; }
+.calib-quality { text-align: center; padding: 14px; border-radius: var(--radius); font-size: 13.5px; font-weight: 700; margin: 14px 0; transition: all 0.3s; }
 .calib-quality.bad    { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
 .calib-quality.medium { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
 .calib-quality.good   { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-.calib-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin: 14px 0;
-}
-.calib-stat {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 8px;
-  text-align: center;
-}
+.calib-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0; }
+.calib-stat { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; }
 .calib-stat .lbl { font-size: 11px; color: var(--text-mute); display: block; margin-bottom: 4px; }
 .calib-stat .val { font-size: 14px; font-weight: 700; color: var(--accent-1); }
 .calib-hint { text-align: center; font-size: 13px; color: var(--text-dim); margin: 12px 0; min-height: 22px; }
-.success-anim {
-  text-align: center;
-  font-size: 60px;
-  animation: bounceScale 0.6s ease;
-  display: flex;
-  justify-content: center;
-  color: var(--success);
-  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6));
-  margin-bottom: 12px;
-}
+.success-anim { text-align: center; font-size: 60px; animation: bounceScale 0.6s ease; display: flex; justify-content: center; color: var(--success); filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6)); margin-bottom: 12px; }
 .success-anim .icon-svg { width: 70px; height: 70px; stroke-width: 1.5; }
-@keyframes bounceScale {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
+@keyframes bounceScale { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
-/* ============ SELECTED DIRECTION BOX ============ */
 .selected-dir {
-  text-align: center;
-  padding: 14px 16px;
+  text-align: center; padding: 14px 16px;
   border-radius: var(--radius);
   background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(99, 102, 241, 0.08));
   border: 1px solid rgba(34, 211, 238, 0.3);
-  color: #67e8f9;
-  font-size: 14px;
-  font-weight: 700;
+  color: #67e8f9; font-size: 14px; font-weight: 700;
   margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: flex; flex-direction: column; gap: 4px;
 }
-.selected-dir.empty {
-  background: rgba(120, 150, 220, 0.05);
-  border-color: var(--border);
-  color: var(--text-mute);
-  font-weight: 500;
-  font-size: 13px;
-}
-.selected-dir .az-value {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-dim);
-}
+.selected-dir.empty { background: rgba(120, 150, 220, 0.05); border-color: var(--border); color: var(--text-mute); font-weight: 500; font-size: 13px; }
+.selected-dir .az-value { font-size: 12px; font-weight: 500; color: var(--text-dim); }
 
-/* ============ TIME SLIDER ============ */
-.time-slider-wrap {
-  padding: 18px;
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  margin-bottom: 14px;
-}
-.time-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--text-dim);
-  margin-bottom: 12px;
-  font-weight: 600;
-}
+.time-slider-wrap { padding: 18px; border-radius: var(--radius); background: var(--surface-2); border: 1px solid var(--border); margin-bottom: 14px; }
+.time-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dim); margin-bottom: 12px; font-weight: 600; }
 .time-label span:last-child { color: var(--accent-1); font-family: 'Courier New', monospace; font-weight: 700; }
 #liveTimeSlider {
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(8, 12, 28, 0.7);
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  direction: ltr;
+  width: 100%; height: 6px; border-radius: 3px;
+  background: rgba(8, 12, 28, 0.7); outline: none;
+  -webkit-appearance: none; appearance: none;
+  cursor: pointer; direction: ltr;
   border: 1px solid var(--border);
 }
 #liveTimeSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
   background: linear-gradient(135deg, #22d3ee, #6366f1);
   border: 2px solid #fff;
   box-shadow: 0 0 14px rgba(34, 211, 238, 0.9);
   cursor: pointer;
 }
 #liveTimeSlider::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+  width: 22px; height: 22px; border-radius: 50%;
   background: linear-gradient(135deg, #22d3ee, #6366f1);
   border: 2px solid #fff;
   box-shadow: 0 0 14px rgba(34, 211, 238, 0.9);
   cursor: pointer;
 }
-.time-marks {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10.5px;
-  color: var(--text-mute);
-  margin-top: 10px;
-  direction: ltr;
-}
+.time-marks { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--text-mute); margin-top: 10px; direction: ltr; }
 
-/* ============ LIVE INDICATOR ============ */
 .live-indicator {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11px;
-  color: var(--text-mute);
-  padding: 6px 4px;
-  margin-bottom: 8px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: var(--text-mute);
+  padding: 6px 4px; margin-bottom: 8px;
 }
 .live-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
-  border-radius: 50%;
+  display: inline-block; width: 8px; height: 8px;
+  background: #ef4444; border-radius: 50%;
   margin-left: 6px;
   animation: pulseLive 1.5s ease-in-out infinite;
   box-shadow: 0 0 10px #ef4444;
@@ -981,12 +692,9 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   50% { opacity: 0.4; transform: scale(0.75); }
 }
 
-/* ============ MAP LEGEND ============ */
 .map-legend {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 12px;
+  display: flex; justify-content: center;
+  gap: 16px; padding: 12px;
   margin-top: 12px;
   border-radius: var(--radius);
   background: var(--surface-2);
@@ -996,12 +704,11 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   flex-wrap: wrap;
 }
 .legend-item { display: flex; align-items: center; gap: 6px; }
-.legend-item .icon-svg { width: 16px; height: 16px; }
-.legend-item.sat .icon-svg { color: #67e8f9; }
-.legend-item.ac .icon-svg { color: #6ee7b7; }
+.legend-item .icon-svg { width: 18px; height: 18px; }
+.legend-item.sat .icon-svg { color: #22d3ee; }
+.legend-item.ac .icon-svg { color: #10b981; }
 .legend-item.me .icon-svg { color: #a5b4fc; }
 
-/* ============ PREDICTION RESULTS ============ */
 .pred-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .pred-row {
   background: var(--surface-2);
@@ -1012,47 +719,28 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .pred-row-header {
   padding: 12px 16px;
   background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.08));
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; align-items: center; gap: 12px;
   font-size: 13.5px;
   border-bottom: 1px solid var(--border);
 }
 .pred-row-num {
-  background: rgba(0, 0, 0, 0.3);
-  color: #d8b4fe;
-  min-width: 28px;
-  height: 26px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 800;
-  padding: 0 6px;
+  background: rgba(0, 0, 0, 0.3); color: #d8b4fe;
+  min-width: 28px; height: 26px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; padding: 0 6px;
 }
 .pred-row-name {
-  flex: 1;
-  font-weight: 700;
-  color: var(--text);
+  flex: 1; font-weight: 700; color: var(--text);
   font-size: 13.5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .pred-row-body {
   padding: 12px 16px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: 1fr 1fr;
   gap: 10px 16px;
   font-size: 12.5px;
 }
-.pred-row-body .cell {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  align-items: center;
-}
+.pred-row-body .cell { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .pred-row-body .cell .lbl { color: var(--text-mute); }
 .pred-row-body .cell .val { color: var(--text); font-weight: 600; }
 .pred-row-body .cell-full { grid-column: 1 / -1; }
@@ -1062,75 +750,43 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   border-radius: var(--radius);
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.08));
   border: 1px solid rgba(139, 92, 246, 0.3);
-  font-size: 13px;
-  line-height: 2;
+  font-size: 13px; line-height: 2;
   margin-bottom: 14px;
 }
 .pred-summary b { color: #f0abfc; font-weight: 700; }
 
-/* ============ HISTORY ITEM ============ */
 .hist-item {
-  padding: 14px;
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  margin-bottom: 10px;
-  font-size: 13px;
+  padding: 14px; border-radius: var(--radius);
+  background: var(--surface-2); border: 1px solid var(--border);
+  margin-bottom: 10px; font-size: 13px;
 }
-.hist-item .hi-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 700;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-.hist-item .hi-bottom {
-  color: var(--text-dim);
-  font-size: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.hist-item .hi-top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.hist-item .hi-bottom { color: var(--text-dim); font-size: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* ============ EMPTY STATE ============ */
 .empty-state {
-  text-align: center;
-  padding: 40px 24px;
+  text-align: center; padding: 40px 24px;
   border-radius: var(--radius);
   background: rgba(120, 150, 220, 0.04);
   border: 1px dashed rgba(120, 150, 220, 0.2);
-  color: var(--text-dim);
-  font-size: 13.5px;
-  line-height: 1.9;
+  color: var(--text-dim); font-size: 13.5px; line-height: 1.9;
 }
 .empty-state .icon-svg { width: 40px; height: 40px; color: var(--text-mute); margin-bottom: 12px; }
 
-/* ============ NEARBY TABLE ============ */
 .nearby-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  margin-top: 14px;
+  width: 100%; border-collapse: collapse;
+  font-size: 12px; margin-top: 14px;
   background: var(--surface-2);
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--border);
 }
 .nearby-table th, .nearby-table td {
-  padding: 10px 8px;
-  text-align: center;
+  padding: 10px 8px; text-align: center;
   border-bottom: 1px solid rgba(120, 150, 220, 0.08);
 }
-.nearby-table th {
-  background: rgba(120, 200, 255, 0.06);
-  color: var(--accent-1);
-  font-weight: 700;
-  font-size: 11.5px;
-}
+.nearby-table th { background: rgba(120, 200, 255, 0.06); color: var(--accent-1); font-weight: 700; font-size: 11.5px; }
 .nearby-table td { color: var(--text); }
 
-/* ============ DIAG DETAILS ============ */
 .diag-box {
   background: rgba(120, 150, 220, 0.04);
   border: 1px dashed rgba(120, 150, 220, 0.18);
@@ -1144,89 +800,54 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   cursor: pointer;
   color: var(--accent-1);
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex; align-items: center; gap: 8px;
   list-style: none;
 }
 .diag-box summary::-webkit-details-marker { display: none; }
 .diag-row {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
   padding: 5px 0;
   border-bottom: 1px dashed rgba(120, 150, 220, 0.1);
 }
 .diag-row:last-child { border-bottom: none; }
 .diag-row span:last-child { color: var(--text); font-weight: 600; }
 
-/* ============ ABOUT BOX ============ */
 .about-content {
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 24px;
-  background: linear-gradient(180deg, #10162e 0%, #0a0e1f 100%);
-  border: 1px solid rgba(34, 211, 238, 0.3);
-  border-radius: var(--radius-xl);
   line-height: 2.1;
   font-size: 13.5px;
   color: #c8d0ea;
 }
-.about-content h3 {
-  color: #67e8f9;
-  margin-bottom: 12px;
-  font-size: 18px;
-}
-.about-content h4 {
-  color: #d8b4fe;
-  margin: 18px 0 8px;
-  font-size: 14.5px;
-}
+.about-content h4 { color: #d8b4fe; margin: 18px 0 8px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
 .about-content p { margin-bottom: 10px; }
-.about-content strong { color: #e0e7ff; }
-.about-content ul {
-  padding-right: 20px;
-  margin: 8px 0;
-}
+.about-content strong { color: #e0e7ff; font-weight: 700; }
+.about-content ul { padding-right: 20px; margin: 8px 0; }
 .about-content li { margin-bottom: 6px; }
 
-/* ============ FULL WIDTH SCROLL ============ */
 body, html { overflow-x: hidden; }
 .page-section { display: none; }
 .page-section.active { display: block; animation: pageFade 0.35s ease; }
-@keyframes pageFade {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ============ HIDDEN UTILITY ============ */
+@keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .hidden { display: none !important; }
 
-/* ============ RESPONSIVE TYPOS ============ */
 @media (max-width: 400px) {
   .app-shell { padding: 18px 14px 60px; }
   .app-header h1 { font-size: 28px; }
   .card { padding: 18px; }
+  .menu-card { padding: 16px; gap: 12px; }
+  .menu-icon-wrap { width: 52px; height: 52px; }
+  .menu-icon-wrap .icon-svg { width: 28px; height: 28px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ================================================================== -->
-<!--                            SVG ICONS                               -->
-<!-- ================================================================== -->
+<!-- SVG icon library -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <!-- Main satellite logo -->
     <symbol id="i-satellite" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="3" />
       <path d="M6 6l3 3M18 6l-3 3M6 18l3-3M18 18l-3-3" />
       <path d="M4 4l2 2M20 4l-2 2M4 20l2-2M20 20l-2-2" />
-    </symbol>
-    <symbol id="i-orbit" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
-      <ellipse cx="12" cy="12" rx="10" ry="6" />
-      <ellipse cx="12" cy="12" rx="10" ry="6" transform="rotate(60 12 12)" />
-      <circle cx="22" cy="12" r="1.5" fill="currentColor" stroke="none"/>
     </symbol>
     <symbol id="i-scan" viewBox="0 0 24 24">
       <path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3" />
@@ -1343,16 +964,23 @@ body, html { overflow-x: hidden; }
       <path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z" fill="currentColor" stroke="none"/>
       <path d="M19 15l.9 2.7L22 18.6l-2.1.9L19 22l-.9-2.5L16 18.6l2.1-.9z" fill="currentColor" stroke="none"/>
     </symbol>
+    <symbol id="i-book" viewBox="0 0 24 24">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      <path d="M8 7h8M8 11h5"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none"/>
+    </symbol>
   </defs>
 </svg>
 
-<div class="app-shell" id="appShell">
+<div class="app-shell">
 
-<!-- ================================================================== -->
-<!--                         HOME PAGE                                  -->
-<!-- ================================================================== -->
+<!-- HOME PAGE -->
 <div id="pageHome" class="page-section active">
-
   <header class="app-header">
     <div class="logo-wrap">
       <svg class="logo-mark" viewBox="0 0 100 100">
@@ -1367,15 +995,12 @@ body, html { overflow-x: hidden; }
             <stop offset="100%" stop-color="#f0abfc"/>
           </linearGradient>
         </defs>
-        <!-- Orbit rings -->
         <ellipse cx="50" cy="50" rx="42" ry="18" fill="none" stroke="url(#logoGrad1)" stroke-width="1.5" opacity="0.55"/>
         <ellipse cx="50" cy="50" rx="42" ry="18" fill="none" stroke="url(#logoGrad1)" stroke-width="1.5" opacity="0.55" transform="rotate(60 50 50)"/>
         <ellipse cx="50" cy="50" rx="42" ry="18" fill="none" stroke="url(#logoGrad1)" stroke-width="1.5" opacity="0.55" transform="rotate(-60 50 50)"/>
-        <!-- Central body -->
         <circle cx="50" cy="50" r="14" fill="url(#logoGrad1)" opacity="0.15"/>
         <circle cx="50" cy="50" r="14" fill="none" stroke="url(#logoGrad1)" stroke-width="2"/>
         <circle cx="50" cy="50" r="6" fill="url(#logoGrad2)"/>
-        <!-- Satellite dots -->
         <circle cx="92" cy="50" r="3.5" fill="#67e8f9"/>
         <circle cx="8" cy="50" r="2.5" fill="#f0abfc"/>
         <circle cx="71" cy="86" r="3" fill="#a5b4fc"/>
@@ -1383,7 +1008,7 @@ body, html { overflow-x: hidden; }
       </svg>
     </div>
     <h1 class="text-gradient">رصدیار</h1>
-    <p class="subtitle">سامانه‌ی هوشمند رصد و شناسایی اجرام آسمانی</p>
+    <p class="subtitle">سامانه‌ی هوشمند رصد ، شناسایی و بررسی اشیاء نورانی آسمانی</p>
   </header>
 
   <div class="menu-stack">
@@ -1393,7 +1018,7 @@ body, html { overflow-x: hidden; }
       </div>
       <div class="menu-content">
         <h3>بررسی شیء مشاهده‌شده</h3>
-        <p>شناسایی جرم نورانی مشاهده‌شده بر اساس موقعیت، زمان و جهت</p>
+        <p>شناسایی شی نورانی مشاهده‌شده بر اساس موقعیت، زمان و جهت</p>
       </div>
       <div class="menu-arrow"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
     </div>
@@ -1419,54 +1044,34 @@ body, html { overflow-x: hidden; }
       </div>
       <div class="menu-arrow"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
     </div>
-
-    <div class="menu-card menu-about" onclick="openAbout()">
-      <div class="menu-icon-wrap">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg>
-      </div>
-      <div class="menu-content">
-        <h3>درباره‌ی رصدیار</h3>
-        <p>معرفی کامل سامانه، توانمندی‌های فنی و اهداف پروژه</p>
-      </div>
-      <div class="menu-arrow"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
-    </div>
-
-    <div class="menu-card menu-admin" onclick="openAdminLogin()">
-      <div class="menu-icon-wrap">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-shield-user"/></svg>
-      </div>
-      <div class="menu-content">
-        <h3>ورود مدیر سیستم</h3>
-        <p>دسترسی به پنل مدیریت پایگاه داده‌ی ماهواره‌ها</p>
-      </div>
-      <div class="menu-arrow"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
-    </div>
   </div>
 
+  <div class="menu-dual">
+    <div class="menu-card-sm about" onclick="openAbout()">
+      <div class="icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg></div>
+      <span class="label">درباره‌ی رصدیار</span>
+    </div>
+    <div class="menu-card-sm admin" onclick="openAdminLogin()">
+      <div class="icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-shield-user"/></svg></div>
+      <span class="label">ورود مدیر سیستم</span>
+    </div>
+  </div>
 </div>
 
-<!-- ================================================================== -->
-<!--                         SEARCH PAGE                                -->
-<!-- ================================================================== -->
+<!-- SEARCH PAGE -->
 <div id="pageSearch" class="page-section">
-
   <div class="page-header">
     <div class="back-btn" onclick="navigateTo('pageHome')">
       <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
     </div>
     <div class="page-title-wrap">
-      <h2>بررسی شیء مشاهده‌شده</h2>
-      <p>شناسایی جرم نورانی بر اساس داده‌های شما</p>
-    </div>
-  </div>
-
-  <div class="guide-box">
-    <div class="guide-head">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg>
-      راهنمای عملیاتی
-    </div>
-    <div class="guide-body">
-      این ماژول با استفاده از الگوریتم‌های پیشرفته‌ی محاسبات مداری <strong>SGP4</strong> و ترکیب آن با داده‌های لحظه‌ای ترافیک هوایی، موقعیت شیء نورانی مشاهده‌شده‌ی شما را با دقت بالا در آسمان بازسازی می‌کند. برای دریافت نتیجه‌ی دقیق، موقعیت جغرافیایی، زمان مشاهده و جهت رؤیت را با بالاترین دقت ممکن وارد نمایید.
+      <div class="titles">
+        <h2>بررسی شیء مشاهده‌شده</h2>
+        <p>شناسایی شی نورانی بر اساس داده‌های شما</p>
+      </div>
+      <div class="guide-trigger" onclick="openGuide('search')" title="راهنمای این بخش">
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg>
+      </div>
     </div>
   </div>
 
@@ -1504,7 +1109,7 @@ body, html { overflow-x: hidden; }
 
     <div id="mapLocPanel" style="display:none; margin-top:14px;">
       <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید تا موقعیت ناظر ثبت شود.</p>
-      <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden;"></div>
+      <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
       <div class="coord-boxes" id="mapCoordBoxes" style="display:none;">
         <input type="text" id="mapLat" readonly placeholder="عرض جغرافیایی">
         <input type="text" id="mapLon" readonly placeholder="طول جغرافیایی">
@@ -1514,20 +1119,10 @@ body, html { overflow-x: hidden; }
     <div id="manualLocPanel" style="display:none; margin-top:14px;">
       <div class="field-label" style="margin-top:0;">فرمت ورود مختصات</div>
       <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="seg-item" onclick="setCoordFormat('dms', this)">
-          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>
-          DMS
-        </div>
-        <div class="seg-item" onclick="setCoordFormat('dec', this)">
-          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>
-          Decimal
-        </div>
-        <div class="seg-item" onclick="setCoordFormat('utm', this)">
-          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>
-          UTM
-        </div>
+        <div class="seg-item" onclick="setCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
+        <div class="seg-item" onclick="setCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
+        <div class="seg-item" onclick="setCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
       </div>
-
       <div id="dmsInputs" style="display:none; margin-top:14px;">
         <label class="field-label" style="font-size:12px;">عرض جغرافیایی</label>
         <div class="dt-grid">
@@ -1544,14 +1139,12 @@ body, html { overflow-x: hidden; }
         </div>
         <select id="lonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
       </div>
-
       <div id="decInputs" style="display:none; margin-top:14px;">
         <div class="coord-boxes" style="margin-top:0;">
           <input type="text" id="decLat" placeholder="مثلا 35.6892">
           <input type="text" id="decLon" placeholder="مثلا 51.3890">
         </div>
       </div>
-
       <div id="utmInputs" style="display:none; margin-top:14px;">
         <div class="coord-boxes" style="margin-top:0;">
           <input type="number" id="utmZone" placeholder="Zone">
@@ -1631,19 +1224,19 @@ body, html { overflow-x: hidden; }
     </button>
     <button type="button" class="btn btn-outline" onclick="openHistory()">
       <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-history"/></svg>
-      مشاهده‌ی تاریخچه‌ی مشاهدات
+      تاریخچه‌ی مشاهدات
     </button>
   </div>
 
-  <!-- Result box -->
-  <div id="resultBox">
+  <!-- Results box: hidden until analysis is run -->
+  <div id="resultBox" style="display:none;">
     <div class="result-hero" id="resultHero">
-      <div class="hero-icon"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-scan"/></svg></div>
+      <div class="hero-icon"><svg class="icon-svg" viewBox="0 0 24 24"><use id="resultHeroIcon" href="#i-scan"/></svg></div>
       <h2 id="resultTitle">در حال پردازش...</h2>
       <p class="sub" id="resultSub"></p>
     </div>
 
-    <div class="card-flat">
+    <div class="card" style="padding:14px 18px;">
       <div class="info-line"><span>موقعیت ناظر</span><span id="infoLoc"></span></div>
       <div class="info-line"><span>زمان مشاهده</span><span id="infoTime"></span></div>
       <div class="info-line"><span>سمت / حرکت</span><span id="infoAz"></span></div>
@@ -1674,31 +1267,22 @@ body, html { overflow-x: hidden; }
       ثبت مشاهده‌ی جدید
     </button>
   </div>
-
 </div>
 
-<!-- ================================================================== -->
-<!--                         PREDICT PAGE                               -->
-<!-- ================================================================== -->
+<!-- PREDICT PAGE -->
 <div id="pagePredict" class="page-section">
-
   <div class="page-header">
     <div class="back-btn" onclick="navigateTo('pageHome')">
       <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
     </div>
     <div class="page-title-wrap">
-      <h2>پیش‌بینی عبور ماهواره‌ها</h2>
-      <p>محاسبه‌ی مسیر آینده‌ی ماهواره‌ها</p>
-    </div>
-  </div>
-
-  <div class="guide-box">
-    <div class="guide-head">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg>
-      راهنمای عملیاتی
-    </div>
-    <div class="guide-body">
-      این ماژول با پردازش <strong>مدارهای کپلری</strong> ماهواره‌های فعال و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند. برای هر عبور، پارامترهای زمانی، زاویه‌ای و جهتی به‌صورت کامل نمایش داده می‌شود. توجه داشته باشید که لیست نتایج شامل ماهواره‌های قابل رؤیت در روشنایی روز نیز می‌باشد.
+      <div class="titles">
+        <h2>پیش‌بینی عبور ماهواره‌ها</h2>
+        <p>محاسبه‌ی مسیر آینده‌ی ماهواره‌ها</p>
+      </div>
+      <div class="guide-trigger" onclick="openGuide('predict')" title="راهنمای این بخش">
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg>
+      </div>
     </div>
   </div>
 
@@ -1709,16 +1293,13 @@ body, html { overflow-x: hidden; }
     </div>
     <div class="seg">
       <div class="seg-item active" id="predModeAutoCard" onclick="setPredLocationMode('auto')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>
-        GPS
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>GPS
       </div>
       <div class="seg-item" id="predModeManualCard" onclick="setPredLocationMode('manual')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>
-        دستی
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی
       </div>
       <div class="seg-item" id="predModeMapCard" onclick="setPredLocationMode('map')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>
-        نقشه
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه
       </div>
     </div>
 
@@ -1736,7 +1317,7 @@ body, html { overflow-x: hidden; }
 
     <div id="predMapLocPanel" style="display:none; margin-top:14px;">
       <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
-      <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden;"></div>
+      <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
       <div class="coord-boxes" id="predMapCoordBoxes" style="display:none;">
         <input type="text" id="predMapLat" readonly placeholder="عرض">
         <input type="text" id="predMapLon" readonly placeholder="طول">
@@ -1768,28 +1349,14 @@ body, html { overflow-x: hidden; }
 
   <div class="card">
     <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان شروع بازه‌ی پیش‌بینی</div>
-    <div class="dt-grid">
-      <select id="predStartYear"></select>
-      <select id="predStartMonth"></select>
-      <select id="predStartDay"></select>
-    </div>
-    <div class="dt-time">
-      <select id="predStartHour"></select>
-      <select id="predStartMinute"></select>
-    </div>
+    <div class="dt-grid"><select id="predStartYear"></select><select id="predStartMonth"></select><select id="predStartDay"></select></div>
+    <div class="dt-time"><select id="predStartHour"></select><select id="predStartMinute"></select></div>
   </div>
 
   <div class="card">
     <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان پایان بازه‌ی پیش‌بینی</div>
-    <div class="dt-grid">
-      <select id="predEndYear"></select>
-      <select id="predEndMonth"></select>
-      <select id="predEndDay"></select>
-    </div>
-    <div class="dt-time">
-      <select id="predEndHour"></select>
-      <select id="predEndMinute"></select>
-    </div>
+    <div class="dt-grid"><select id="predEndYear"></select><select id="predEndMonth"></select><select id="predEndDay"></select></div>
+    <div class="dt-time"><select id="predEndHour"></select><select id="predEndMinute"></select></div>
   </div>
 
   <div class="card">
@@ -1809,31 +1376,22 @@ body, html { overflow-x: hidden; }
   </div>
 
   <div id="predResults"></div>
-
 </div>
 
-<!-- ================================================================== -->
-<!--                         LIVE SKY PAGE                              -->
-<!-- ================================================================== -->
+<!-- LIVE SKY PAGE -->
 <div id="pageLive" class="page-section">
-
   <div class="page-header">
     <div class="back-btn" onclick="closeLiveSky()">
       <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
     </div>
     <div class="page-title-wrap">
-      <h2>مشاهده‌ی زنده‌ی آسمان</h2>
-      <p>ردیابی لحظه‌ای اجرام در حال عبور</p>
-    </div>
-  </div>
-
-  <div class="guide-box">
-    <div class="guide-head">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg>
-      راهنمای عملیاتی
-    </div>
-    <div class="guide-body">
-      این ماژول به‌صورت لحظه‌ای موقعیت تمامی ماهواره‌های فعال و پروازهای هوایی قابل رؤیت از موقعیت شما را با <strong>نرخ بروزرسانی یک‌ثانیه‌ای</strong> نمایش می‌دهد. با استفاده از نوار زمان، می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با دقت محاسبات مداری، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.
+      <div class="titles">
+        <h2>مشاهده‌ی زنده‌ی آسمان</h2>
+        <p>ردیابی لحظه‌ای اجرام در حال عبور</p>
+      </div>
+      <div class="guide-trigger" onclick="openGuide('live')" title="راهنمای این بخش">
+        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg>
+      </div>
     </div>
   </div>
 
@@ -1845,19 +1403,16 @@ body, html { overflow-x: hidden; }
         <div class="seg-item" id="liveModeManualCard" onclick="setLiveLocationMode('manual')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی</div>
         <div class="seg-item" id="liveModeMapCard" onclick="setLiveLocationMode('map')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه</div>
       </div>
-
       <div id="liveAutoLocPanel" style="margin-top:14px;">
         <button type="button" class="btn btn-outline" onclick="getLiveLocation()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>دریافت موقعیت</button>
         <div class="status-msg" id="liveLocStatus"></div>
         <div class="coord-boxes" id="liveAutoCoordBoxes" style="display:none;"><input type="text" id="liveAutoLat" readonly placeholder="عرض"><input type="text" id="liveAutoLon" readonly placeholder="طول"></div>
       </div>
-
       <div id="liveMapLocPanel" style="display:none; margin-top:14px;">
         <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
-        <div id="livePickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden;"></div>
+        <div id="livePickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
         <div class="coord-boxes" id="liveMapCoordBoxes" style="display:none;"><input type="text" id="liveMapLat" readonly placeholder="عرض"><input type="text" id="liveMapLon" readonly placeholder="طول"></div>
       </div>
-
       <div id="liveManualLocPanel" style="display:none; margin-top:14px;">
         <div class="field-label" style="margin-top:0;">فرمت مختصات</div>
         <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
@@ -1880,7 +1435,6 @@ body, html { overflow-x: hidden; }
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="error-box" id="liveErrorBox"></div>
       <button type="button" class="btn btn-cyan" onclick="startLiveSky()">
@@ -1905,7 +1459,7 @@ body, html { overflow-x: hidden; }
       <div class="time-marks"><span>۶۰ دقیقه قبل</span><span>الان</span></div>
     </div>
 
-    <div id="liveMapView" style="width:100%; height:440px; border-radius:16px; overflow:hidden; border:1px solid var(--border);"></div>
+    <div id="liveMapView" style="width:100%; height:440px; border-radius:16px; overflow:hidden; border:1px solid var(--border); background:#0a0e1f;"></div>
 
     <div class="map-legend">
       <div class="legend-item sat"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-satellite-small"/></svg>ماهواره</div>
@@ -1913,23 +1467,18 @@ body, html { overflow-x: hidden; }
       <div class="legend-item me"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-eye"/></svg>موقعیت شما</div>
     </div>
   </div>
-
 </div>
 
 </div><!-- /app-shell -->
 
-<!-- ================================================================== -->
-<!--                     LOADING OVERLAY                                -->
-<!-- ================================================================== -->
-<div id="loadingBox" style="position:fixed; inset:0; background:rgba(5,6,15,0.92); backdrop-filter:blur(10px); z-index:800; display:none; align-items:center; justify-content:center; flex-direction:column;">
+<!-- LOADING -->
+<div id="loadingBox">
   <div class="radar"><div class="radar-sweep"></div></div>
   <p class="loading-title" id="loadingMainText">در حال پردازش داده‌های مداری...</p>
   <p class="loading-sub" id="loadingProgress"></p>
 </div>
 
-<!-- ================================================================== -->
-<!--                     CALIBRATION PAGE                               -->
-<!-- ================================================================== -->
+<!-- CALIBRATION -->
 <div id="calibrationPage">
   <div class="calib-wrap">
     <div class="page-header">
@@ -1937,16 +1486,16 @@ body, html { overflow-x: hidden; }
         <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
       </div>
       <div class="page-title-wrap">
-        <h2>کالیبراسیون قطب‌نما</h2>
-        <p>تنظیم دقیق سنسور مغناطیسی</p>
+        <div class="titles">
+          <h2>کالیبراسیون قطب‌نما</h2>
+          <p>تنظیم دقیق سنسور مغناطیسی</p>
+        </div>
       </div>
     </div>
 
     <div id="calStep1" class="card">
       <div class="calib-title">مرحله‌ی آموزش</div>
-      <p class="calib-desc">
-        برای دستیابی به دقت حداکثری در اندازه‌گیری زاویه، سنسور مغناطیسی گوشی شما نیاز به کالیبراسیون دارد.
-      </p>
+      <p class="calib-desc">برای دستیابی به دقت حداکثری در اندازه‌گیری زاویه، سنسور مغناطیسی گوشی نیاز به کالیبراسیون دارد.</p>
 
       <div class="infinity-wrap">
         <svg class="infinity-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
@@ -1957,27 +1506,18 @@ body, html { overflow-x: hidden; }
               <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
             </linearGradient>
           </defs>
-          <!-- True lemniscate path centered at (100,50) -->
-          <path class="infinity-path"
-            d="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
-          <path class="infinity-trail"
-            d="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
+          <path class="infinity-path" d="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
+          <path class="infinity-trail" d="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
           <circle class="infinity-dot" r="4">
-            <animateMotion dur="3s" repeatCount="indefinite"
-              path="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
+            <animateMotion dur="3s" repeatCount="indefinite" path="M 100,50 C 100,20 60,20 60,50 C 60,80 100,80 100,50 C 100,20 140,20 140,50 C 140,80 100,80 100,50 Z" />
           </circle>
         </svg>
       </div>
 
-      <p class="calib-desc">
-        گوشی را مطابق شکل، به صورت <strong>عدد ۸ (∞)</strong> در فضا حرکت دهید.
-      </p>
+      <p class="calib-desc">گوشی را مطابق شکل، به صورت <strong>عدد ۸ (∞)</strong> در فضا حرکت دهید.</p>
 
       <div class="calib-tips">
-        <div class="tip-title">
-          <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg>
-          ملاحظات فنی
-        </div>
+        <div class="tip-title"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> ملاحظات فنی</div>
         • از اجسام فلزی، لپ‌تاپ و منابع الکترومغناطیسی فاصله بگیرید.<br>
         • در فضای باز یا کنار پنجره، دور از سازه‌های بتنی قرار بگیرید.<br>
         • حرکات را نرم و پیوسته، به مدت ۱۰ تا ۳۰ ثانیه تکرار کنید.
@@ -2001,10 +1541,7 @@ body, html { overflow-x: hidden; }
       </div>
 
       <div class="calib-progress-wrap">
-        <div class="calib-progress-label">
-          <span>میزان پیشرفت</span>
-          <span id="calProgressLabel">0%</span>
-        </div>
+        <div class="calib-progress-label"><span>میزان پیشرفت</span><span id="calProgressLabel">0%</span></div>
         <div class="calib-progress-bar"><div class="calib-progress-fill" id="calProgressFill"></div></div>
         <div class="calib-progress-pct" id="calProgressPct">0%</div>
       </div>
@@ -2031,12 +1568,10 @@ body, html { overflow-x: hidden; }
 
     <div id="calStep3" class="card" style="display:none; text-align:center;">
       <div style="display:flex; justify-content:center; color:var(--warning); margin-bottom:14px;">
-        <svg class="icon-svg icon-xl" viewBox="0 0 24 24" style="width:60px; height:60px;"><use href="#i-info"/></svg>
+        <svg class="icon-svg icon-xl" viewBox="0 0 24 24" style="width:60px; height:60px;"><use href="#i-alert"/></svg>
       </div>
       <h3 style="color:#fbbf24; margin-bottom:10px;">کالیبراسیون به اتمام نرسید</h3>
-      <p class="calib-desc" style="margin-bottom:18px;">
-        در بازه‌ی تعیین‌شده، سنسور موفق به دریافت داده‌ی کافی نشد. لطفاً دوباره تلاش کنید یا از لیست کشویی جهت‌ها استفاده نمایید.
-      </p>
+      <p class="calib-desc" style="margin-bottom:18px;">در بازه‌ی تعیین‌شده، سنسور موفق به دریافت داده‌ی کافی نشد. لطفاً دوباره تلاش کنید یا از لیست کشویی جهت‌ها استفاده نمایید.</p>
       <div style="display:flex; gap:10px; flex-direction:column;">
         <button type="button" class="btn btn-primary" onclick="retryCalibration()">
           <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>
@@ -2051,25 +1586,15 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- ================================================================== -->
-<!--                     ABOUT MODAL                                    -->
-<!-- ================================================================== -->
+<!-- ABOUT MODAL -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal-box" style="max-width:560px;">
-    <button class="modal-close" onclick="closeModal('aboutModal')">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg>
-    </button>
+    <button class="modal-close" onclick="closeModal('aboutModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> درباره‌ی رصدیار</h2>
-    <div class="about-content" style="padding:0; background:none; border:none; border-radius:0;">
-      <p>
-        <strong>رصدیار</strong> یک سامانه‌ی مستقل و تخصصی برای شناسایی اجرام نورانی آسمان است که با تکیه بر داده‌های مداری رسمی و پردازش لحظه‌ای، تلاش می‌کند پاسخ علمی دقیقی به پرسش‌های رایج کاربران درباره‌ی ماهیت نورهای مشاهده‌شده در آسمان بدهد.
-      </p>
-
+    <div class="about-content">
+      <p><strong>رصدیار</strong> یک سامانه‌ی مستقل و تخصصی برای شناسایی اجرام نورانی آسمان است که با تکیه بر داده‌های مداری رسمی و پردازش لحظه‌ای، تلاش می‌کند پاسخ علمی دقیقی به پرسش‌های رایج کاربران درباره‌ی ماهیت نورهای مشاهده‌شده در آسمان بدهد.</p>
       <h4>هسته‌ی تحلیلی</h4>
-      <p>
-        این سامانه از الگوریتم استاندارد <strong>SGP4</strong> برای انتشار مداری ماهواره‌های فعال و از کاتالوگ جامع <strong>CelesTrak</strong> به‌عنوان مرجع مداری بهره می‌برد. تمامی محاسبات به‌صورت بلادرنگ و روی دستگاه کاربر انجام می‌شود.
-      </p>
-
+      <p>این سامانه از الگوریتم استاندارد <strong>SGP4</strong> برای انتشار مداری ماهواره‌های فعال و از کاتالوگ جامع <strong>CelesTrak</strong> به‌عنوان مرجع مداری بهره می‌برد. تمامی محاسبات به‌صورت بلادرنگ و روی دستگاه کاربر انجام می‌شود.</p>
       <h4>قابلیت‌های کلیدی</h4>
       <ul>
         <li>شناسایی هوشمند اجرام نورانی بر اساس موقعیت، زمان و جهت</li>
@@ -2078,44 +1603,37 @@ body, html { overflow-x: hidden; }
         <li>کالیبراسیون خودکار سنسور مغناطیسی گوشی</li>
         <li>پشتیبانی کامل از تقویم هجری شمسی</li>
       </ul>
-
       <h4>اصول طراحی</h4>
-      <p>
-        <strong>استقلال:</strong> بدون وابستگی به زیرساخت‌های ابری متمرکز، تمام قابلیت‌ها روی مرورگر کاربر اجرا می‌شود.
-        <br>
-        <strong>دقت:</strong> استفاده‌ی انحصاری از داده‌های مداری رسمی و استانداردهای نجوم محاسباتی.
-        <br>
-        <strong>حریم خصوصی:</strong> هیچ داده‌ای از کاربر به سرورهای شخص ثالث ارسال نمی‌گردد.
-      </p>
-
-      <p style="color:var(--text-mute); font-size:11.5px; text-align:center; margin-top:20px; padding-top:16px; border-top:1px dashed rgba(120,150,220,0.15);">
-        نسخه ۲.۰ — طراحی و توسعه‌ی مستقل
-      </p>
+      <p><strong>استقلال:</strong> بدون وابستگی به زیرساخت‌های ابری متمرکز، تمام قابلیت‌ها روی مرورگر کاربر اجرا می‌شود.<br>
+      <strong>دقت:</strong> استفاده‌ی انحصاری از داده‌های مداری رسمی و استانداردهای نجوم محاسباتی.<br>
+      <strong>حریم خصوصی:</strong> هیچ داده‌ای از کاربر به سرورهای شخص ثالث ارسال نمی‌گردد.</p>
+      <p style="color:var(--text-mute); font-size:11.5px; text-align:center; margin-top:20px; padding-top:16px; border-top:1px dashed rgba(120,150,220,0.15);">نسخه ۲.۰ — طراحی و توسعه‌ی مستقل</p>
     </div>
   </div>
 </div>
 
-<!-- ================================================================== -->
-<!--                     HISTORY MODAL                                  -->
-<!-- ================================================================== -->
+<!-- GUIDE MODAL (dynamic) -->
+<div class="modal-overlay" id="guideModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('guideModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
+    <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg> <span id="guideTitle">راهنما</span></h2>
+    <div class="guide-modal-body" id="guideBody"></div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('historyModal')">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg>
-    </button>
+    <button class="modal-close" onclick="closeModal('historyModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-history"/></svg> تاریخچه‌ی مشاهدات</h2>
     <div id="historyList"></div>
   </div>
 </div>
 
-<!-- ================================================================== -->
-<!--                     ADMIN LOGIN MODAL                              -->
-<!-- ================================================================== -->
+<!-- ADMIN LOGIN -->
 <div class="modal-overlay" id="adminLoginModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('adminLoginModal')">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg>
-    </button>
+    <button class="modal-close" onclick="closeModal('adminLoginModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-shield-user"/></svg> ورود مدیر سیستم</h2>
     <label class="field-label" style="font-size:13px;">نام کاربری</label>
     <input type="text" id="adminUser" placeholder="نام کاربری" autocomplete="username">
@@ -2129,41 +1647,29 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- ================================================================== -->
-<!--                     ADMIN DASH MODAL                               -->
-<!-- ================================================================== -->
+<!-- ADMIN DASHBOARD -->
 <div class="modal-overlay" id="adminDashModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('adminDashModal')">
-      <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg>
-    </button>
+    <button class="modal-close" onclick="closeModal('adminDashModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-github"/></svg> پنل مدیریت پایگاه داده</h2>
-
-    <p class="text-small text-muted" style="margin-bottom:16px; line-height:1.9;">
-      به‌روزرسانی منظم پایگاه داده‌ی TLE باعث افزایش دقت محاسبات می‌شود. توصیه می‌شود این فرایند ماهانه یک‌بار انجام گیرد.
-    </p>
-
+    <p class="text-small text-muted" style="margin-bottom:16px; line-height:1.9;">به‌روزرسانی منظم پایگاه داده‌ی TLE باعث افزایش دقت محاسبات می‌شود. توصیه می‌شود این فرایند ماهانه یک‌بار انجام گیرد.</p>
     <label class="field-label" style="font-size:12.5px;">Owner مخزن گیت‌هاب</label>
     <input type="text" id="ghOwner" value="yahoseinnnnn0313-eng" style="margin-bottom:10px;">
     <label class="field-label" style="font-size:12.5px;">نام مخزن</label>
     <input type="text" id="ghRepo" value="didban-app" style="margin-bottom:10px;">
     <label class="field-label" style="font-size:12.5px;">Personal Access Token</label>
     <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxx">
-
     <button type="button" class="btn btn-primary" style="margin-top:16px;" onclick="autoUpdateTle()">
       <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-github"/></svg>
       دریافت و به‌روزرسانی خودکار
     </button>
-
     <div style="text-align:center; margin:14px 0; color:var(--text-mute); font-size:11.5px;">— یا —</div>
-
     <label class="field-label" style="font-size:12.5px;">ورود دستی داده‌ی TLE</label>
     <textarea id="manualTleText" rows="5" style="font-family:monospace; font-size:11px;" placeholder="محتوای TLE را اینجا بچسبانید..."></textarea>
     <button type="button" class="btn btn-outline" style="margin-top:10px;" onclick="manualUpdateTle()">
       <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg>
       ثبت داده‌ی دستی
     </button>
-
     <div class="diag-box" id="adminStatus" style="margin-top:16px; display:none;"></div>
   </div>
 </div>
@@ -2173,15 +1679,86 @@ body, html { overflow-x: hidden; }
    NAVIGATION
 ======================================================================== */
 function navigateTo(pageId){
-  // Stop live if leaving
-  if(pageId !== 'pageLive'){
-    try{ stopLive(); }catch(e){}
-  }
-  // Stop all compass handlers when leaving
+  if(pageId !== 'pageLive'){ try{ stopLive(); }catch(e){} }
   document.querySelectorAll('.page-section').forEach(function(p){ p.classList.remove('active'); });
   var target = document.getElementById(pageId);
   if(target){ target.classList.add('active'); }
   window.scrollTo(0,0);
+}
+
+/* ========================================================================
+   GUIDES
+======================================================================== */
+var GUIDES = {
+  search: {
+    title: 'راهنمای بررسی شیء مشاهده‌شده',
+    body: `
+      <p>این ماژول با بهره‌گیری از الگوریتم پیشرفته‌ی محاسبات مداری <strong>SGP4</strong> و تطبیق آن با داده‌های لحظه‌ای ترافیک هوایی، موقعیت شیء نورانی مشاهده‌شده‌ی شما را با دقت بازسازی می‌کند.</p>
+      <h4>ورودی‌های ضروری</h4>
+      <ul>
+        <li><strong>موقعیت ناظر:</strong> مختصات دقیق محل مشاهده را با GPS، نقشه یا ورود دستی تعیین کنید.</li>
+        <li><strong>زمان مشاهده:</strong> تاریخ و ساعت دقیق رؤیت را بر اساس تقویم هجری شمسی وارد کنید.</li>
+        <li><strong>سمت مشاهده:</strong> جهت جغرافیایی که شیء در آن دیده شده (نسبت به شمال واقعی).</li>
+        <li><strong>جهت حرکت:</strong> مسیر ظاهری حرکت شیء در آسمان.</li>
+      </ul>
+      <h4>الگوریتم تحلیل</h4>
+      <p>سامانه تمامی ماهواره‌های فعال و پروازهای هوایی را در پنج بازه‌ی زمانی حول لحظه‌ی مشاهده بررسی می‌کند و با اعمال فیلترهای هندسی، نتایج هم‌خوان با گزارش شما را استخراج می‌نماید.</p>
+      <h4>شاخص اطمینان</h4>
+      <p>درصد اطمینان نشان‌دهنده‌ی میزان هم‌خوانی زاویه‌ای شیء با گزارش شماست. هرچه این عدد بالاتر باشد، احتمال تطابق بیشتر است.</p>
+    `
+  },
+  predict: {
+    title: 'راهنمای پیش‌بینی عبور ماهواره‌ها',
+    body: `
+      <p>این ماژول با پردازش مدارهای کپلری ماهواره‌های فعال و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند.</p>
+      <h4>پارامترهای ورودی</h4>
+      <ul>
+        <li><strong>موقعیت رصد:</strong> مختصات جغرافیایی نقطه‌ی مورد نظر برای رصد.</li>
+        <li><strong>بازه‌ی زمانی:</strong> تعیین زمان شروع و پایان پیش‌بینی.</li>
+      </ul>
+      <h4>الگوریتم انتخاب</h4>
+      <p>تنها ماهواره‌هایی در نتایج نمایش داده می‌شوند که در طول بازه، حداقل به ارتفاع <strong>۱۵ درجه</strong> بالای افق برسند و از روشنایی کافی برای رؤیت برخوردار باشند. این فیلتر، نتایج را به موارد قابل مشاهده‌ی واقعی محدود می‌کند.</p>
+      <h4>اطلاعات هر عبور</h4>
+      <ul>
+        <li>نام و نوع ماهواره</li>
+        <li>کشور بهره‌بردار</li>
+        <li>زمان دقیق شروع عبور</li>
+        <li>سمت مشاهده (آزیموت ورود)</li>
+        <li>جهت حرکت در آسمان</li>
+      </ul>
+      <h4>خروجی CSV</h4>
+      <p>نتیجه‌ی تحلیل قابل دانلود به فرمت اکسل بوده و شامل تمامی پارامترهای محاسبه‌شده است.</p>
+    `
+  },
+  live: {
+    title: 'راهنمای مشاهده‌ی زنده‌ی آسمان',
+    body: `
+      <p>این ماژول به‌صورت لحظه‌ای موقعیت تمامی ماهواره‌های فعال و پروازهای هوایی قابل رؤیت از موقعیت شما را با نرخ بروزرسانی یک‌ثانیه‌ای نمایش می‌دهد.</p>
+      <h4>پارامترهای فیلتر</h4>
+      <ul>
+        <li><strong>حداقل ارتفاع از افق:</strong> ۱۰ درجه (مقدار پیش‌فرض استاندارد)</li>
+        <li><strong>حداکثر فاصله‌ی هواپیماها:</strong> ۱۵۰ کیلومتر</li>
+        <li><strong>حداکثر قدر ظاهری ماهواره:</strong> ۶.۵ (محدوده‌ی دید چشم غیرمسلح)</li>
+      </ul>
+      <h4>نوار زمان</h4>
+      <p>با استفاده از نوار زمان می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با محاسبات مداری دقیق، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.</p>
+      <h4>نمایش روی نقشه</h4>
+      <ul>
+        <li><strong>ماهواره‌ها:</strong> با نماد ماهواره‌ای</li>
+        <li><strong>هواپیماها:</strong> با نماد هواپیما</li>
+        <li><strong>موقعیت شما:</strong> در مرکز نقشه</li>
+      </ul>
+      <p>برای مشاهده‌ی جزئیات هر شیء، روی نشانگر آن ضربه بزنید.</p>
+    `
+  }
+};
+
+function openGuide(key){
+  var g = GUIDES[key];
+  if(!g) return;
+  document.getElementById('guideTitle').innerText = g.title;
+  document.getElementById('guideBody').innerHTML = g.body;
+  document.getElementById('guideModal').classList.add('show');
 }
 
 function openAbout(){ document.getElementById('aboutModal').classList.add('show'); }
@@ -2193,6 +1770,30 @@ function openAdminLogin(){
   document.getElementById('adminLoginModal').classList.add('show');
 }
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+/* ========================================================================
+   ERROR DISPLAY HELPERS
+======================================================================== */
+function showErrorBox(boxId, title, items){
+  var box = document.getElementById(boxId);
+  var html = '<strong>'+title+'</strong>';
+  items.forEach(function(it){
+    html += '<div class="err-item"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-alert"/></svg><span>'+it+'</span></div>';
+  });
+  box.innerHTML = html;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function clearErrorBox(boxId){
+  var box = document.getElementById(boxId);
+  box.classList.remove('show');
+  box.innerHTML = '';
+}
+function markFieldInvalid(el){
+  if(!el) return;
+  el.classList.add('invalid');
+  setTimeout(function(){ el.classList.remove('invalid'); }, 2500);
+}
 
 /* ========================================================================
    JALALI CALENDAR
@@ -2372,10 +1973,7 @@ function buildJalaliSelectors(yearId, monthId, dayId, hourId, minuteId, minStep,
   ySel.addEventListener('change', rebuildDays);
   mSel.addEventListener('change', rebuildDays);
 }
-
-function fillDatePicker(){
-  buildJalaliSelectors('jYear','jMonth','jDay','jHour','jMinute',1,getNowLocal().jy);
-}
+function fillDatePicker(){ buildJalaliSelectors('jYear','jMonth','jDay','jHour','jMinute',1,getNowLocal().jy); }
 function fillPredDatePickers(){
   buildJalaliSelectors('predStartYear','predStartMonth','predStartDay','predStartHour','predStartMinute',5);
   buildJalaliSelectors('predEndYear','predEndMonth','predEndDay','predEndHour','predEndMinute',5);
@@ -2406,6 +2004,20 @@ function fillPredDatePickers(){
 }
 
 /* ========================================================================
+   MAP TILE HELPER — reliable tile source
+======================================================================== */
+function addTileLayer(map){
+  var tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var layer = L.tileLayer(tileUrl, {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19,
+    crossOrigin: true,
+    errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+  }).addTo(map);
+  return layer;
+}
+
+/* ========================================================================
    LOCATION MODE — SEARCH
 ======================================================================== */
 var currentLocMode='auto';
@@ -2420,12 +2032,17 @@ function setLocationMode(mode){
   document.getElementById('autoLocPanel').style.display = mode==='auto' ? 'block':'none';
   document.getElementById('manualLocPanel').style.display = mode==='manual' ? 'block':'none';
   document.getElementById('mapLocPanel').style.display = mode==='map' ? 'block':'none';
-  if(mode==='map') setTimeout(initPickerMap, 50);
+  if(mode==='map'){
+    setTimeout(function(){
+      initPickerMap();
+      if(pickerMapObj) pickerMapObj.invalidateSize();
+    }, 100);
+  }
 }
 function initPickerMap(){
   if(pickerMapObj){ pickerMapObj.invalidateSize(); return; }
   pickerMapObj=L.map('pickerMap').setView([35.6892, 51.3890], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(pickerMapObj);
+  addTileLayer(pickerMapObj);
   pickerMapObj.on('click', function(e){
     var la=e.latlng.lat, lo=e.latlng.lng;
     if(pickerMarker) pickerMapObj.removeLayer(pickerMarker);
@@ -2563,8 +2180,8 @@ function beginCalibration(){
   if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
     DeviceOrientationEvent.requestPermission().then(function(state){
       if(state === 'granted'){ startCalibrationListener(); }
-      else { showCalibrationFailed('اجازه دسترسی داده نشد.'); }
-    }).catch(function(err){ showCalibrationFailed('خطا: ' + err.message); });
+      else { showCalibrationFailed(); }
+    }).catch(function(){ showCalibrationFailed(); });
   } else {
     startCalibrationListener();
   }
@@ -2648,7 +2265,7 @@ function showCalibrationSuccess(){
   document.getElementById('calSuccessBox').style.display = 'block';
   document.getElementById('calStatStability').innerText = 'مطلوب';
 }
-function showCalibrationFailed(msg){
+function showCalibrationFailed(){
   stopCalibrationListener();
   document.getElementById('calStep2').style.display = 'none';
   document.getElementById('calStep3').style.display = 'block';
@@ -2660,7 +2277,6 @@ function finishCalibrationSuccess(){
   enableCompass();
   window.scrollTo(0,0);
 }
-var compassHandler = null;
 function enableCompass(){
   function handle(e){
     var h;
@@ -2674,16 +2290,15 @@ function enableCompass(){
       document.getElementById('compassStatus').innerText = "جهت زنده: " + Math.round(h) + "° — " + azimuthToCompass(h);
     }
   }
-  compassHandler = handle;
   if('ondeviceorientationabsolute' in window){
-    window.addEventListener('deviceorientationabsolute', compassHandler);
+    window.addEventListener('deviceorientationabsolute', handle);
   } else {
-    window.addEventListener('deviceorientation', compassHandler);
+    window.addEventListener('deviceorientation', handle);
   }
 }
 
 /* ========================================================================
-   MATH HELPERS
+   MATH
 ======================================================================== */
 function toRad(d){ return d*Math.PI/180; }
 function toDeg(r){ return r*180/Math.PI; }
@@ -2758,7 +2373,7 @@ function computeMovementDirection(startAz, peakAz, endAz){
 }
 
 /* ========================================================================
-   PROXY HELPERS
+   PROXY
 ======================================================================== */
 var VERCEL_PROXY = "https://didban-app.vercel.app/api/proxy";
 function buildProxyAttempts(url){
@@ -2792,7 +2407,7 @@ async function fetchJsonWithProxies(url, timeoutMs){
 }
 
 /* ========================================================================
-   TLE LOADING
+   TLE
 ======================================================================== */
 var cachedTleText = null;
 async function loadTleData(){
@@ -2847,8 +2462,8 @@ async function fetchAllAircraft(lat, lon, radiusKm){
   ];
   var ok=[], fail=[];
   var results=await Promise.all(sources.map(function(s){
-    return s.fn().then(function(r){ ok.push(s.name); return r; })
-                 .catch(function(e){ fail.push(s.name+': '+(e && e.message ? e.message : 'خطای نامشخص')); return []; });
+    return s.fn().then(function(r){ if(r && r.length) ok.push(s.name); return r; })
+                 .catch(function(e){ fail.push(s.name); return []; });
   }));
   var merged={};
   results.forEach(function(list){
@@ -2903,20 +2518,20 @@ function guessSatInfo(name){
 }
 function estimateSatMag(rangeKm, name){
   var n=(name||'').toUpperCase();
-  var stdMag=2.0;
+  var stdMag=4.0; // Default: faint
   if(n.indexOf('ISS')>-1 || n.indexOf('ZARYA')>-1) stdMag=-2.0;
   else if(n.indexOf('CSS')>-1 || n.indexOf('TIANGONG')>-1) stdMag=-1.0;
   else if(n.indexOf('HST')>-1 || n.indexOf('HUBBLE')>-1) stdMag=1.0;
-  else if(n.indexOf('STARLINK')>-1) stdMag=5.0;
-  else if(n.indexOf('ONEWEB')>-1) stdMag=4.5;
+  else if(n.indexOf('STARLINK')>-1) stdMag=6.5;
+  else if(n.indexOf('ONEWEB')>-1) stdMag=5.5;
   else if(n.indexOf('IRIDIUM')>-1) stdMag=4.0;
-  else if(n.indexOf('COSMOS')>-1) stdMag=3.5;
-  else if(n.indexOf('GLOBALSTAR')>-1) stdMag=4.5;
-  else if(n.indexOf('NAVSTAR')>-1 || n.indexOf('GPS')>-1) stdMag=3.5;
-  else if(n.indexOf('GLONASS')>-1) stdMag=4.0;
-  else if(n.indexOf('GALILEO')>-1) stdMag=4.0;
-  else if(n.indexOf('BEIDOU')>-1) stdMag=4.0;
-  else if(n.indexOf('NOAA')>-1) stdMag=4.0;
+  else if(n.indexOf('COSMOS')>-1) stdMag=4.0;
+  else if(n.indexOf('GLOBALSTAR')>-1) stdMag=5.5;
+  else if(n.indexOf('NAVSTAR')>-1 || n.indexOf('GPS')>-1) stdMag=4.5;
+  else if(n.indexOf('GLONASS')>-1) stdMag=4.5;
+  else if(n.indexOf('GALILEO')>-1) stdMag=4.5;
+  else if(n.indexOf('BEIDOU')>-1) stdMag=4.5;
+  else if(n.indexOf('NOAA')>-1) stdMag=4.5;
   var refRange=1000;
   return stdMag + 5 * Math.log10(Math.max(rangeKm, 100) / refRange);
 }
@@ -2924,40 +2539,75 @@ function estimateSatMag(rangeKm, name){
 /* ========================================================================
    MAIN SEARCH ANALYSIS
 ======================================================================== */
-function showError(msg){ var b=document.getElementById('errorBox'); b.innerText=msg; b.style.display='block'; }
-function clearError(){ document.getElementById('errorBox').style.display='none'; }
-
 function validateAndRun(){
-  clearError();
+  clearErrorBox('errorBox');
+  var errors = [];
+  var focusEl = null;
+
+  // Validate location
   var lat, lon;
   if(currentLocMode==='auto'){
     lat=parseFloat(document.getElementById('autoLat').value);
     lon=parseFloat(document.getElementById('autoLon').value);
-    if(isNaN(lat)||isNaN(lon)){ showError('لطفاً ابتدا موقعیت خود را دریافت کنید.'); return; }
+    if(isNaN(lat)||isNaN(lon)){
+      errors.push('موقعیت ناظر تعیین نشده است. لطفاً دکمه‌ی «دریافت خودکار موقعیت» را بزنید یا حالت دیگری انتخاب کنید.');
+      focusEl = document.getElementById('modeAutoCard');
+    }
   } else if(currentLocMode==='map'){
     lat=parseFloat(document.getElementById('mapLat').value);
     lon=parseFloat(document.getElementById('mapLon').value);
-    if(isNaN(lat)||isNaN(lon)){ showError('لطفاً روی نقشه ضربه بزنید.'); return; }
+    if(isNaN(lat)||isNaN(lon)){
+      errors.push('موقعیت ناظر روی نقشه انتخاب نشده است. لطفاً روی نقشه ضربه بزنید.');
+      focusEl = document.getElementById('pickerMap');
+    }
   } else {
-    if(!currentCoordFormat){ showError('لطفاً فرمت مختصات را انتخاب کنید.'); return; }
-    var c=getManualCoords();
-    if(!c){ showError('مختصات نامعتبر است.'); return; }
-    lat=c[0]; lon=c[1];
+    if(!currentCoordFormat){
+      errors.push('فرمت ورود مختصات انتخاب نشده است. یکی از سه گزینه‌ی DMS، Decimal یا UTM را انتخاب کنید.');
+    } else {
+      var c=getManualCoords();
+      if(!c){
+        errors.push('مختصات دستی ناقص یا نامعتبر است. لطفاً تمامی فیلدهای ضروری را به‌درستی وارد کنید.');
+        focusEl = document.getElementById('manualLocPanel');
+      } else {
+        lat=c[0]; lon=c[1];
+      }
+    }
   }
-  if(lat<-90||lat>90||lon<-180||lon>180){ showError('مختصات خارج از محدوده.'); return; }
+  if(!isNaN(lat) && !isNaN(lon) && (lat<-90||lat>90||lon<-180||lon>180)){
+    errors.push('مقدار مختصات خارج از محدوده‌ی مجاز جغرافیایی است. طول جغرافیایی بین ۱۸۰- تا ۱۸۰+ و عرض بین ۹۰- تا ۹۰+ باشد.');
+  }
+
+  // Validate time
   var jy=parseInt(document.getElementById('jYear').value);
   var jm=parseInt(document.getElementById('jMonth').value);
   var jd=parseInt(document.getElementById('jDay').value);
   var jh=parseInt(document.getElementById('jHour').value);
   var jmin=parseInt(document.getElementById('jMinute').value);
-  var obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
-  if(obsDate.getTime() > Date.now()+60000){ showError('زمان نمی‌تواند در آینده باشد.'); return; }
-  if(selectedAzimuth === null){ showError('لطفاً سمت مشاهده شیء را انتخاب کنید.'); return; }
+  if(isNaN(jy)||isNaN(jm)||isNaN(jd)||isNaN(jh)||isNaN(jmin)){
+    errors.push('تاریخ یا ساعت مشاهده نامعتبر است. لطفاً هر دو مقدار را انتخاب کنید.');
+  } else {
+    var obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
+    if(obsDate.getTime() > Date.now()+60000){
+      errors.push('زمان انتخاب‌شده در آینده قرار دارد. امکان تحلیل مشاهده برای زمان آینده وجود ندارد.');
+    }
+  }
+
+  // Validate direction
+  if(selectedAzimuth === null){
+    errors.push('سمت مشاهده‌ی شیء انتخاب نشده است. لطفاً یکی از جهات جغرافیایی را از لیست انتخاب کنید یا از قطب‌نما استفاده نمایید.');
+    focusEl = document.getElementById('directionSelect');
+  }
+
+  if(errors.length > 0){
+    showErrorBox('errorBox', 'خطا در ورود اطلاعات', errors);
+    if(focusEl) markFieldInvalid(focusEl);
+    return;
+  }
+
   var azimuth = selectedAzimuth;
   var moveDir=document.getElementById('moveDir').value;
   document.getElementById('resultBox').style.display='none';
-  var loadingBox = document.getElementById('loadingBox');
-  loadingBox.style.display='flex';
+  document.getElementById('loadingBox').style.display='flex';
   runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin);
 }
 
@@ -3084,7 +2734,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
         diag.acSourcesFail=acData.sourcesFail;
         diag.acNearby=list.length;
         var NEARBY_AC_DIST=100, NEARBY_AC_MIN_ELEV=0.3;
-        if(acData.sourcesOk.length===0){ acErrorMsg='دسترسی به منابع هواپیما ممکن نشد.'; }
+        if(acData.sourcesOk.length===0){ acErrorMsg='دسترسی به منابع داده‌ی هواپیما ممکن نشد.'; }
         else {
           list.forEach(function(a){
             if(a.onGround) return;
@@ -3106,7 +2756,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
     finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, acErrorMsg, diag, allSatCandidates, allAcCandidates);
   }catch(fatalErr){
     document.getElementById('loadingBox').style.display='none';
-    showError('خطای غیرمنتظره: '+fatalErr.message);
+    showErrorBox('errorBox', 'خطای غیرمنتظره', [fatalErr.message]);
   }
 }
 
@@ -3122,7 +2772,7 @@ function endpointFromHeading(objLat, objLon, heading, kmEach){
 }
 function resetSearch(){
   document.getElementById('resultBox').style.display='none';
-  document.getElementById('formBox2') && (document.getElementById('formBox2').style.display='block');
+  document.getElementById('map').innerHTML='';
   window.scrollTo(0,0);
 }
 function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, errMsg, diag, allSatCandidates, allAcCandidates){
@@ -3131,14 +2781,26 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   cachedAllSat=allSatCandidates||[]; cachedAllAc=allAcCandidates||[];
   var hasSat=satResults.length>0, hasAc=acResults.length>0;
   var hero=document.getElementById('resultHero');
-  var cls='un', title='شیء ناشناس', sub='', icon='scan';
-  if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+(satResults.length===1?' ماهواره با مشخصات شما هم‌خوانی دارد':' ماهواره با شرایط رؤیت شما مطابقت دارند'); icon='satellite'; }
-  else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+(acResults.length===1?' پرواز در سمت مشاهده‌ی شما قرار دارد':' پرواز با مشخصات شما مطابقت دارند'); icon='plane'; }
-  else if(hasSat && hasAc){ cls='mix'; title='شناسایی دوگانه'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما در آن لحظه از آن سمت قابل مشاهده بودند'; icon='satellite'; }
-  else { cls='un'; title='شیء ناشناس'; sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای با این مشخصات مطابقت نداشت. احتمالاً جرم نجومی، شهاب‌سنگ یا شیء خارج از کاتالوگ‌ها.'; icon='sparkle'; }
+  var cls='un', title='شیء ناشناس', sub='', icon='sparkle';
+  if(hasSat && !hasAc){
+    cls='sat'; title='ماهواره شناسایی شد';
+    sub=satResults.length+(satResults.length===1?' ماهواره با مشخصات شما هم‌خوانی دارد':' ماهواره با شرایط رؤیت شما مطابقت دارند');
+    icon='satellite';
+  } else if(hasAc && !hasSat){
+    cls='ac'; title='هواپیما شناسایی شد';
+    sub=acResults.length+(acResults.length===1?' پرواز در سمت مشاهده‌ی شما قرار دارد':' پرواز با مشخصات شما مطابقت دارند');
+    icon='plane';
+  } else if(hasSat && hasAc){
+    cls='mix'; title='شناسایی دوگانه';
+    sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما در آن لحظه از آن سمت قابل مشاهده بودند';
+    icon='satellite';
+  } else {
+    cls='un'; title='شیء ناشناس';
+    sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای با این مشخصات مطابقت نداشت.';
+    icon='sparkle';
+  }
   hero.className='result-hero '+cls;
-  var heroIcon = hero.querySelector('.hero-icon .icon-svg use');
-  if(heroIcon) heroIcon.setAttribute('href', '#i-'+icon);
+  document.getElementById('resultHeroIcon').setAttribute('href', '#i-'+icon);
   document.getElementById('resultTitle').innerText=title;
   document.getElementById('resultSub').innerText=sub;
   document.getElementById('infoLoc').innerText=lat.toFixed(4)+', '+lon.toFixed(4);
@@ -3176,7 +2838,7 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   var warnBox=document.getElementById('acTimeWarning');
   var warnParts=[];
   if(diag && diag.satFetchError) warnParts.push(diag.satFetchError);
-  if(diag && diag.acSkippedOldTime) warnParts.push('بررسی هواپیما انجام نشد (زمان بیش از ۳۰ دقیقه پیش).');
+  if(diag && diag.acSkippedOldTime) warnParts.push('بررسی ترافیک هوایی انجام نشد (زمان گزارش بیش از ۳۰ دقیقه با اکنون فاصله دارد).');
   if(warnParts.length>0){ warnBox.style.display='block'; warnBox.innerHTML=warnParts.join('<br><br>'); }
   else { warnBox.style.display='none'; }
 
@@ -3190,29 +2852,35 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>';
   }
 
-  var map=L.map('map').setView([lat, lon], 8);
-  mapRef=map;
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-  var obsIcon=L.divIcon({html:'<div style="color:#67e8f9;font-size:28px;filter:drop-shadow(0 0 10px #22d3ee);">◉</div>', iconSize:[28,28], iconAnchor:[14,14], className:''});
-  L.marker([lat,lon], {icon:obsIcon}).addTo(map).bindPopup('موقعیت شما');
-  var sightEnd=projectPoint(lat, lon, azimuth, 60);
-  L.polyline([[lat,lon],sightEnd], {color:'#67e8f9', weight:2, dashArray:'5,6', opacity:.7}).addTo(map);
-  function drawObject(objLat, objLon, heading, iconHtml, popupHtml, lineColor, lineKm){
-    var icon=L.divIcon({html:iconHtml, iconSize:[26,26], iconAnchor:[13,13], className:''});
-    L.marker([objLat,objLon],{icon:icon}).addTo(map).bindPopup(popupHtml);
-    var ends=endpointFromHeading(objLat, objLon, heading, lineKm||60);
-    if(ends) L.polyline(ends, {color:lineColor, weight:2, dashArray:'6,8', opacity:.6}).addTo(map);
-  }
-  satResults.forEach(function(s){
-    drawObject(s.lat, s.lon, s.heading, '<div style="font-size:20px;filter:drop-shadow(0 0 6px #22d3ee);">🛰️</div>', '<b>'+s.name+'</b><br>'+s.type, '#22d3ee', 250);
-  });
-  acResults.forEach(function(a){
-    drawObject(a.lat, a.lon, a.heading, '<div style="font-size:20px;filter:drop-shadow(0 0 6px #10b981);">✈️</div>', '<b>'+a.name+'</b><br>'+a.country, '#10b981', 50);
-  });
-  if(!hasSat && !hasAc){
-    var unkIcon=L.divIcon({html:'<div style="font-size:20px;">✨</div>', iconSize:[20,20], iconAnchor:[10,10], className:''});
-    L.marker(sightEnd,{icon:unkIcon}).addTo(map).bindPopup('جهت تقریبی مشاهده');
-  }
+  // Init map
+  setTimeout(function(){
+    if(mapRef){ try{ mapRef.remove(); }catch(e){} mapRef=null; }
+    mapRef=L.map('map').setView([lat, lon], 8);
+    addTileLayer(mapRef);
+    setTimeout(function(){ mapRef.invalidateSize(); }, 100);
+
+    var obsIcon=L.divIcon({html:'<div style="color:#67e8f9;font-size:28px;filter:drop-shadow(0 0 10px #22d3ee);">◉</div>', iconSize:[28,28], iconAnchor:[14,14], className:''});
+    L.marker([lat,lon], {icon:obsIcon}).addTo(mapRef).bindPopup('موقعیت شما');
+    var sightEnd=projectPoint(lat, lon, azimuth, 60);
+    L.polyline([[lat,lon],sightEnd], {color:'#67e8f9', weight:2, dashArray:'5,6', opacity:.7}).addTo(mapRef);
+    function drawObject(objLat, objLon, heading, iconHtml, popupHtml, lineColor, lineKm){
+      var icon=L.divIcon({html:iconHtml, iconSize:[26,26], iconAnchor:[13,13], className:''});
+      L.marker([objLat,objLon],{icon:icon}).addTo(mapRef).bindPopup(popupHtml);
+      var ends=endpointFromHeading(objLat, objLon, heading, lineKm||60);
+      if(ends) L.polyline(ends, {color:lineColor, weight:2, dashArray:'6,8', opacity:.6}).addTo(mapRef);
+    }
+    satResults.forEach(function(s){
+      drawObject(s.lat, s.lon, s.heading, '<div style="font-size:20px;filter:drop-shadow(0 0 6px #22d3ee);">🛰️</div>', '<b>'+s.name+'</b><br>'+s.type, '#22d3ee', 250);
+    });
+    acResults.forEach(function(a){
+      drawObject(a.lat, a.lon, a.heading, '<div style="font-size:20px;filter:drop-shadow(0 0 6px #10b981);">✈️</div>', '<b>'+a.name+'</b><br>'+a.country, '#10b981', 50);
+    });
+    if(!hasSat && !hasAc){
+      var unkIcon=L.divIcon({html:'<div style="font-size:20px;">✨</div>', iconSize:[20,20], iconAnchor:[10,10], className:''});
+      L.marker(sightEnd,{icon:unkIcon}).addTo(mapRef).bindPopup('جهت تقریبی مشاهده');
+    }
+  }, 100);
+
   saveHistory({lat:lat, lon:lon, dateStr:jd+' '+monthNamesFa[jm-1]+' '+jy, az:azimuth, cls:cls, title:title, mainName: hasSat ? satResults[0].name : (hasAc ? acResults[0].name : null)});
 }
 function guessAirline(c){
@@ -3225,7 +2893,7 @@ function toggleNearbyAll(){
   nearbyActive=!nearbyActive;
   var btn=document.getElementById('nearbyToggleBtn');
   var table=document.getElementById('nearbyTable');
-  nearbyLayers.forEach(function(l){ mapRef.removeLayer(l); });
+  nearbyLayers.forEach(function(l){ if(mapRef) mapRef.removeLayer(l); });
   nearbyLayers=[];
   if(!nearbyActive){ btn.innerText='نمایش تمامی اهداف قابل رؤیت در ۳۶۰ درجه'; table.style.display='none'; table.innerHTML=''; return; }
   btn.innerText='بستن لیست اهداف';
@@ -3306,12 +2974,17 @@ function setPredLocationMode(mode){
   document.getElementById('predAutoLocPanel').style.display = mode==='auto' ? 'block':'none';
   document.getElementById('predManualLocPanel').style.display = mode==='manual' ? 'block':'none';
   document.getElementById('predMapLocPanel').style.display = mode==='map' ? 'block':'none';
-  if(mode==='map') setTimeout(initPredPickerMap, 50);
+  if(mode==='map'){
+    setTimeout(function(){
+      initPredPickerMap();
+      if(predPickerMapObj) predPickerMapObj.invalidateSize();
+    }, 100);
+  }
 }
 function initPredPickerMap(){
   if(predPickerMapObj){ predPickerMapObj.invalidateSize(); return; }
   predPickerMapObj=L.map('predPickerMap').setView([35.6892, 51.3890], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(predPickerMapObj);
+  addTileLayer(predPickerMapObj);
   predPickerMapObj.on('click', function(e){
     var la=e.latlng.lat, lo=e.latlng.lng;
     if(predPickerMarker) predPickerMapObj.removeLayer(predPickerMarker);
@@ -3384,8 +3057,8 @@ function getPredLocationCoords(){
   }
   return null;
 }
-function predShowError(msg){ var b=document.getElementById('predErrorBox'); b.innerText=msg; b.style.display='block'; }
 
+/* --- Prediction algorithm with proper visibility filter --- */
 function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minElev, observerGd){
   var passes = [];
   var step = 60000;
@@ -3395,15 +3068,19 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
   while(currentTime <= endTime){
     var tDate = new Date(currentTime);
     var pv = satellite.propagate(satrec, tDate);
-    var elev = -90, az = 0, visible = false;
+    var elev = -90, az = 0, rangeKm = 99999, visible = false;
     if(pv.position){
       var gmst = satellite.gstime(tDate);
       var ecf = satellite.eciToEcf(pv.position, gmst);
       var look = satellite.ecfToLookAngles(observerGd, ecf);
       elev = toDeg(look.elevation);
       az = toDeg(look.azimuth);
-      // ✅ نمایش همه‌ی ماهواره‌ها بدون توجه به روشنایی روز
-      if(elev > minElev){ visible = true; }
+      rangeKm = look.rangeSat;
+      // Track even daytime passes, but limit by magnitude so faint sats don't bloat
+      if(elev > minElev){
+        var m = estimateSatMag(rangeKm, name);
+        if(m <= 4.0) visible = true;
+      }
     }
     if(visible){
       if(!inPass){
@@ -3427,11 +3104,17 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
 var PREDICTION_MIN_ELEV = 15;
 
 async function runPrediction(){
-  document.getElementById('predErrorBox').style.display='none';
+  clearErrorBox('predErrorBox');
   document.getElementById('predResults').innerHTML='';
+  var errors = [];
+
   var coords = getPredLocationCoords();
-  if(!coords){ predShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
-  var lat = coords[0], lon = coords[1];
+  if(!coords){
+    errors.push('موقعیت رصد به‌درستی تعیین نشده است. لطفاً از GPS استفاده کنید، روی نقشه ضربه بزنید یا مختصات را وارد نمایید.');
+  }
+  if(coords && (coords[0]<-90||coords[0]>90||coords[1]<-180||coords[1]>180)){
+    errors.push('مقدار مختصات وارد شده خارج از محدوده‌ی مجاز جغرافیایی است.');
+  }
 
   var startY=parseInt(document.getElementById('predStartYear').value);
   var startM=parseInt(document.getElementById('predStartMonth').value);
@@ -3447,9 +3130,23 @@ async function runPrediction(){
   var endMin=parseInt(document.getElementById('predEndMinute').value);
   var endDate = jalaliToUtcDate(endY, endM, endD, endH, endMin);
 
-  if(endDate.getTime() <= startDate.getTime()){ predShowError('زمان پایان باید بعد از زمان شروع باشد.'); return; }
-  if(startDate.getTime() < Date.now() - 3600000){ predShowError('زمان شروع نمی‌تواند خیلی در گذشته باشد.'); return; }
+  if(isNaN(startDate.getTime())) errors.push('زمان شروع پیش‌بینی نامعتبر است.');
+  if(isNaN(endDate.getTime())) errors.push('زمان پایان پیش‌بینی نامعتبر است.');
+  if(!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())){
+    if(endDate.getTime() <= startDate.getTime()){
+      errors.push('زمان پایان باید بعد از زمان شروع باشد. لطفاً بازه‌ی زمانی را اصلاح کنید.');
+    }
+    if(startDate.getTime() < Date.now() - 3600000){
+      errors.push('زمان شروع نمی‌تواند بیش از یک ساعت در گذشته باشد. لطفاً زمان مناسب‌تری انتخاب کنید.');
+    }
+  }
 
+  if(errors.length > 0){
+    showErrorBox('predErrorBox', 'خطا در ورود اطلاعات', errors);
+    return;
+  }
+
+  var lat = coords[0], lon = coords[1];
   var progressBox = document.getElementById('predProgress');
   var progressText = document.getElementById('predProgressText');
   var progressFill = document.getElementById('predProgressFill');
@@ -3483,7 +3180,15 @@ async function runPrediction(){
         var alt = sma - 6371;
         if(alt > 2000 || alt < 150){ processed++; continue; }
         var un = name.toUpperCase();
+        // Skip debris and rocket bodies
         if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) { processed++; continue; }
+        // Skip very faint large constellations (they are numerous and rarely visible)
+        if(un.indexOf('STARLINK') > -1) { processed++; continue; }
+        if(un.indexOf('ONEWEB') > -1) { processed++; continue; }
+        if(un.indexOf('GLOBALSTAR') > -1) { processed++; continue; }
+        // Skip navigation constellations (faint)
+        if(un.indexOf('NAVSTAR') > -1 || un.indexOf('GLONASS') > -1) { processed++; continue; }
+        if(un.indexOf('GALILEO') > -1 || un.indexOf('BEIDOU') > -1) { processed++; continue; }
         var satPasses = findPassesForSatellite(satrec, name, lat, lon, startMs, endMs, PREDICTION_MIN_ELEV, observerGd);
         for(var p = 0; p < satPasses.length; p++){ allPasses.push(satPasses[p]); }
       } catch(e){}
@@ -3505,7 +3210,7 @@ async function runPrediction(){
     }, 500);
   }catch(e){
     progressBox.style.display='none';
-    predShowError('خطا در پیش‌بینی: ' + e.message);
+    showErrorBox('predErrorBox', 'خطا در پیش‌بینی', [e.message]);
   }
 }
 
@@ -3517,13 +3222,13 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   lastPredictionPasses = passes;
   lastPredictionMeta = {lat:lat, lon:lon, startDate:startDate, endDate:endDate};
   if(passes.length === 0){
-    container.innerHTML = '<div class="empty-state"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg><br>در این بازه‌ی زمانی، هیچ ماهواره‌ای از بالای موقعیت شما عبور نمی‌کند.</div>';
+    container.innerHTML = '<div class="empty-state"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg><br>در این بازه‌ی زمانی، هیچ ماهواره‌ی قابل رؤیتی از بالای موقعیت شما عبور نمی‌کند.</div>';
     return;
   }
   var summaryHtml = '<div class="pred-summary">' +
     '<div>📍 مختصات: <b>' + lat.toFixed(4) + ', ' + lon.toFixed(4) + '</b></div>' +
     '<div>🕐 بازه: <b>' + formatJalaliDateTime(new Date(startDate)) + '</b> تا <b>' + formatJalaliDateTime(new Date(endDate)) + '</b></div>' +
-    '<div>🛰️ تعداد عبور: <b>' + passes.length + '</b></div>' +
+    '<div>🛰️ تعداد عبور قابل مشاهده: <b>' + passes.length + '</b></div>' +
     '</div>';
   var downloadHtml = '<button type="button" class="btn btn-success" onclick="downloadPredictionCSV()" style="margin-bottom:14px;">' +
     '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg> دانلود خروجی (Excel/CSV)' +
@@ -3552,11 +3257,12 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   container.innerHTML = summaryHtml + downloadHtml + mapHtml + cardsHtml;
   setTimeout(function(){
     if(document.getElementById('predMap')){
-      if(predResultMap){ predResultMap.remove(); predResultMap = null; }
+      if(predResultMap){ try{ predResultMap.remove(); }catch(e){} predResultMap = null; }
       predResultMap = L.map('predMap').setView([lat, lon], 5);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(predResultMap);
+      addTileLayer(predResultMap);
       var icon = L.divIcon({html:'<div style="font-size:24px;filter:drop-shadow(0 0 10px #ec4899);">👁️</div>', iconSize:[24,24], className:''});
       L.marker([lat,lon],{icon:icon}).addTo(predResultMap).bindPopup('موقعیت شما');
+      setTimeout(function(){ predResultMap.invalidateSize(); }, 100);
     }
   }, 100);
 }
@@ -3633,12 +3339,17 @@ function setLiveLocationMode(mode){
   document.getElementById('liveAutoLocPanel').style.display = mode==='auto' ? 'block':'none';
   document.getElementById('liveManualLocPanel').style.display = mode==='manual' ? 'block':'none';
   document.getElementById('liveMapLocPanel').style.display = mode==='map' ? 'block':'none';
-  if(mode==='map') setTimeout(initLivePickerMap, 50);
+  if(mode==='map'){
+    setTimeout(function(){
+      initLivePickerMap();
+      if(livePickerMapObj) livePickerMapObj.invalidateSize();
+    }, 100);
+  }
 }
 function initLivePickerMap(){
   if(livePickerMapObj){ livePickerMapObj.invalidateSize(); return; }
   livePickerMapObj=L.map('livePickerMap').setView([35.6892, 51.3890], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(livePickerMapObj);
+  addTileLayer(livePickerMapObj);
   livePickerMapObj.on('click', function(e){
     var la=e.latlng.lat, lo=e.latlng.lng;
     if(livePickerMarker) livePickerMapObj.removeLayer(livePickerMarker);
@@ -3711,13 +3422,21 @@ function getLiveLocationCoords(){
   }
   return null;
 }
-function liveShowError(msg){ var b=document.getElementById('liveErrorBox'); b.innerText=msg; b.style.display='block'; }
-function liveClearError(){ document.getElementById('liveErrorBox').style.display='none'; }
 
 async function startLiveSky(){
-  liveClearError();
+  clearErrorBox('liveErrorBox');
+  var errors = [];
   var coords = getLiveLocationCoords();
-  if(!coords){ liveShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
+  if(!coords){
+    errors.push('موقعیت رصد تعیین نشده است. لطفاً با GPS، نقشه یا ورود دستی مختصات را مشخص کنید.');
+  } else if(coords[0]<-90||coords[0]>90||coords[1]<-180||coords[1]>180){
+    errors.push('مقدار مختصات وارد شده خارج از محدوده‌ی مجاز است.');
+  }
+  if(errors.length > 0){
+    showErrorBox('liveErrorBox', 'خطا در ورود اطلاعات', errors);
+    return;
+  }
+
   liveLat = coords[0];
   liveLon = coords[1];
 
@@ -3742,7 +3461,7 @@ async function startLiveSky(){
       }catch(e){}
     }
   }catch(e){
-    liveShowError('خطا در دریافت TLE: ' + e.message);
+    showErrorBox('liveErrorBox', 'خطا در دریافت پایگاه داده', [e.message]);
     return;
   }
 
@@ -3779,12 +3498,13 @@ async function startLiveSky(){
 function initLiveMap(lat, lon){
   if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
   liveMapObj = L.map('liveMapView').setView([lat, lon], 6);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap'}).addTo(liveMapObj);
+  addTileLayer(liveMapObj);
   var obsIcon = L.divIcon({
     html:'<div style="font-size:24px;filter:drop-shadow(0 0 10px #6366f1);">👁️</div>',
     iconSize:[24,24], iconAnchor:[12,12], className:''
   });
   L.marker([lat,lon], {icon: obsIcon}).addTo(liveMapObj).bindPopup('موقعیت شما');
+  setTimeout(function(){ liveMapObj.invalidateSize(); }, 150);
 }
 
 function recomputeLiveSatellites(offsetMin){
@@ -3924,8 +3644,8 @@ function tryAdminLogin(){
     document.getElementById('adminDashModal').classList.add('show');
   } else {
     var e=document.getElementById('adminLoginError');
-    e.innerText='نام کاربری یا رمز عبور اشتباه است.';
-    e.style.display='block';
+    e.innerHTML = '<strong>خطا در ورود</strong><div class="err-item"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-alert"/></svg><span>نام کاربری یا رمز عبور اشتباه است.</span></div>';
+    e.classList.add('show');
   }
 }
 function setAdminStatus(msg, isError){
@@ -3956,7 +3676,7 @@ async function pushTleToRepo(tleText){
   var owner=document.getElementById('ghOwner').value.trim();
   var repo=document.getElementById('ghRepo').value.trim();
   var token=document.getElementById('ghToken').value.trim();
-  if(!owner||!repo||!token){ setAdminStatus('لطفاً همه فیلدها را پر کنید.', true); return; }
+  if(!owner||!repo||!token){ setAdminStatus('لطفاً تمامی فیلدها را تکمیل کنید.', true); return; }
   setAdminStatus('در حال ارسال به مخزن...', false);
   try{
     await commitFileToGitHub(token, owner, repo, 'tle-data.txt', tleText, 'به‌روزرسانی TLE');
@@ -3968,14 +3688,14 @@ async function autoUpdateTle(){
   setAdminStatus('در حال دریافت از CelesTrak...', false);
   try{
     var text=await fetchTextWithProxies("https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=tle", 30000);
-    if(!text || text.length<1000) throw new Error('پاسخ خالی');
-    setAdminStatus('داده دریافت شد. ارسال...', false);
+    if(!text || text.length<1000) throw new Error('پاسخ دریافتی خالی بود');
+    setAdminStatus('داده دریافت شد. ارسال به مخزن...', false);
     await pushTleToRepo(text);
   }catch(e){ setAdminStatus('❌ دریافت شکست خورد: '+e.message, true); }
 }
 async function manualUpdateTle(){
   var text=document.getElementById('manualTleText').value.trim();
-  if(!text || text.length<1000){ setAdminStatus('متن کوتاه است.', true); return; }
+  if(!text || text.length<1000){ setAdminStatus('متن وارد شده کوتاه است.', true); return; }
   await pushTleToRepo(text);
 }
 
@@ -3992,4 +3712,4 @@ window.onload=function(){
 };
 </script>
 </body>
-  </html>
+</html>
