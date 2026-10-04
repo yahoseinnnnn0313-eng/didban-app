@@ -1689,7 +1689,6 @@ function navigateTo(pageId){
 }
 
 function resetSearchPageState(){
-  // Cleanup nearby layers before nulling mapRef
   nearbyLayers.forEach(function(l){ if(mapRef){ try{ mapRef.removeLayer(l); }catch(e){} } });
   nearbyLayers = [];
   nearbyActive = false;
@@ -1951,7 +1950,6 @@ function updateSelectedDirDisplay(){
   }
 }
 function onDirectionSelect(key){
-  // کاربر دستی انتخاب می‌کند → قطب‌نما را خاموش کن
   disableCompass();
   var cs = document.getElementById('compassStatus');
   if(cs) cs.innerText = '';
@@ -2507,8 +2505,6 @@ async function fetchAdsbLol(lat, lon, radiusNm){
   var data=await fetchJsonWithProxies(url, 15000);
   return ((data && data.ac) || []).map(normalizeAdsbAc).filter(function(a){return a.icao && a.lat!=null && a.lon!=null;});
 }
-
-// Serial fetch: اول adsb.fi، اگه خالی بود adsb.lol
 async function fetchAllAircraft(lat, lon, radiusKm){
   var radiusNm = Math.min(250, Math.max(10, Math.round(radiusKm * 0.54)));
   var ok = [], fail = [];
@@ -2519,7 +2515,6 @@ async function fetchAllAircraft(lat, lon, radiusKm){
       ok.push('adsb.fi');
       return { list: list, sourcesOk: ok, sourcesFail: fail };
     }
-    // اگه adsb.fi پاسخ داد ولی خالی بود، adsb.lol رو امتحان کن
   }catch(e){ fail.push('adsb.fi'); }
 
   try{
@@ -2668,6 +2663,7 @@ function validateAndRun(){
 
 function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
 
+/* === تابع بازنویسی‌شده: بررسی همه‌ی ۵ لحظه‌ی زمانی، نه فقط اوج === */
 async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveDir, azTolerance, minAlt, maxMag, maxSatRangeKm, precomputed, diag, allSatCandidates, satResults){
   var CHUNK=600;
   var count=0, total=Math.floor(lines.length/3);
@@ -2679,7 +2675,10 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       var name=lines[i].trim();
       var satrec=satellite.twoline2satrec(lines[i+1], lines[i+2]);
       diag.satChecked++;
-      var bestVisible=null;
+
+      var bestMatch=null;      // بهترین کاندید معتبر در پنجره‌ی کاربر
+      var bestAnyVisible=null; // بهترین از هر نظر (برای لیست ۳۶۰ درجه)
+
       for(var t=0; t<precomputed.length; t++){
         var pre = precomputed[t];
         var tDate = pre.tDate;
@@ -2689,26 +2688,68 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
         var look=satellite.ecfToLookAngles(observerGd, ecf);
         var altDeg=toDeg(look.elevation), azDeg=toDeg(look.azimuth), rangeKm=look.rangeSat;
         var azDiff=Math.abs(azDeg-azimuth); azDiff=Math.min(azDiff,360-azDiff);
+
         if(pre.offset===0 && azDiff<=azTolerance && altDeg>NEARBY_MIN_ALT) diag.satAzMatchIgnoringLight++;
+
+        // فیلترهای پایه‌ی «دیده‌شدنی» — برای همه‌ی ۵ لحظه اعمال می‌شن
         if(altDeg <= NEARBY_MIN_ALT || rangeKm > NEARBY_MAX_RANGE) continue;
         if(pre.sunAlt > -6) continue;
         if(!isSunlit(pv.position, pre.sunEci)) continue;
         var estMag=estimateSatMag(rangeKm, name);
         if(estMag > NEARBY_MAX_MAG) continue;
-        if(bestVisible && altDeg <= bestVisible.altDeg) continue;
-        var geo=satellite.eciToGeodetic(pv.position, pre.gmst);
-        var subLat=toDeg(geo.latitude), subLon=toDeg(geo.longitude), subHeightKm=geo.height;
-        var nextT = new Date(tDate.getTime()+10000);
-        var pv2=satellite.propagate(satrec, nextT);
-        var heading=null;
-        if(pv2.position){
-          var gmst2=satellite.gstime(nextT);
-          var geo2=satellite.eciToGeodetic(pv2.position, gmst2);
-          heading=simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
+
+        // ---- برای لیست ۳۶۰ درجه: هر لحظه‌ی دیده‌شدنی معتبره ----
+        if(!bestAnyVisible || altDeg > bestAnyVisible.altDeg){
+          var geoAny = satellite.eciToGeodetic(pv.position, pre.gmst);
+          var subLatAny = toDeg(geoAny.latitude);
+          var subLonAny = toDeg(geoAny.longitude);
+          var subHAny = geoAny.height;
+          var nextTAny = new Date(tDate.getTime()+10000);
+          var pvNextAny = satellite.propagate(satrec, nextTAny);
+          var headAny = null;
+          if(pvNextAny.position){
+            var gmstAny2 = satellite.gstime(nextTAny);
+            var geoAny2 = satellite.eciToGeodetic(pvNextAny.position, gmstAny2);
+            headAny = simpleBearing(subLatAny, subLonAny, toDeg(geoAny2.latitude), toDeg(geoAny2.longitude));
+          }
+          bestAnyVisible = {name:name, altDeg:altDeg, azDeg:azDeg, mag:estMag, rangeKm:rangeKm, subHeightKm:subHAny, lat:subLatAny, lon:subLonAny, heading:headAny, azDiff:azDiff};
         }
-        bestVisible={name:name,altDeg:altDeg,azDeg:azDeg,mag:estMag,rangeKm:rangeKm,subHeightKm:subHeightKm,lat:subLat,lon:subLon,heading:heading,azDiff:azDiff};
+
+        // ---- برای فیلتر اصلی: شرط‌های سختگیرانه ----
+        if(azDiff > azTolerance) continue;
+        if(altDeg < minAlt) continue;
+        if(estMag > maxMag) continue;
+        if(rangeKm > maxSatRangeKm) continue;
+
+        // این لحظه معتبره — نگهش دار اگه از قبلی بهتره
+        if(!bestMatch || altDeg > bestMatch.altDeg){
+          var geo = satellite.eciToGeodetic(pv.position, pre.gmst);
+          var subLat = toDeg(geo.latitude);
+          var subLon = toDeg(geo.longitude);
+          var subH = geo.height;
+          var nextT = new Date(tDate.getTime()+10000);
+          var pvNext = satellite.propagate(satrec, nextT);
+          var head = null;
+          if(pvNext.position){
+            var gmst2 = satellite.gstime(nextT);
+            var geo2 = satellite.eciToGeodetic(pvNext.position, gmst2);
+            head = simpleBearing(subLat, subLon, toDeg(geo2.latitude), toDeg(geo2.longitude));
+          }
+          bestMatch = {name:name, altDeg:altDeg, azDeg:azDeg, mag:estMag, rangeKm:rangeKm, subHeightKm:subH, lat:subLat, lon:subLon, heading:head, azDiff:azDiff};
+        }
       }
-      if(bestVisible && (!bestByName[name] || bestVisible.altDeg > bestByName[name].altDeg)) bestByName[name]=bestVisible;
+
+      // اضافه به نتایج اصلی (اگه یه کاندید معتبر پیدا شد)
+      if(bestMatch){
+        var info = guessSatInfo(bestMatch.name);
+        var full = {name:bestMatch.name, alt:bestMatch.altDeg.toFixed(1), az:bestMatch.azDeg.toFixed(1), mag:bestMatch.mag.toFixed(1), dist:Math.round(bestMatch.rangeKm), orbitAltKm:Math.round(bestMatch.subHeightKm), lat:bestMatch.lat, lon:bestMatch.lon, heading:bestMatch.heading, type:info.type, country:info.country};
+        var conf = calcConfidence(bestMatch.azDiff, azTolerance);
+        conf = adjustConfidenceByMovement(conf, bestMatch.heading, moveDir);
+        satResults.push(Object.assign({}, full, {confidence:conf}));
+      }
+
+      // اضافه به لیست ۳۶۰ درجه
+      if(bestAnyVisible) bestByName[name] = bestAnyVisible;
     }catch(e){}
     count++;
     if(count % CHUNK === 0){
@@ -2717,23 +2758,20 @@ async function processSatellitesChunked(lines, lat, lon, obsDate, azimuth, moveD
       await sleep(0);
     }
   }
+  // پر کردن لیست ۳۶۰ درجه
   for(var key in bestByName){
-    var b=bestByName[key];
-    var info=guessSatInfo(b.name);
-    var full={name:b.name,alt:b.altDeg.toFixed(1),az:b.azDeg.toFixed(1),mag:b.mag.toFixed(1),dist:Math.round(b.rangeKm),orbitAltKm:Math.round(b.subHeightKm),lat:b.lat,lon:b.lon,heading:b.heading,type:info.type,country:info.country};
-    allSatCandidates.push(Object.assign({}, full, {azDiff:b.azDiff}));
-    if(b.azDiff <= azTolerance && b.altDeg > minAlt && b.mag <= maxMag && b.rangeKm <= maxSatRangeKm){
-      var conf=calcConfidence(b.azDiff, azTolerance);
-      conf=adjustConfidenceByMovement(conf, b.heading, moveDir);
-      satResults.push(Object.assign({}, full, {confidence:conf}));
-    }
+    var b = bestByName[key];
+    var info2 = guessSatInfo(b.name);
+    var full2 = {name:b.name, alt:b.altDeg.toFixed(1), az:b.azDeg.toFixed(1), mag:b.mag.toFixed(1), dist:Math.round(b.rangeKm), orbitAltKm:Math.round(b.subHeightKm), lat:b.lat, lon:b.lon, heading:b.heading, type:info2.type, country:info2.country};
+    allSatCandidates.push(Object.assign({}, full2, {azDiff:b.azDiff}));
   }
 }
 
 async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin){
-  var azTolerance=22.5;
-  var minAlt=25, maxMag=3.0, maxSatRangeKm=1200;
-  var maxAircraftDistKm=40, aircraftAzTol=22.5, aircraftMinElev=5;
+  /* === فیلترهای شل‌شده === */
+  var azTolerance=28;
+  var minAlt=15, maxMag=5.5, maxSatRangeKm=1800;
+  var maxAircraftDistKm=80, aircraftAzTol=30, aircraftMinElev=3;
   var timeOffsetsSec=[-120,-60,0,60,120];
   var satResults=[], acResults=[];
   var acErrorMsg=null;
@@ -2743,7 +2781,7 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
   var aircraftTimeUsable = minutesAgo <= 30;
   diag.acSkippedOldTime = !aircraftTimeUsable;
 
-  // پیش‌محاسبه‌ی مقادیر وابسته به زمان (فقط ۵ بار محاسبه، به‌جای ۸۰,۰۰۰ بار)
+  // پیش‌محاسبه‌ی مقادیر وابسته به زمان
   var precomputed = timeOffsetsSec.map(function(off){
     var tDate = new Date(obsDate.getTime() + off * 1000);
     return {
@@ -2917,7 +2955,8 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       '<div class="diag-row"><span>منابع هواپیما</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? escapeHtml(diag.acSourcesOk.join(', ')) : '—')+'</span></div>'+
       '<div class="diag-row"><span>ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
-      '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>';
+      '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>'+
+      '<div class="diag-row"><span>کاندید ۳۶۰ درجه</span><span>'+cachedAllSat.length+'</span></div>';
   }
 
   setTimeout(function(){
@@ -3145,7 +3184,6 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
       if(elev > minElev){
         var m = estimateSatMag(rangeKm, name);
         if(m <= 4.0){
-          // فیلتر سایه‌ی زمین: ماهواره باید در نور خورشید باشد
           if(isSunlit(pv.position, sunEciKm(tDate))) visible = true;
         }
       }
