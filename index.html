@@ -220,7 +220,6 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .app-header h1 { font-size: 34px; font-weight: 900; letter-spacing: 0.01em; margin-bottom: 6px; }
 .app-header .subtitle { color: var(--text-dim); font-size: 12.5px; font-weight: 400; line-height: 1.6; padding: 0 12px; }
 
-/* Dedication footer */
 .dedication {
   text-align: center;
   margin-top: 28px;
@@ -352,13 +351,88 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 }
 .guide-trigger .icon-svg { width: 20px; height: 20px; }
 
-.guide-modal-body { font-size: 13.5px; line-height: 2.1; color: #c8d0ea; }
-.guide-modal-body h4 { color: #67e8f9; margin: 16px 0 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+/* ---------- GUIDE MODAL CONTENT ---------- */
+.guide-modal-body {
+  font-size: 13.5px;
+  line-height: 2.15;
+  color: #c8d0ea;
+  text-align: justify;
+  text-justify: inter-word;
+  word-spacing: -0.5px;
+}
+.guide-modal-body h4 {
+  color: #67e8f9;
+  margin: 18px 0 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: right;
+}
 .guide-modal-body h4:first-child { margin-top: 0; }
-.guide-modal-body p { margin-bottom: 10px; }
+.guide-modal-body p {
+  margin-bottom: 12px;
+  text-align: justify;
+}
 .guide-modal-body strong { color: #e0e7ff; font-weight: 700; }
-.guide-modal-body ul { padding-right: 20px; margin: 8px 0; }
-.guide-modal-body li { margin-bottom: 6px; }
+.guide-modal-body ul {
+  padding-right: 20px;
+  margin: 8px 0 14px;
+  list-style-position: inside;
+}
+.guide-modal-body li {
+  margin-bottom: 8px;
+  text-align: justify;
+}
+
+/* Guide modal header centered */
+.guide-modal-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 8px 0 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.guide-modal-header .icon-wrap-lg {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(99, 102, 241, 0.2));
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+}
+.guide-modal-header .icon-wrap-lg .icon-svg { width: 26px; height: 26px; color: #67e8f9; }
+.guide-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  text-align: center;
+  justify-content: center;
+  padding-left: 0;
+  color: var(--text);
+}
+
+/* ---------- ABOUT MODAL CONTENT ---------- */
+.about-content {
+  line-height: 2.15;
+  font-size: 13.5px;
+  color: #c8d0ea;
+  text-align: justify;
+  text-justify: inter-word;
+}
+.about-content h4 {
+  color: #d8b4fe;
+  margin: 18px 0 8px;
+  font-size: 14.5px;
+  display: flex; align-items: center; gap: 8px;
+  text-align: right;
+}
+.about-content p { margin-bottom: 12px; text-align: justify; }
+.about-content strong { color: #e0e7ff; font-weight: 700; }
+.about-content ul { padding-right: 20px; margin: 8px 0; list-style-position: inside; }
+.about-content li { margin-bottom: 8px; text-align: justify; }
 
 .result-hero {
   border-radius: var(--radius-lg); padding: 26px 22px;
@@ -730,13 +804,6 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .diag-row:last-child { border-bottom: none; }
 .diag-row span:last-child { color: var(--text); font-weight: 600; }
 
-.about-content { line-height: 2.1; font-size: 13.5px; color: #c8d0ea; }
-.about-content h4 { color: #d8b4fe; margin: 18px 0 8px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
-.about-content p { margin-bottom: 10px; }
-.about-content strong { color: #e0e7ff; font-weight: 700; }
-.about-content ul { padding-right: 20px; margin: 8px 0; }
-.about-content li { margin-bottom: 6px; }
-
 body, html { overflow-x: hidden; }
 .page-section { display: none; }
 .page-section.active { display: block; animation: pageFade 0.35s ease; }
@@ -890,7 +957,7 @@ body, html { overflow-x: hidden; }
     <symbol id="i-refresh" viewBox="0 0 24 24">
       <polyline points="23 4 23 10 17 10" />
       <polyline points="1 20 1 14 7 14" />
-      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+      <path d="M3.51 9a9 9 0 1 1 2.13 9.36L1 14M23 10l-4.64-4.36A9 9 0 0 0 3.51 9" />
     </symbol>
   </defs>
 </svg>
@@ -969,7 +1036,6 @@ body, html { overflow-x: hidden; }
     </div>
   </div>
 
-  <!-- Dedication -->
   <div class="dedication">
     به یاد <span class="martyr">شهید</span> میلاد ملک
   </div>
@@ -992,7 +1058,6 @@ body, html { overflow-x: hidden; }
     </div>
   </div>
 
-  <!-- FORM PANEL: hidden after analysis -->
   <div id="searchFormPanel">
     <div class="card">
       <div class="field-label">
@@ -1143,9 +1208,8 @@ body, html { overflow-x: hidden; }
         تاریخچه‌ی مشاهدات
       </button>
     </div>
-  </div><!-- /searchFormPanel -->
+  </div>
 
-  <!-- RESULTS PANEL -->
   <div id="resultBox" style="display:none;">
     <div class="result-hero" id="resultHero">
       <div class="hero-icon"><svg class="icon-svg" viewBox="0 0 24 24"><use id="resultHeroIcon" href="#i-scan"/></svg></div>
@@ -1203,7 +1267,6 @@ body, html { overflow-x: hidden; }
     </div>
   </div>
 
-  <!-- FORM PANEL -->
   <div id="predictFormPanel">
     <div class="card">
       <div class="field-label">
@@ -1285,7 +1348,7 @@ body, html { overflow-x: hidden; }
         اجرای پیش‌بینی
       </button>
     </div>
-  </div><!-- /predictFormPanel -->
+  </div>
 
   <div id="predProgress" style="display:none; padding:24px; text-align:center; background:var(--surface-2); border-radius:var(--radius); border:1px solid var(--border);">
     <p style="color:#a8c8ff; font-size:13.5px; margin-bottom:14px;" id="predProgressText">در حال پردازش...</p>
@@ -1394,7 +1457,7 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-</div><!-- /app-shell -->
+</div>
 
 <div id="loadingBox">
   <div class="radar"><div class="radar-sweep"></div></div>
@@ -1515,15 +1578,11 @@ body, html { overflow-x: hidden; }
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-sparkle"/></svg> درباره‌ی رصدیار</h2>
     <div class="about-content">
       <p><strong>رصدیار</strong> یک سامانه‌ی مستقل و تخصصی برای شناسایی اجرام نورانی آسمان است که با تکیه بر داده‌های مداری رسمی و پردازش لحظه‌ای، تلاش می‌کند پاسخ علمی دقیقی به پرسش‌های رایج کاربران درباره‌ی ماهیت نورهای مشاهده‌شده در آسمان بدهد.</p>
-      <h4>هسته‌ی تحلیلی</h4>
-      <p>این سامانه از الگوریتم استاندارد <strong>SGP4</strong> برای انتشار مداری ماهواره‌های فعال و از کاتالوگ جامع <strong>CelesTrak</strong> به‌عنوان مرجع مداری بهره می‌برد. تمامی محاسبات به‌صورت بلادرنگ و روی دستگاه کاربر انجام می‌شود.</p>
       <h4>قابلیت‌های کلیدی</h4>
       <ul>
         <li>شناسایی هوشمند اجرام نورانی بر اساس موقعیت، زمان و جهت</li>
         <li>پیش‌بینی دقیق عبور ماهواره‌ها با محاسبه‌ی پارامترهای مداری</li>
         <li>ردیابی زنده‌ی ماهواره‌ها و هواپیماها در آسمان شما</li>
-        <li>کالیبراسیون خودکار سنسور مغناطیسی گوشی</li>
-        <li>پشتیبانی کامل از تقویم هجری شمسی</li>
       </ul>
       <h4>اصول طراحی</h4>
       <p><strong>استقلال:</strong> بدون وابستگی به زیرساخت‌های ابری متمرکز، تمام قابلیت‌ها روی مرورگر کاربر اجرا می‌شود.<br>
@@ -1536,7 +1595,10 @@ body, html { overflow-x: hidden; }
 <div class="modal-overlay" id="guideModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('guideModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
-    <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg> <span id="guideTitle">راهنما</span></h2>
+    <div class="guide-modal-header">
+      <div class="icon-wrap-lg"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-book"/></svg></div>
+      <h2 id="guideTitle">راهنما</h2>
+    </div>
     <div class="guide-modal-body" id="guideBody"></div>
   </div>
 </div>
@@ -1596,11 +1658,7 @@ body, html { overflow-x: hidden; }
    NAVIGATION + STATE RESET
 ======================================================================== */
 function navigateTo(pageId){
-  // Stop live if leaving
-  if(pageId !== 'pageLive'){
-    try{ stopLive(); }catch(e){}
-  }
-  // Reset page states before showing
+  if(pageId !== 'pageLive'){ try{ stopLive(); }catch(e){} }
   resetSearchPageState();
   resetPredictPageState();
   resetLivePageState();
@@ -1616,7 +1674,6 @@ function resetSearchPageState(){
   var res = document.getElementById('resultBox');
   if(form) form.style.display = 'block';
   if(res) res.style.display = 'none';
-  // clean map
   var mapEl = document.getElementById('map');
   if(mapEl) mapEl.innerHTML = '';
   if(mapRef){ try{ mapRef.remove(); }catch(e){} mapRef = null; }
@@ -1656,8 +1713,6 @@ var GUIDES = {
         <li><strong>سمت مشاهده:</strong> جهت جغرافیایی که شیء در آن دیده شده (نسبت به شمال واقعی).</li>
         <li><strong>جهت حرکت:</strong> مسیر ظاهری حرکت شیء در آسمان.</li>
       </ul>
-      <h4>الگوریتم تحلیل</h4>
-      <p>سامانه تمامی ماهواره‌های فعال و پروازهای هوایی را در پنج بازه‌ی زمانی حول لحظه‌ی مشاهده بررسی می‌کند و با اعمال فیلترهای هندسی، نتایج هم‌خوان با گزارش شما را استخراج می‌نماید.</p>
       <h4>شاخص اطمینان</h4>
       <p>درصد اطمینان نشان‌دهنده‌ی میزان هم‌خوانی زاویه‌ای شیء با گزارش شماست. هرچه این عدد بالاتر باشد، احتمال تطابق بیشتر است.</p>
     `
@@ -1665,14 +1720,12 @@ var GUIDES = {
   predict: {
     title: 'راهنمای پیش‌بینی عبور ماهواره‌ها',
     body: `
-      <p>این ماژول با پردازش مدارهای کپلری ماهواره‌های فعال و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند.</p>
+      <p>این ماژول با پردازش مسیر حرکت ماهواره‌های فعال در مدار زمین و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند.</p>
       <h4>پارامترهای ورودی</h4>
       <ul>
         <li><strong>موقعیت رصد:</strong> مختصات جغرافیایی نقطه‌ی مورد نظر برای رصد.</li>
         <li><strong>بازه‌ی زمانی:</strong> تعیین زمان شروع و پایان پیش‌بینی.</li>
       </ul>
-      <h4>الگوریتم انتخاب</h4>
-      <p>تنها ماهواره‌هایی در نتایج نمایش داده می‌شوند که در طول بازه، حداقل به ارتفاع <strong>۱۵ درجه</strong> بالای افق برسند و از روشنایی کافی برای رؤیت برخوردار باشند. این فیلتر، نتایج را به موارد قابل مشاهده‌ی واقعی محدود می‌کند.</p>
       <h4>اطلاعات هر عبور</h4>
       <ul>
         <li>نام و نوع ماهواره</li>
@@ -1697,12 +1750,6 @@ var GUIDES = {
       </ul>
       <h4>نوار زمان</h4>
       <p>با استفاده از نوار زمان می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با محاسبات مداری دقیق، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.</p>
-      <h4>نمایش روی نقشه</h4>
-      <ul>
-        <li><strong>ماهواره‌ها:</strong> با نماد ماهواره‌ای</li>
-        <li><strong>هواپیماها:</strong> با نماد هواپیما</li>
-        <li><strong>موقعیت شما:</strong> در مرکز نقشه</li>
-      </ul>
     `
   }
 };
@@ -2555,7 +2602,6 @@ function validateAndRun(){
   var azimuth = selectedAzimuth;
   var moveDir=document.getElementById('moveDir').value;
 
-  // Hide form, show results ONLY
   document.getElementById('searchFormPanel').style.display='none';
   document.getElementById('resultBox').style.display='block';
   document.getElementById('loadingBox').style.display='flex';
@@ -3099,7 +3145,6 @@ async function runPrediction(){
 
   var lat = coords[0], lon = coords[1];
 
-  // Hide form, show progress
   document.getElementById('predictFormPanel').style.display='none';
   var progressBox = document.getElementById('predProgress');
   var progressText = document.getElementById('predProgressText');
