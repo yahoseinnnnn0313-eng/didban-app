@@ -5,374 +5,967 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>رصدیار | سامانه هوشمند تشخیص اجسام آسمانی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  * { box-sizing: border-box; }
+  :root {
+    --bg-deep: #0a0a1f;
+    --bg-mid: #1a1a3e;
+    --bg-soft: #242442;
+    --surface: rgba(255, 255, 255, 0.05);
+    --surface-2: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.18);
+    --text-primary: #f5f5ff;
+    --text-secondary: #b8b8d8;
+    --text-muted: #7e7ea8;
+    --accent-cyan: #22d3ee;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-pink: #ec4899;
+    --accent-emerald: #10b981;
+    --accent-amber: #fbbf24;
+    --radius-sm: 10px;
+    --radius: 16px;
+    --radius-lg: 22px;
+    --shadow-glow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
   body {
     font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
-    margin: 0;
     min-height: 100vh;
-    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
-    color: #f0f0f5;
-    padding: 18px 14px 60px;
+    background: radial-gradient(ellipse at top, #1a1a4e 0%, #0a0a1f 50%, #050510 100%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
-  .header { text-align:center; margin-bottom: 22px; }
-  .header .logo {
-    width: 64px; height: 64px; margin: 0 auto 8px;
-    background: radial-gradient(circle at 30% 30%, #6dd5ff, #2b7de9 70%);
+
+  /* ============================= PAGE WRAPPERS ============================= */
+  .page {
+    display: none;
+    min-height: 100vh;
+    padding: 20px 16px 80px;
+    max-width: 620px;
+    margin: 0 auto;
+    animation: pageFadeIn 0.35s ease;
+  }
+  .page.active { display: block; }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================= LANDING / HOME ============================= */
+  .home-hero {
+    text-align: center;
+    padding: 40px 12px 30px;
+    position: relative;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .home-logo {
+    width: 96px; height: 96px;
+    margin: 0 auto 18px;
+    background: radial-gradient(circle at 30% 30%, #6dd5ff, #2b7de9 60%, #4c1d95 100%);
+    border-radius: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 46px;
+    box-shadow: 0 0 60px rgba(109, 213, 255, 0.4), 0 0 100px rgba(139, 92, 246, 0.3);
+    position: relative; z-index: 1;
+    animation: floatLogo 4s ease-in-out infinite;
+  }
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  .home-title {
+    font-size: 42px;
+    font-weight: 900;
+    margin: 0 0 8px;
+    background: linear-gradient(120deg, #7ee8fa 0%, #a78bfa 50%, #f0abfc 100%);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    letter-spacing: -1px;
+    position: relative; z-index: 1;
+  }
+  .home-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0 0 6px;
+    position: relative; z-index: 1;
+  }
+  .home-tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+    position: relative; z-index: 1;
+  }
+
+  /* Intro card */
+  .home-intro {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(34, 211, 238, 0.06));
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 22px 22px;
+    margin: 20px 0 28px;
+    font-size: 13.5px;
+    line-height: 2.1;
+    color: var(--text-secondary);
+  }
+  .home-intro b { color: var(--text-primary); }
+
+  /* Feature cards */
+  .feature-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .feature-card {
+    position: relative;
+    padding: 22px 22px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--c1, transparent), var(--c2, transparent));
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .feature-card:active { transform: scale(0.98); }
+  .feature-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  }
+  .feature-card:hover::before { opacity: 0.6; }
+  .feature-card .fc-icon {
+    width: 60px; height: 60px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative; z-index: 1;
+  }
+  .feature-card .fc-body {
+    flex: 1;
+    position: relative; z-index: 1;
+    min-width: 0;
+  }
+  .feature-card .fc-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: var(--text-primary);
+  }
+  .feature-card .fc-desc {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.7;
+  }
+  .feature-card .fc-arrow {
+    font-size: 22px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    position: relative; z-index: 1;
+    transition: transform 0.3s;
+  }
+  .feature-card:hover .fc-arrow {
+    transform: translateX(-6px);
+    color: var(--accent-cyan);
+  }
+
+  /* Feature card color variants */
+  .feature-review  { --c1: rgba(59, 130, 246, 0.15);  --c2: rgba(34, 211, 238, 0.08); }
+  .feature-review  .fc-icon { background: linear-gradient(135deg, #3b82f6, #22d3ee); }
+  .feature-predict { --c1: rgba(139, 92, 246, 0.15);  --c2: rgba(236, 72, 153, 0.08); }
+  .feature-predict .fc-icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+  .feature-live    { --c1: rgba(16, 185, 129, 0.15);  --c2: rgba(34, 211, 238, 0.08); }
+  .feature-live    .fc-icon { background: linear-gradient(135deg, #10b981, #06b6d4); }
+
+  /* Home footer */
+  .home-footer {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ============================= COMMON COMPONENTS ============================= */
+  .page-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 4px 0;
+  }
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { background: var(--surface-2); border-color: var(--border-strong); }
+  .back-btn:active { transform: scale(0.96); }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  .guide-btn {
+    width: 42px; height: 42px;
     border-radius: 50%;
-    display:flex; align-items:center; justify-content:center;
-    font-size: 30px;
-    box-shadow: 0 0 25px rgba(60,140,255,.6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
   }
-  .header h1 {
-    font-weight: 900; font-size: 26px; margin: 4px 0 2px;
-    background: linear-gradient(90deg, #7ee8fa, #eec0c6);
-    -webkit-background-clip: text; background-clip:text; color: transparent;
-  }
-  .header p { color:#b8b8d8; font-size:13px; margin:0; }
+  .guide-btn:hover { background: var(--surface-2); border-color: var(--accent-cyan); }
 
   .card {
-    max-width: 520px; margin: 14px auto;
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px; padding: 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 14px 0;
+    box-shadow: var(--shadow-soft);
   }
-  .field-label { display:block; font-size:14px; font-weight:700; margin: 16px 0 8px; color:#d8d8f0; }
-  .field-label:first-child { margin-top:0; }
-  input[type=text], input[type=number], input[type=password], select {
-    width:100%; padding:11px 14px; border-radius:10px; border:1px solid rgba(255,255,255,.15);
-    background: rgba(0,0,0,.25); color:#fff; font-family:inherit; font-size:14px;
+  .card-label {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  input::placeholder { color:#8888a8; }
-  select { cursor: pointer; }
-  select option { background: #1c1c34; color: #fff; padding: 10px; }
-  .btn {
-    width:100%; padding:13px; border:none; border-radius:12px; font-size:15px; font-weight:700;
-    cursor:pointer; font-family:inherit; transition: transform .15s, box-shadow .15s;
+  .card-subtext {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: -6px 0 14px;
+    line-height: 1.8;
   }
-  .btn:active { transform: scale(0.97); }
-  .btn-primary { background: linear-gradient(90deg,#2b7de9,#6dd5ff); color:#08172e; box-shadow:0 4px 18px rgba(43,125,233,.4); }
-  .btn-outline { background: rgba(255,255,255,.08); color:#eee; border:1px solid rgba(255,255,255,.2); }
-  .btn-success { background: linear-gradient(90deg, #10b981, #34d399); color: #052e16; box-shadow: 0 4px 18px rgba(16,185,129,.4); }
-  .btn-predict {
-    background: linear-gradient(90deg, #8b5cf6, #ec4899);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(139,92,246,.5);
-    font-size: 16px;
-    padding: 15px;
-  }
-  .btn-live {
-    background: linear-gradient(90deg, #06b6d4, #3b82f6);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(6,182,212,.5);
-    font-size: 16px;
-    padding: 15px;
-  }
-  .btn-download {
-    background: linear-gradient(90deg, #10b981, #34d399);
-    color: #052e16;
-    box-shadow: 0 4px 18px rgba(16,185,129,.4);
+
+  input[type=text], input[type=number], input[type=password], select, textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-primary);
+    font-family: inherit;
     font-size: 14px;
-    padding: 12px;
-    margin-top: 12px;
+    transition: all 0.2s;
+    outline: none;
   }
-
-  .two-col { display:flex; gap:10px; }
-  .mode-card {
-    flex:1; padding:14px 8px; border-radius:12px; text-align:center; cursor:pointer;
-    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); font-size:13px;
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-cyan);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
   }
-  .mode-card.active { background: linear-gradient(135deg,#2b7de9,#1a4fa0); border-color:#6dd5ff; }
-  .mode-card .icon { font-size:22px; display:block; margin-bottom:6px; }
+  input::placeholder, textarea::placeholder { color: var(--text-muted); }
+  select { cursor: pointer; }
+  select option { background: var(--bg-mid); color: var(--text-primary); }
 
-  .coord-boxes { display:flex; gap:10px; margin-top:10px; }
-  .coord-boxes input { text-align:center; }
-  .coord-fmt-row { display:flex; gap:8px; margin-top:10px; }
-  .coord-fmt-row .mode-card { font-size:12px; padding:10px 4px; }
-
-  .status-msg { font-size:13px; margin-top:8px; color:#7ee6a0; min-height:16px; }
-  .error-box { background: rgba(255,80,80,.15); border:1px solid #ff6b6b; color:#ffb3b3; padding:10px 14px; border-radius:10px; font-size:13px; margin-top:14px; display:none; }
-
-  .dt-grid { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; }
-  .dt-grid select { padding:9px 4px; font-size:13px; }
-  .dt-grid-time { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
-
-  .selected-dir {
-    text-align: center;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(109,213,255,.1);
-    border: 1px solid rgba(109,213,255,.3);
-    color: #7ee8fa;
+  .btn {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
     font-size: 15px;
     font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #22d3ee);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(59, 130, 246, 0.5); }
+  .btn-outline {
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+  }
+  .btn-outline:hover { background: rgba(255, 255, 255, 0.12); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    padding: 12px;
+  }
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: #052e16;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+  }
+  .btn-danger {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.35);
+  }
+  .btn-download {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: #052e16;
+    font-size: 14px;
+    padding: 13px;
+  }
+  .btn-live {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+  }
+  .btn-predict {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  }
+
+  /* ============================= SELECTORS ============================= */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .mode-card {
+    padding: 14px 8px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    transition: all 0.2s;
+    user-select: none;
+    color: var(--text-secondary);
+  }
+  .mode-card:hover { border-color: var(--border-strong); }
+  .mode-card.active {
+    background: linear-gradient(135deg, #3b82f6, #22d3ee);
+    border-color: var(--accent-cyan);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+  }
+  .mode-card .icon { font-size: 20px; display: block; margin-bottom: 6px; }
+  .mode-card:active { transform: scale(0.96); }
+
+  .coord-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .coord-boxes input { text-align: center; }
+  .coord-fmt-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .coord-fmt-row .mode-card { padding: 10px 4px; font-size: 11.5px; }
+
+  .dt-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.8fr;
+    gap: 8px;
+  }
+  .dt-grid select { padding: 11px 4px; font-size: 12.5px; text-align: center; }
+  .dt-grid-time {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .dt-grid-time select { padding: 11px 4px; font-size: 13px; text-align: center; }
+
+  /* Status messages */
+  .status-msg {
+    font-size: 12.5px;
+    margin-top: 10px;
+    color: var(--accent-emerald);
+    min-height: 18px;
+    line-height: 1.7;
+  }
+  .status-msg.info { color: var(--text-muted); }
+  .error-box {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+    line-height: 1.7;
+  }
+
+  /* Direction display */
+  .selected-dir {
+    text-align: center;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: var(--accent-cyan);
+    font-size: 14.5px;
+    font-weight: 700;
     margin-top: 14px;
+    transition: all 0.2s;
   }
   .selected-dir.empty {
-    background: rgba(255,255,255,.04);
-    border-color: rgba(255,255,255,.1);
-    color: #8888a8;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border);
+    color: var(--text-muted);
     font-weight: 500;
-    font-size: 13px;
+    font-size: 12.5px;
   }
   .selected-dir .az-value {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 500;
-    color: #a0a0c8;
+    color: var(--text-secondary);
     display: block;
     margin-top: 4px;
   }
 
-  .action-links { max-width:520px; margin: 18px auto 0; display:flex; flex-direction:column; gap:8px; }
-  .link-card {
-    display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; cursor:pointer;
-    background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); font-size:14px;
+  /* ============================= LOADING ============================= */
+  #loadingBox {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 620px;
+    margin: 0 auto;
   }
-  .link-card .icon { font-size:18px; }
-
-  #loadingBox { display:none; text-align:center; padding: 40px 20px; }
-  .radar { width:90px; height:90px; margin:0 auto 18px; position:relative; border-radius:50%;
-    background: radial-gradient(circle, rgba(43,125,233,.25) 0%, transparent 70%);
-    border: 2px solid rgba(109,213,255,.35); }
+  .radar {
+    width: 100px; height: 100px;
+    margin: 0 auto 24px;
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.2) 0%, transparent 70%);
+    border: 2px solid rgba(34, 211, 238, 0.3);
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.2);
+  }
   .radar::before {
-    content:''; position:absolute; top:50%; left:50%; width:50%; height:2px;
-    background: linear-gradient(90deg, #6dd5ff, transparent);
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50%; height: 2px;
+    background: linear-gradient(90deg, var(--accent-cyan), transparent);
     transform-origin: 0 50%;
     animation: spin 1.4s linear infinite;
   }
-  @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-  #loadingBox p { color:#a8c8ff; font-size:14px; margin-top:6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loadingBox p { color: var(--accent-cyan); font-size: 14px; margin: 6px 0; }
 
-  #resultBox { display:none; }
+  /* ============================= RESULT ============================= */
+  #resultBox { display: none; }
+
   .result-hero {
-    max-width:520px; margin:14px auto; padding:22px; border-radius:18px; text-align:center;
-    position:relative; overflow:hidden;
+    padding: 28px 22px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-glow);
   }
-  .result-hero.sat { background: linear-gradient(135deg,#0f3460,#16537e); }
-  .result-hero.ac { background: linear-gradient(135deg,#134e3a,#1a7a5e); }
-  .result-hero.mix { background: linear-gradient(135deg,#5a3e0f,#8a5a1a); }
-  .result-hero.un { background: linear-gradient(135deg,#5a1a3e,#7a1a3e); }
-  .result-hero .big-icon { font-size:52px; }
-  .result-hero h2 { margin:8px 0 2px; font-size:22px; }
-  .result-hero p.sub { color:#dcdcf5; font-size:13px; margin:0; }
+  .result-hero.sat { background: linear-gradient(135deg, #0c2d5c, #0f4c81); }
+  .result-hero.ac  { background: linear-gradient(135deg, #0d4a3a, #0e7c5c); }
+  .result-hero.mix { background: linear-gradient(135deg, #5c3e10, #8a5a1a); }
+  .result-hero.un  { background: linear-gradient(135deg, #4d1a2e, #7a1a3e); }
+  .result-hero .big-icon { font-size: 60px; line-height: 1; }
+  .result-hero h2 { margin: 12px 0 4px; font-size: 24px; font-weight: 800; }
+  .result-hero p.sub { color: rgba(255, 255, 255, 0.8); font-size: 13px; margin: 0; line-height: 1.8; }
 
-  .info-line { max-width:520px; margin:8px auto; display:flex; justify-content:space-between; font-size:13px; color:#c0c0e0; padding:0 6px; }
+  .info-lines {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .info-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 6px 0;
+    gap: 8px;
+  }
+  .info-line:not(:last-child) { border-bottom: 1px dashed rgba(255, 255, 255, 0.06); }
+  .info-line span:last-child {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: left;
+    direction: ltr;
+  }
 
-  .conf-wrap { display:flex; align-items:center; justify-content:center; gap:12px; margin:14px 0; }
-  .conf-ring { position:relative; width:70px; height:70px; }
-  .conf-ring svg { transform: rotate(-90deg); }
-  .conf-ring .num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; }
-
+  /* Object card */
   .obj-card {
-    max-width:520px; margin:12px auto; padding:16px; border-radius:14px;
-    background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
   }
-  .obj-card h3 { margin:0 0 10px; font-size:16px; display:flex; align-items:center; gap:8px; }
-  .obj-row { display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px dashed rgba(255,255,255,.08); }
-  .obj-row:last-child { border-bottom:none; }
-  .obj-row .lbl { color:#a0a0c8; }
-  .obj-row .val { font-weight:700; }
-  .estimate-tag { font-size:10px; background:rgba(255,255,255,.1); padding:2px 6px; border-radius:6px; margin-right:4px; }
+  .obj-card h3 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .obj-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 7px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    gap: 10px;
+  }
+  .obj-row:last-child { border-bottom: none; }
+  .obj-row .lbl { color: var(--text-muted); flex-shrink: 0; }
+  .obj-row .val { font-weight: 600; color: var(--text-primary); text-align: left; }
+  .estimate-tag {
+    font-size: 10px;
+    background: rgba(139, 92, 246, 0.2);
+    color: #d8b4fe;
+    padding: 2px 6px;
+    border-radius: 5px;
+    margin-right: 4px;
+    font-weight: 500;
+  }
 
-  #map { max-width:520px; height:380px; margin:14px auto; border-radius:14px; }
+  /* Confidence ring */
+  .conf-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 16px 0 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .conf-ring { position: relative; width: 74px; height: 74px; }
+  .conf-ring svg { transform: rotate(-90deg); }
+  .conf-ring .num {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px;
+    color: var(--text-primary);
+  }
 
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; padding:20px; overflow-y:auto; }
-  .modal-box { max-width:520px; margin:20px auto; background:#1c1c34; border-radius:16px; padding:22px; border:1px solid rgba(255,255,255,.12); }
-  .modal-box h2 { margin-top:0; }
-  .modal-box .close-btn { float:left; background:rgba(255,255,255,.1); border:none; color:#fff; width:30px; height:30px; border-radius:50%; cursor:pointer; }
-  .guide-section { margin-bottom:14px; }
-  .guide-section h4 { color:#7ee8fa; margin-bottom:4px; font-size:14px; }
-  .guide-section p { font-size:13px; color:#d0d0e8; line-height:1.9; margin:0; }
-  .hist-item { padding:12px; border-radius:10px; background:rgba(255,255,255,.05); margin-bottom:8px; font-size:13px; }
-  .hist-item .hi-top { display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px; }
+  /* Map */
+  #map, #predMap, #liveMapView {
+    height: 380px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: #0a0a1f;
+  }
 
-  .diag-box { max-width:520px; margin:10px auto; background:rgba(255,255,255,.04); border:1px dashed rgba(255,255,255,.15); border-radius:12px; padding:12px 16px; font-size:12px; color:#a8a8c8; }
-  .diag-box summary { cursor:pointer; color:#9fd0ff; font-weight:700; }
-  .diag-row { display:flex; justify-content:space-between; padding:3px 0; }
+  /* Details box */
+  .diag-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 14px 0;
+  }
+  .diag-box summary {
+    cursor: pointer;
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-size: 13px;
+    outline: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .diag-box summary::-webkit-details-marker { display: none; }
+  .diag-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    gap: 10px;
+    line-height: 1.7;
+  }
+  .diag-row span:last-child { color: var(--text-secondary); text-align: left; direction: ltr; }
 
-  .nearby-toggle-wrap { max-width:520px; margin:14px auto; text-align:center; }
-  .nearby-table { max-width:520px; margin:10px auto; border-collapse:collapse; width:100%; font-size:12px; background:rgba(255,255,255,.05); border-radius:10px; overflow:hidden; }
-  .nearby-table th, .nearby-table td { padding:8px 6px; text-align:center; border-bottom:1px solid rgba(255,255,255,.08); }
-  .nearby-table th { background:rgba(255,255,255,.08); color:#c8c8e8; }
+  /* Nearby table */
+  .nearby-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 14px 0;
+  }
+  .nearby-table th, .nearby-table td {
+    padding: 10px 6px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .nearby-table th {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 11.5px;
+  }
+  .nearby-table td { color: var(--text-primary); }
 
-  /* Calibration */
-  #calibrationPage { display:none; position:fixed; inset:0; background:linear-gradient(160deg,#0f0c29,#302b63,#24243e); z-index:600; overflow-y:auto; padding:14px 14px 40px; }
-  .cal-header { max-width:520px; margin:0 auto 14px; display:flex; align-items:center; justify-content:space-between; padding:12px 4px; }
-  .cal-header h2 { margin:0; font-size:20px; background:linear-gradient(90deg,#6dd5ff,#a78bfa); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .cal-close-btn { width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:20px; cursor:pointer; }
-  .cal-step-title { font-size:15px; font-weight:700; color:#7ee8fa; text-align:center; margin:4px 0 12px; }
-  .cal-desc { font-size:13.5px; color:#d0d0e8; line-height:2; text-align:center; }
-  .cal-desc b { color:#f0abfc; }
-  .cal-tips { background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.3); border-radius:12px; padding:12px 16px; font-size:12.5px; color:#fde68a; line-height:1.9; margin-top:14px; }
-  .cal-tips .tip-title { font-weight:700; color:#fbbf24; margin-bottom:6px; }
-  .infinity-wrap { display:flex; justify-content:center; align-items:center; padding:20px 0; margin:14px 0; }
-  .infinity-svg { width:220px; height:120px; filter:drop-shadow(0 0 12px rgba(109,213,255,.6)); }
-  .infinity-path { fill:none; stroke:rgba(109,213,255,.3); stroke-width:3; stroke-linecap:round; }
-  .infinity-dot { fill:#6dd5ff; filter:drop-shadow(0 0 6px #6dd5ff); }
-  .infinity-trail { fill:none; stroke:url(#gradient); stroke-width:4; stroke-linecap:round; stroke-dasharray:400; stroke-dashoffset:0; animation:drawTrail 3s linear infinite; }
-  @keyframes drawTrail { 0%{stroke-dashoffset:400;} 50%{stroke-dashoffset:0;} 100%{stroke-dashoffset:-400;} }
-  .cal-progress-wrap { margin:20px 0 12px; }
-  .cal-progress-label { display:flex; justify-content:space-between; font-size:12px; color:#a0a0c8; margin-bottom:8px; }
-  .cal-progress-bar { height:12px; background:rgba(255,255,255,.08); border-radius:6px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,.1); }
-  .cal-progress-fill { height:100%; width:0%; background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981); background-size:200% 100%; border-radius:6px; transition:width .25s ease,background-position .25s ease; background-position:100% 0; }
-  .cal-progress-pct { text-align:center; margin-top:8px; font-size:22px; font-weight:900; color:#7ee8fa; }
-  .cal-quality { text-align:center; padding:14px; border-radius:12px; font-size:14px; font-weight:700; margin:14px 0; transition:all .3s; }
-  .cal-quality.bad    { background:rgba(239,68,68,.15); border:1px solid rgba(239,68,68,.4); color:#fca5a5; }
-  .cal-quality.medium { background:rgba(245,158,11,.15); border:1px solid rgba(245,158,11,.4); color:#fcd34d; }
-  .cal-quality.good   { background:rgba(16,185,129,.15); border:1px solid rgba(16,185,129,.4); color:#6ee7b7; }
-  .cal-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:14px 0; }
-  .cal-stat { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding:10px 6px; text-align:center; }
-  .cal-stat .lbl { font-size:11px; color:#8f8fb8; display:block; margin-bottom:4px; }
-  .cal-stat .val { font-size:14px; font-weight:700; color:#7ee8fa; }
-  .cal-hint { text-align:center; font-size:13px; color:#a0a0c8; margin:12px 0; min-height:20px; }
-  .cal-success-anim { text-align:center; font-size:60px; animation:bounceScale .6s ease; }
-  @keyframes bounceScale { 0%{transform:scale(0);} 50%{transform:scale(1.2);} 100%{transform:scale(1);} }
-
-  /* Prediction page */
-  #predictionPage { display:none; position:fixed; inset:0; background:linear-gradient(160deg,#0f0c29,#302b63,#24243e); z-index:500; overflow-y:auto; padding:14px 14px 40px; }
-  .pred-header { max-width:520px; margin:0 auto 14px; display:flex; align-items:center; justify-content:space-between; padding:12px 4px; }
-  .pred-header h2 { margin:0; font-size:20px; background:linear-gradient(90deg,#a78bfa,#f472b6); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .pred-close-btn { width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:20px; cursor:pointer; }
-  .pred-progress { max-width:520px; margin:20px auto; padding:20px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); text-align:center; }
-  .pred-progress-bar { height:6px; background:rgba(255,255,255,.1); border-radius:3px; overflow:hidden; margin-top:12px; }
-  .pred-progress-fill { height:100%; background:linear-gradient(90deg,#8b5cf6,#ec4899); width:0%; transition:width 0.2s; }
-  .pred-summary { max-width:520px; margin:14px auto; padding:14px 18px; border-radius:14px; background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(236,72,153,.15)); border:1px solid rgba(139,92,246,.4); font-size:13px; line-height:2; }
-  .pred-summary b { color:#f0abfc; }
-  .pred-list { max-width:520px; margin:14px auto; display:flex; flex-direction:column; gap:8px; }
-  .pred-row { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden; }
-  .pred-row-header { padding:10px 14px; background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(236,72,153,.15)); display:flex; align-items:center; gap:10px; font-size:13.5px; }
-  .pred-row-num { background:rgba(0,0,0,.3); color:#d8b4fe; min-width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; padding:0 6px; }
-  .pred-row-name { flex:1; font-weight:700; color:#f0f0f5; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
-  .pred-row-body { padding:10px 14px; display:grid; grid-template-columns:1fr 1fr; gap:8px 14px; font-size:12.5px; }
-  .pred-row-body .cell { display:grid; grid-template-columns:1fr 1fr; gap:6px; align-items:center; }
-  .pred-row-body .cell .lbl { color:#8f8fb8; text-align:right; }
-  .pred-row-body .cell .val { color:#f0f0f5; font-weight:600; text-align:center; }
-  .pred-row-body .cell-full { grid-column:1 / -1; }
-  .pred-empty { max-width:520px; margin:30px auto; padding:30px 20px; border-radius:14px; background:rgba(255,255,255,.04); border:1px dashed rgba(255,255,255,.2); text-align:center; color:#a0a0c8; font-size:14px; }
-  #predMap { max-width:520px; height:340px; margin:14px auto; border-radius:14px; }
-
-  /* ==================== LIVE SKY PAGE ==================== */
-  #liveSkyPage {
+  /* ============================= MODALS ============================= */
+  .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: linear-gradient(160deg, #0f0c29, #302b63, #24243e);
-    z-index: 550;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    padding: 20px;
     overflow-y: auto;
-    padding: 14px 14px 40px;
+    animation: fadeIn 0.2s ease;
   }
-  .live-header {
-    max-width: 520px;
-    margin: 0 auto 14px;
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-overlay.active { display: block; }
+  .modal-box {
+    max-width: 540px;
+    margin: 20px auto;
+    background: linear-gradient(160deg, #1c1c34, #151530);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-glow);
+    animation: modalSlide 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+    position: relative;
+  }
+  @keyframes modalSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .modal-box h2 {
+    margin: 0 0 20px;
+    font-size: 19px;
+    font-weight: 800;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 4px;
+    gap: 8px;
+    color: var(--text-primary);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
   }
-  .live-header h2 {
-    margin: 0;
-    font-size: 20px;
-    background: linear-gradient(90deg, #06b6d4, #3b82f6);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .live-close-btn {
-    width: 40px; height: 40px;
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 36px; height: 36px;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.2);
-    background: rgba(255,255,255,.08);
-    color: #fff;
-    font-size: 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-size: 18px;
     cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+  .guide-section {
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .guide-section h4 {
+    color: var(--accent-cyan);
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .guide-section p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 2;
+    margin: 0;
+  }
+  .guide-section b { color: var(--text-primary); }
+
+  /* History items */
+  .hist-item {
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .hist-item:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--border-strong); }
+  .hist-item .hi-top {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-bottom: 6px;
+    gap: 8px;
+    color: var(--text-primary);
+  }
+  .hist-item .hi-top span:last-child {
+    color: var(--accent-cyan);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .hist-item .hi-bottom { color: var(--text-muted); font-size: 12px; line-height: 1.7; }
+
+  /* ============================= PREDICTION ============================= */
+  .pred-progress {
+    max-width: 520px;
+    margin: 20px auto;
+    padding: 22px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .pred-progress-bar {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 14px;
+  }
+  .pred-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    width: 0%;
+    transition: width 0.2s;
+    border-radius: 4px;
+  }
+  .pred-summary {
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    font-size: 13px;
+    line-height: 2.1;
+    margin-bottom: 14px;
+  }
+  .pred-summary b { color: #f0abfc; }
+  .pred-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .pred-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .pred-row:hover { border-color: var(--border-strong); }
+  .pred-row-header {
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.12));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13.5px;
+  }
+  .pred-row-num {
+    background: rgba(0, 0, 0, 0.35);
+    color: #d8b4fe;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 0 6px;
+  }
+  .pred-row-name {
+    flex: 1;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 13.5px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pred-row-body {
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    font-size: 12.5px;
+  }
+  .pred-row-body .cell {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    align-items: center;
+  }
+  .pred-row-body .cell .lbl { color: var(--text-muted); text-align: right; }
+  .pred-row-body .cell .val { color: var(--text-primary); font-weight: 600; text-align: center; }
+  .pred-row-body .cell-full { grid-column: 1 / -1; }
+
+  .pred-empty, .live-empty {
+    margin: 30px auto;
+    padding: 40px 24px;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--border-strong);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 2;
   }
 
+  /* ============================= LIVE SKY ============================= */
   .live-update-indicator {
-    max-width: 520px;
-    margin: 0 auto;
-    text-align: center;
-    font-size: 11px;
-    color: #6b7280;
-    padding: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    margin-bottom: 14px;
   }
   .live-dot-pulse {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     background: #ef4444;
     border-radius: 50%;
-    margin-left: 5px;
+    margin-left: 6px;
+    box-shadow: 0 0 8px #ef4444;
     animation: pulseLive 1.5s ease-in-out infinite;
   }
   @keyframes pulseLive {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.4; transform: scale(0.8); }
+    50%      { opacity: 0.4; transform: scale(0.75); }
   }
 
-  /* Single satellite stat card */
-  .live-stats-single {
-    max-width: 520px;
-    margin: 12px auto;
-  }
   .live-stat-card {
-    padding: 14px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
+    padding: 18px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(34, 211, 238, 0.08));
+    border: 1px solid rgba(59, 130, 246, 0.3);
     text-align: center;
-    transition: all .3s;
+    margin-bottom: 14px;
   }
-  .live-stat-card.active-sat {
-    background: rgba(59,130,246,.15);
-    border-color: rgba(59,130,246,.5);
-  }
-  .live-stat-card .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .live-stat-card .icon { font-size: 24px; display: block; margin-bottom: 6px; }
   .live-stat-card .num {
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 900;
-    color: #7ee8fa;
+    color: var(--accent-cyan);
     display: block;
+    line-height: 1.2;
   }
   .live-stat-card .lbl {
     font-size: 12px;
-    color: #a0a0c8;
+    color: var(--text-secondary);
     display: block;
     margin-top: 4px;
   }
 
-  /* Time slider */
   .live-time-slider-wrap {
-    max-width: 520px;
-    margin: 14px auto;
-    padding: 14px 16px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
+    padding: 16px 18px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
   }
   .live-time-label {
     display: flex;
     justify-content: space-between;
     font-size: 13px;
-    color: #d0d0e8;
-    margin-bottom: 10px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
     font-weight: 700;
   }
-  .live-time-label span:last-child {
-    color: #7ee8fa;
-    font-family: monospace;
-  }
+  .live-time-label span:last-child { color: var(--accent-cyan); font-family: monospace; direction: ltr; }
   #liveTimeSlider {
     width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: rgba(255,255,255,.1);
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
     outline: none;
     -webkit-appearance: none;
     appearance: none;
@@ -382,293 +975,596 @@
   #liveTimeSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 22px;
-    height: 22px;
+    width: 24px; height: 24px;
     border-radius: 50%;
     background: linear-gradient(135deg, #06b6d4, #3b82f6);
     border: 2px solid #fff;
-    box-shadow: 0 0 10px rgba(6,182,212,.8);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.8);
     cursor: pointer;
   }
   #liveTimeSlider::-moz-range-thumb {
-    width: 22px;
-    height: 22px;
+    width: 24px; height: 24px;
     border-radius: 50%;
     background: linear-gradient(135deg, #06b6d4, #3b82f6);
     border: 2px solid #fff;
-    box-shadow: 0 0 10px rgba(6,182,212,.8);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.8);
     cursor: pointer;
   }
   .live-time-marks {
     display: flex;
     justify-content: space-between;
     font-size: 10.5px;
-    color: #6b7280;
+    color: var(--text-muted);
     margin-top: 8px;
     direction: ltr;
   }
 
-  #liveMapView {
-    width: 100%;
-    max-width: 520px;
-    height: 480px;
-    border-radius: 16px;
-    margin: 14px auto;
-    border: 1px solid rgba(6,182,212,.3);
-  }
-
-  /* Map legend */
   .live-map-legend {
-    max-width: 520px;
-    margin: 12px auto;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     justify-content: center;
     font-size: 12.5px;
-    color: #c8c8e8;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
   }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .legend-icon {
-    font-size: 18px;
-    filter: drop-shadow(0 0 4px rgba(255,255,255,.4));
-  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-icon { font-size: 18px; }
 
-  /* Guidance */
   .live-guidance {
-    max-width: 520px;
-    margin: 14px auto;
-    padding: 16px 18px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(6,182,212,.08), rgba(59,130,246,.08));
-    border: 1px solid rgba(6,182,212,.25);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(59, 130, 246, 0.06));
+    border: 1px solid rgba(6, 182, 212, 0.25);
     font-size: 12.5px;
-    line-height: 1.9;
-    color: #d0d0e8;
+    line-height: 2;
+    color: var(--text-secondary);
   }
   .live-guidance h4 {
-    margin: 0 0 8px;
-    color: #7ee8fa;
+    margin: 0 0 10px;
+    color: var(--accent-cyan);
     font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .live-guidance p {
+  .live-guidance p { margin: 0; padding-right: 0; }
+
+  /* ============================= CALIBRATION ============================= */
+  #calibrationPage {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at top, #1a1a4e 0%, #0a0a1f 50%);
+    z-index: 600;
+    overflow-y: auto;
+    padding: 20px 16px 60px;
+  }
+  .cal-header {
+    max-width: 540px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .cal-header h2 {
     margin: 0;
-    padding-right: 0;
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #22d3ee, #a78bfa);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    flex: 1;
+    text-align: center;
+  }
+  .cal-close-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cal-close-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+  .cal-step-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    text-align: center;
+    margin: 0 0 14px;
+  }
+  .cal-desc {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 2.1;
+    text-align: center;
+    margin: 0;
+  }
+  .cal-desc b { color: var(--text-primary); }
+  .cal-tips {
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: #fde68a;
+    line-height: 2;
+    margin-top: 16px;
+  }
+  .cal-tips .tip-title {
+    font-weight: 800;
+    color: var(--accent-amber);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .infinity-wrap { display: flex; justify-content: center; align-items: center; padding: 24px 0; margin: 16px 0; }
+  .infinity-svg { width: 240px; height: 130px; filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.6)); }
+  .infinity-path { fill: none; stroke: rgba(34, 211, 238, 0.3); stroke-width: 3; stroke-linecap: round; }
+  .infinity-dot { fill: #22d3ee; filter: drop-shadow(0 0 6px #22d3ee); }
+  .infinity-trail {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 0;
+    animation: drawTrail 3s linear infinite;
+  }
+  @keyframes drawTrail {
+    0%   { stroke-dashoffset: 400; }
+    50%  { stroke-dashoffset: 0;   }
+    100% { stroke-dashoffset: -400; }
+  }
+  .cal-progress-wrap { margin: 24px 0 14px; }
+  .cal-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .cal-progress-bar {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .cal-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    transition: width .25s ease, background-position .25s ease;
+    background-position: 100% 0;
+  }
+  .cal-progress-pct {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--accent-cyan);
+  }
+  .cal-quality {
+    text-align: center;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    margin: 16px 0;
+    transition: all .3s;
+  }
+  .cal-quality.bad    { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
+  .cal-quality.medium { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+  .cal-quality.good   { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+  .cal-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .cal-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .cal-stat .lbl { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+  .cal-stat .val { font-size: 14px; font-weight: 700; color: var(--accent-cyan); }
+  .cal-hint { text-align: center; font-size: 13px; color: var(--text-secondary); margin: 14px 0; min-height: 20px; }
+  .cal-success-anim { text-align: center; font-size: 68px; animation: bounceScale .6s ease; }
+  @keyframes bounceScale {
+    0%   { transform: scale(0); }
+    50%  { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* ============================= UTILITIES ============================= */
+  .spacer-sm { height: 10px; }
+  .spacer { height: 16px; }
+  .spacer-lg { height: 24px; }
+
+  @media (max-width: 400px) {
+    .home-title { font-size: 34px; }
+    .home-logo { width: 84px; height: 84px; font-size: 40px; }
+    .feature-card { padding: 18px 16px; }
+    .feature-card .fc-icon { width: 52px; height: 52px; font-size: 24px; }
+    .page { padding: 16px 12px 70px; }
+    .card { padding: 18px; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">🛰️</div>
-  <h1>رصدیار</h1>
-  <p>سامانه هوشمند تشخیص اجسام نورانی آسمان</p>
+<!-- ======================================================================== -->
+<!--                            PAGE: HOME                                    -->
+<!-- ======================================================================== -->
+<div id="pageHome" class="page active">
+  <div class="home-hero">
+    <div class="home-logo">🛰️</div>
+    <h1 class="home-title">رصدیار</h1>
+    <p class="home-subtitle">سامانه هوشمند تشخیص اجسام نورانی آسمان</p>
+    <p class="home-tagline">نسخه ۱.۰ — ساخته شده با ❤️ برای رصدگران</p>
+  </div>
+
+  <div class="home-intro">
+    <b>🌠 رصدیار چیه؟</b><br>
+    رصدیار یک سامانه‌ی هوشمند برای شناسایی و ردیابی اجسام نورانی آسمان است. اگه شبی توی آسمان نوری دیدی و نمی‌دونی ماهواره بود یا هواپیما یا شهاب‌سنگ، رصدیار کمکت می‌کنه. همچنین می‌تونی ببینی در آینده چه ماهواره‌هایی از بالای سرت عبور می‌کنند و یا در لحظه، آسمان اطرافت رو رصد کنی.
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card feature-review" onclick="navTo('pageReview')">
+      <div class="fc-icon">🔍</div>
+      <div class="fc-body">
+        <h3 class="fc-title">بررسی شیء مشاهده‌شده</h3>
+        <p class="fc-desc">اگه یه نور توی آسمون دیدی، مشخصاتش رو وارد کن تا بفهمی چی بوده.</p>
+      </div>
+      <div class="fc-arrow">‹</div>
+    </div>
+
+    <div class="feature-card feature-predict" onclick="navTo('pagePredict')">
+      <div class="fc-icon">🔮</div>
+      <div class="fc-body">
+        <h3 class="fc-title">پیش‌بینی عبور ماهواره</h3>
+        <p class="fc-desc">ببین در ساعات آینده چه ماهواره‌هایی از بالای سرت عبور می‌کنند.</p>
+      </div>
+      <div class="fc-arrow">‹</div>
+    </div>
+
+    <div class="feature-card feature-live" onclick="navTo('pageLive')">
+      <div class="fc-icon">🌌</div>
+      <div class="fc-body">
+        <h3 class="fc-title">آسمان زنده</h3>
+        <p class="fc-desc">در لحظه ببین چه ماهواره‌ها و هواپیماهایی در آسمون تو در حرکتند.</p>
+      </div>
+      <div class="fc-arrow">‹</div>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    <button class="btn btn-ghost" onclick="openModal('adminLoginModal')">⚙️ ورود مدیر سیستم</button>
+  </div>
 </div>
 
-<div id="formBox">
+<!-- ======================================================================== -->
+<!--                            PAGE: REVIEW                                  -->
+<!-- ======================================================================== -->
+<div id="pageReview" class="page">
+  <div class="page-topbar">
+    <button class="back-btn" onclick="navTo('pageHome')">→ بازگشت</button>
+    <h2 class="page-title">بررسی شیء</h2>
+    <button class="guide-btn" onclick="openModal('guideReview')" title="راهنما">📖</button>
+  </div>
+
+  <div id="formBox">
+    <div class="card">
+      <label class="card-label">📍 محل مشاهده</label>
+      <div class="mode-grid">
+        <div class="mode-card active" id="modeAutoCard" onclick="setLocationMode('auto')">
+          <span class="icon">🎯</span> GPS
+        </div>
+        <div class="mode-card" id="modeManualCard" onclick="setLocationMode('manual')">
+          <span class="icon">⌨️</span> دستی
+        </div>
+        <div class="mode-card" id="modeMapCard" onclick="setLocationMode('map')">
+          <span class="icon">🗺️</span> نقشه
+        </div>
+      </div>
+
+      <div id="autoLocPanel">
+        <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getLocation()">📡 دریافت موقعیت من</button>
+        <div class="status-msg" id="locStatus"></div>
+        <div class="coord-boxes" id="autoCoordBoxes" style="display:none;">
+          <input type="text" id="autoLat" readonly placeholder="X">
+          <input type="text" id="autoLon" readonly placeholder="Y">
+        </div>
+      </div>
+
+      <div id="mapLocPanel" style="display:none;">
+        <div class="status-msg info">روی نقشه ضربه بزنید.</div>
+        <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; margin-top:10px; border:1px solid var(--border);"></div>
+        <div class="coord-boxes" id="mapCoordBoxes" style="display:none;">
+          <input type="text" id="mapLat" readonly placeholder="X">
+          <input type="text" id="mapLon" readonly placeholder="Y">
+        </div>
+      </div>
+
+      <div id="manualLocPanel" style="display:none;">
+        <label class="card-label" style="font-size:12px; margin-top:14px;">فرمت مختصات</label>
+        <div class="coord-fmt-row">
+          <div class="mode-card" onclick="setCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
+          <div class="mode-card" onclick="setCoordFormat('dec', this)">دسیمال</div>
+          <div class="mode-card" onclick="setCoordFormat('utm', this)">UTM</div>
+        </div>
+
+        <div id="dmsInputs" style="display:none; margin-top:12px;">
+          <label class="card-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
+          <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
+            <input type="number" id="latD" placeholder="درجه">
+            <input type="number" id="latM" placeholder="دقیقه">
+            <input type="number" id="latS" placeholder="ثانیه">
+            <select id="latDir"><option value="N">N</option><option value="S">S</option></select>
+          </div>
+          <label class="card-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی (Y)</label>
+          <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
+            <input type="number" id="lonD" placeholder="درجه">
+            <input type="number" id="lonM" placeholder="دقیقه">
+            <input type="number" id="lonS" placeholder="ثانیه">
+            <select id="lonDir"><option value="E">E</option><option value="W">W</option></select>
+          </div>
+        </div>
+
+        <div id="decInputs" style="display:none; margin-top:12px;">
+          <div class="coord-boxes">
+            <input type="text" id="decLat" placeholder="X مثلا 35.6892">
+            <input type="text" id="decLon" placeholder="Y مثلا 51.3890">
+          </div>
+        </div>
+
+        <div id="utmInputs" style="display:none; margin-top:12px;">
+          <div class="coord-boxes">
+            <input type="number" id="utmZone" placeholder="Zone">
+            <select id="utmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select>
+          </div>
+          <div class="coord-boxes">
+            <input type="text" id="utmE" placeholder="Easting">
+            <input type="text" id="utmN" placeholder="Northing">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="card-label">🗓️ تاریخ و ساعت مشاهده</label>
+      <div class="dt-grid">
+        <select id="jYear"></select>
+        <select id="jMonth"></select>
+        <select id="jDay"></select>
+      </div>
+      <div class="dt-grid-time">
+        <select id="jHour"></select>
+        <select id="jMinute"></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="card-label">🧭 سمت مشاهده شیء</label>
+      <select id="directionSelect" onchange="onDirectionSelect(this.value)">
+        <option value="">— انتخاب جهت —</option>
+        <option value="N">⬆️ شمال</option>
+        <option value="NE">↗️ شمال‌شرق</option>
+        <option value="E">➡️ شرق</option>
+        <option value="SE">↘️ جنوب‌شرق</option>
+        <option value="S">⬇️ جنوب</option>
+        <option value="SW">↙️ جنوب‌غرب</option>
+        <option value="W">⬅️ غرب</option>
+        <option value="NW">↖️ شمال‌غرب</option>
+      </select>
+
+      <div style="text-align:center; margin: 14px 0 10px; color:var(--text-muted); font-size:12px;">— یا —</div>
+
+      <button type="button" class="btn btn-outline" onclick="startCompassFlow()">🧭 استفاده از قطب‌نما</button>
+      <div class="status-msg" id="compassStatus"></div>
+
+      <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده</div>
+
+      <label class="card-label" style="margin-top:18px;">➡️ جهت حرکت شیء</label>
+      <select id="moveDir">
+        <option>از شمال به جنوب</option>
+        <option>از جنوب به شمال</option>
+        <option>از شرق به غرب</option>
+        <option>از غرب به شرق</option>
+        <option>از شمال‌شرق به جنوب‌غرب</option>
+        <option>از شمال‌غرب به جنوب‌شرق</option>
+        <option>از جنوب‌شرق به شمال‌غرب</option>
+        <option>از جنوب‌غرب به شمال‌شرق</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <div class="error-box" id="errorBox"></div>
+      <button type="button" class="btn btn-primary" onclick="validateAndRun()">🔍 بررسی کن</button>
+      <div class="spacer-sm"></div>
+      <button type="button" class="btn btn-outline" onclick="openModal('historyModal')">🕘 تاریخچه مشاهدات</button>
+    </div>
+  </div>
+
+  <div id="loadingBox">
+    <div class="radar"></div>
+    <p id="loadingMainText">سیستم در حال پردازش است...</p>
+    <p id="loadingProgress" style="font-size:12px;"></p>
+  </div>
+
+  <div id="resultBox">
+    <div class="result-hero" id="resultHero">
+      <div class="big-icon" id="resultIcon">❓</div>
+      <h2 id="resultTitle">در حال بررسی...</h2>
+      <p class="sub" id="resultSub"></p>
+    </div>
+
+    <div class="info-lines">
+      <div class="info-line"><span>📍 موقعیت</span><span id="infoLoc"></span></div>
+      <div class="info-line"><span>🕓 زمان</span><span id="infoTime"></span></div>
+      <div class="info-line"><span>🧭 سمت / حرکت</span><span id="infoAz"></span></div>
+    </div>
+
+    <div id="objectsContainer"></div>
+    <div id="acTimeWarning" style="display:none;" class="diag-box"></div>
+
+    <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()" style="margin-top:8px;">🔭 نمایش همه اهداف اطراف</button>
+    <table class="nearby-table" id="nearbyTable" style="display:none;"></table>
+
+    <div id="map"></div>
+
+    <details class="diag-box">
+      <summary>🔍 جزئیات فنی</summary>
+      <div id="diagContent"></div>
+    </details>
+
+    <button type="button" class="btn btn-outline" onclick="resetReview()">↩️ ثبت مشاهده جدید</button>
+  </div>
+</div>
+
+<!-- ======================================================================== -->
+<!--                            PAGE: PREDICT                                 -->
+<!-- ======================================================================== -->
+<div id="pagePredict" class="page">
+  <div class="page-topbar">
+    <button class="back-btn" onclick="navTo('pageHome')">→ بازگشت</button>
+    <h2 class="page-title">پیش‌بینی عبور</h2>
+    <button class="guide-btn" onclick="openModal('guidePredict')" title="راهنما">📖</button>
+  </div>
 
   <div class="card">
-    <label class="field-label">📍 محل مشاهده شی نورانی</label>
-    <div class="two-col">
-      <div class="mode-card active" id="modeAutoCard" onclick="setLocationMode('auto')">
-        <span class="icon">🎯</span> دریافت خودکار موقعیت من
+    <label class="card-label">📍 محل رصد</label>
+    <div class="mode-grid">
+      <div class="mode-card active" id="predModeAutoCard" onclick="setPredLocationMode('auto')">
+        <span class="icon">🎯</span> GPS
       </div>
-      <div class="mode-card" id="modeManualCard" onclick="setLocationMode('manual')">
-        <span class="icon">⌨️</span> وارد کردن دستی موقعیت
+      <div class="mode-card" id="predModeManualCard" onclick="setPredLocationMode('manual')">
+        <span class="icon">⌨️</span> دستی
       </div>
-      <div class="mode-card" id="modeMapCard" onclick="setLocationMode('map')">
-        <span class="icon">🗺️</span> انتخاب از روی نقشه
-      </div>
-    </div>
-
-    <div id="autoLocPanel">
-      <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getLocation()">📡 دریافت موقعیت من</button>
-      <div class="status-msg" id="locStatus"></div>
-      <div class="coord-boxes" id="autoCoordBoxes" style="display:none;">
-        <input type="text" id="autoLat" readonly placeholder="X (عرض جغرافیایی)">
-        <input type="text" id="autoLon" readonly placeholder="Y (طول جغرافیایی)">
+      <div class="mode-card" id="predModeMapCard" onclick="setPredLocationMode('map')">
+        <span class="icon">🗺️</span> نقشه
       </div>
     </div>
 
-    <div id="mapLocPanel" style="display:none;">
-      <div class="status-msg" style="color:#a0a0c8;">روی نقشه ضربه بزنید تا موقعیت مشاهده ثبت شود.</div>
-      <div id="pickerMap" style="width:100%; height:280px; border-radius:12px; margin-top:8px;"></div>
-      <div class="coord-boxes" id="mapCoordBoxes" style="display:none; margin-top:10px;">
-        <input type="text" id="mapLat" readonly placeholder="X (عرض جغرافیایی)">
-        <input type="text" id="mapLon" readonly placeholder="Y (طول جغرافیایی)">
+    <div id="predAutoLocPanel">
+      <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getPredLocation()">📡 دریافت موقعیت</button>
+      <div class="status-msg" id="predLocStatus"></div>
+      <div class="coord-boxes" id="predAutoCoordBoxes" style="display:none;">
+        <input type="text" id="predAutoLat" readonly placeholder="X">
+        <input type="text" id="predAutoLon" readonly placeholder="Y">
       </div>
     </div>
 
-    <div id="manualLocPanel" style="display:none;">
-      <label class="field-label" style="font-size:12px;">نوع فرمت مختصات را انتخاب کنید</label>
+    <div id="predMapLocPanel" style="display:none;">
+      <div class="status-msg info">روی نقشه ضربه بزنید.</div>
+      <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; margin-top:10px; border:1px solid var(--border);"></div>
+      <div class="coord-boxes" id="predMapCoordBoxes" style="display:none;">
+        <input type="text" id="predMapLat" readonly placeholder="X">
+        <input type="text" id="predMapLon" readonly placeholder="Y">
+      </div>
+    </div>
+
+    <div id="predManualLocPanel" style="display:none;">
+      <label class="card-label" style="font-size:12px; margin-top:14px;">فرمت مختصات</label>
       <div class="coord-fmt-row">
-        <div class="mode-card" onclick="setCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
-        <div class="mode-card" onclick="setCoordFormat('dec', this)">Decimal Degree</div>
-        <div class="mode-card" onclick="setCoordFormat('utm', this)">UTM</div>
+        <div class="mode-card" onclick="setPredCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
+        <div class="mode-card" onclick="setPredCoordFormat('dec', this)">دسیمال</div>
+        <div class="mode-card" onclick="setPredCoordFormat('utm', this)">UTM</div>
       </div>
 
-      <div id="dmsInputs" style="display:none; margin-top:12px;">
-        <label class="field-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
-        <div class="two-col">
-          <input type="number" id="latD" placeholder="درجه">
-          <input type="number" id="latM" placeholder="دقیقه">
-          <input type="number" id="latS" placeholder="ثانیه">
-          <select id="latDir"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
+      <div id="predDmsInputs" style="display:none; margin-top:12px;">
+        <label class="card-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
+        <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
+          <input type="number" id="predLatD" placeholder="درجه">
+          <input type="number" id="predLatM" placeholder="دقیقه">
+          <input type="number" id="predLatS" placeholder="ثانیه">
+          <select id="predLatDir"><option value="N">N</option><option value="S">S</option></select>
         </div>
-        <label class="field-label" style="font-size:12px;">طول جغرافیایی (Y)</label>
-        <div class="two-col">
-          <input type="number" id="lonD" placeholder="درجه">
-          <input type="number" id="lonM" placeholder="دقیقه">
-          <input type="number" id="lonS" placeholder="ثانیه">
-          <select id="lonDir"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
+        <label class="card-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی (Y)</label>
+        <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
+          <input type="number" id="predLonD" placeholder="درجه">
+          <input type="number" id="predLonM" placeholder="دقیقه">
+          <input type="number" id="predLonS" placeholder="ثانیه">
+          <select id="predLonDir"><option value="E">E</option><option value="W">W</option></select>
         </div>
       </div>
 
-      <div id="decInputs" style="display:none; margin-top:12px;">
+      <div id="predDecInputs" style="display:none; margin-top:12px;">
         <div class="coord-boxes">
-          <input type="text" id="decLat" placeholder="X مثلا 35.6892">
-          <input type="text" id="decLon" placeholder="Y مثلا 51.3890">
+          <input type="text" id="predDecLat" placeholder="X">
+          <input type="text" id="predDecLon" placeholder="Y">
         </div>
       </div>
 
-      <div id="utmInputs" style="display:none; margin-top:12px;">
+      <div id="predUtmInputs" style="display:none; margin-top:12px;">
         <div class="coord-boxes">
-          <input type="number" id="utmZone" placeholder="Zone مثلا 39">
-          <select id="utmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
+          <input type="number" id="predUtmZone" placeholder="Zone">
+          <select id="predUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select>
         </div>
-        <div class="coord-boxes" style="margin-top:8px;">
-          <input type="text" id="utmE" placeholder="Easting (X)">
-          <input type="text" id="utmN" placeholder="Northing (Y)">
+        <div class="coord-boxes">
+          <input type="text" id="predUtmE" placeholder="Easting">
+          <input type="text" id="predUtmN" placeholder="Northing">
         </div>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <label class="field-label">🗓️ تاریخ و ساعت مشاهده</label>
+    <label class="card-label">🕐 زمان شروع</label>
     <div class="dt-grid">
-      <select id="jYear"></select>
-      <select id="jMonth"></select>
-      <select id="jDay"></select>
+      <select id="predStartYear"></select>
+      <select id="predStartMonth"></select>
+      <select id="predStartDay"></select>
     </div>
     <div class="dt-grid-time">
-      <select id="jHour"></select>
-      <select id="jMinute"></select>
+      <select id="predStartHour"></select>
+      <select id="predStartMinute"></select>
     </div>
   </div>
 
   <div class="card">
-    <label class="field-label">🧭 سمت مشاهده شیء</label>
-    <label class="field-label" style="font-size:13px;">از لیست انتخاب کنید:</label>
-    <select id="directionSelect" onchange="onDirectionSelect(this.value)">
-      <option value="">— لطفاً جهت را انتخاب کنید —</option>
-      <option value="N">⬆️ شمال</option>
-      <option value="NE">↗️ شمال‌شرق</option>
-      <option value="E">➡️ شرق</option>
-      <option value="SE">↘️ جنوب‌شرق</option>
-      <option value="S">⬇️ جنوب</option>
-      <option value="SW">↙️ جنوب‌غرب</option>
-      <option value="W">⬅️ غرب</option>
-      <option value="NW">↖️ شمال‌غرب</option>
-    </select>
-
-    <div style="text-align:center; margin: 16px 0 10px; color:#a0a0c8; font-size:12px;">— یا —</div>
-
-    <button type="button" class="btn btn-outline" onclick="startCompassFlow()">🧭 استفاده از قطب‌نمای گوشی</button>
-    <div class="status-msg" id="compassStatus"></div>
-    <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
-
-    <label class="field-label">➡️ جهت حرکت شیء</label>
-    <select id="moveDir">
-      <option>از شمال به جنوب</option>
-      <option>از جنوب به شمال</option>
-      <option>از شرق به غرب</option>
-      <option>از غرب به شرق</option>
-      <option>از شمال‌شرق به جنوب‌غرب</option>
-      <option>از شمال‌غرب به جنوب‌شرق</option>
-      <option>از جنوب‌شرق به شمال‌غرب</option>
-      <option>از جنوب‌غرب به شمال‌شرق</option>
-    </select>
+    <label class="card-label">🕐 زمان پایان</label>
+    <div class="dt-grid">
+      <select id="predEndYear"></select>
+      <select id="predEndMonth"></select>
+      <select id="predEndDay"></select>
+    </div>
+    <div class="dt-grid-time">
+      <select id="predEndHour"></select>
+      <select id="predEndMinute"></select>
+    </div>
+    <p class="card-subtext" style="margin-top:10px;">⚠️ بازه‌های طولانی‌تر زمان بیشتری می‌برند.</p>
   </div>
 
   <div class="card">
-    <div class="error-box" id="errorBox"></div>
-    <button type="button" class="btn btn-primary" onclick="validateAndRun()">✅ ثبت و بررسی</button>
+    <div class="error-box" id="predErrorBox"></div>
+    <button type="button" class="btn btn-predict" onclick="runPrediction()">🚀 شروع پیش‌بینی</button>
   </div>
 
-  <div class="card">
-    <button type="button" class="btn btn-predict" onclick="openPrediction()">🔮 پیش‌بینی عبور ماهواره</button>
+  <div id="predProgress" class="pred-progress" style="display:none;">
+    <p style="margin:0; color:var(--accent-cyan); font-size:14px;" id="predProgressText">در حال بررسی...</p>
+    <div class="pred-progress-bar"><div class="pred-progress-fill" id="predProgressFill"></div></div>
+    <p style="margin:10px 0 0; color:var(--text-muted); font-size:12px;" id="predProgressDetail"></p>
   </div>
 
-  <div class="card">
-    <button type="button" class="btn btn-live" onclick="openLiveSky()">🌌 آسمان زنده — مشاهده در لحظه</button>
-  </div>
-
-  <div class="action-links">
-    <div class="link-card" onclick="openHistory()"><span class="icon">🕘</span> تاریخچه‌ی مشاهدات</div>
-    <div class="link-card" onclick="openGuide()"><span class="icon">📘</span> راهنمای استفاده از رصدیار</div>
-    <div class="link-card" onclick="openAdminLogin()" style="opacity:.55; font-size:12px;"><span class="icon">⚙️</span> ورود مدیر سیستم</div>
-  </div>
+  <div id="predResults"></div>
 </div>
 
-<div id="loadingBox">
-  <div class="radar"></div>
-  <p id="loadingMainText">سیستم در حال پردازش است، لطفاً چند لحظه صبر کنید...</p>
-  <p id="loadingProgress" style="font-size:12px; color:#7ee8fa;"></p>
-</div>
-
-<div id="resultBox">
-  <div class="result-hero" id="resultHero">
-    <div class="big-icon" id="resultIcon">❓</div>
-    <h2 id="resultTitle">در حال بررسی...</h2>
-    <p class="sub" id="resultSub"></p>
+<!-- ======================================================================== -->
+<!--                            PAGE: LIVE SKY                                -->
+<!-- ======================================================================== -->
+<div id="pageLive" class="page">
+  <div class="page-topbar">
+    <button class="back-btn" onclick="navTo('pageHome')">→ بازگشت</button>
+    <h2 class="page-title">آسمان زنده</h2>
+    <button class="guide-btn" onclick="openModal('guideLive')" title="راهنما">📖</button>
   </div>
 
-  <div class="info-line"><span>📍 موقعیت</span><span id="infoLoc"></span></div>
-  <div class="info-line"><span>🕓 زمان مشاهده</span><span id="infoTime"></span></div>
-  <div class="info-line"><span>🧭 جهت / حرکت</span><span id="infoAz"></span></div>
-
-  <div id="objectsContainer"></div>
-
-  <div id="acTimeWarning" style="display:none;" class="diag-box"></div>
-
-  <div class="nearby-toggle-wrap">
-    <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()">🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف (۳۶۰°)</button>
-  </div>
-  <table class="nearby-table" id="nearbyTable" style="display:none;"></table>
-
-  <div id="map"></div>
-
-  <details class="diag-box">
-    <summary>🔍 جزئیات فنی جستجو</summary>
-    <div id="diagContent"></div>
-  </details>
-
-  <div class="card" style="text-align:center;">
-    <button type="button" class="btn btn-outline" onclick="location.reload()">↩️ ثبت مشاهده جدید</button>
-  </div>
-</div>
-
-<!-- ===================== LIVE SKY PAGE ===================== -->
-<div id="liveSkyPage">
-  <div class="live-header">
-    <h2>🌌 آسمان زنده</h2>
-    <button class="live-close-btn" onclick="closeLiveSky()">✕</button>
-  </div>
-
-  <!-- Location selection (shown until started) -->
   <div id="liveSetupPanel">
     <div class="card">
-      <label class="field-label">📍 محل رصد</label>
-      <div class="two-col">
+      <label class="card-label">📍 محل رصد</label>
+      <div class="mode-grid">
         <div class="mode-card active" id="liveModeAutoCard" onclick="setLiveLocationMode('auto')">
           <span class="icon">🎯</span> GPS
         </div>
@@ -681,7 +1577,7 @@
       </div>
 
       <div id="liveAutoLocPanel">
-        <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getLiveLocation()">📡 دریافت موقعیت من</button>
+        <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getLiveLocation()">📡 دریافت موقعیت</button>
         <div class="status-msg" id="liveLocStatus"></div>
         <div class="coord-boxes" id="liveAutoCoordBoxes" style="display:none;">
           <input type="text" id="liveAutoLat" readonly placeholder="X">
@@ -690,54 +1586,54 @@
       </div>
 
       <div id="liveMapLocPanel" style="display:none;">
-        <div class="status-msg" style="color:#a0a0c8;">روی نقشه ضربه بزنید.</div>
-        <div id="livePickerMap" style="width:100%; height:280px; border-radius:12px; margin-top:8px;"></div>
-        <div class="coord-boxes" id="liveMapCoordBoxes" style="display:none; margin-top:10px;">
+        <div class="status-msg info">روی نقشه ضربه بزنید.</div>
+        <div id="livePickerMap" style="width:100%; height:280px; border-radius:14px; margin-top:10px; border:1px solid var(--border);"></div>
+        <div class="coord-boxes" id="liveMapCoordBoxes" style="display:none;">
           <input type="text" id="liveMapLat" readonly placeholder="X">
           <input type="text" id="liveMapLon" readonly placeholder="Y">
         </div>
       </div>
 
       <div id="liveManualLocPanel" style="display:none;">
-        <label class="field-label" style="font-size:12px;">نوع فرمت مختصات را انتخاب کنید</label>
+        <label class="card-label" style="font-size:12px; margin-top:14px;">فرمت مختصات</label>
         <div class="coord-fmt-row">
           <div class="mode-card" onclick="setLiveCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
-          <div class="mode-card" onclick="setLiveCoordFormat('dec', this)">Decimal Degree</div>
+          <div class="mode-card" onclick="setLiveCoordFormat('dec', this)">دسیمال</div>
           <div class="mode-card" onclick="setLiveCoordFormat('utm', this)">UTM</div>
         </div>
 
         <div id="liveDmsInputs" style="display:none; margin-top:12px;">
-          <label class="field-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
-          <div class="two-col">
+          <label class="card-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
+          <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
             <input type="number" id="liveLatD" placeholder="درجه">
             <input type="number" id="liveLatM" placeholder="دقیقه">
             <input type="number" id="liveLatS" placeholder="ثانیه">
-            <select id="liveLatDir"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
+            <select id="liveLatDir"><option value="N">N</option><option value="S">S</option></select>
           </div>
-          <label class="field-label" style="font-size:12px;">طول جغرافیایی (Y)</label>
-          <div class="two-col">
+          <label class="card-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی (Y)</label>
+          <div class="mode-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr;">
             <input type="number" id="liveLonD" placeholder="درجه">
             <input type="number" id="liveLonM" placeholder="دقیقه">
             <input type="number" id="liveLonS" placeholder="ثانیه">
-            <select id="liveLonDir"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
+            <select id="liveLonDir"><option value="E">E</option><option value="W">W</option></select>
           </div>
         </div>
 
         <div id="liveDecInputs" style="display:none; margin-top:12px;">
           <div class="coord-boxes">
-            <input type="text" id="liveDecLat" placeholder="X مثلا 35.6892">
-            <input type="text" id="liveDecLon" placeholder="Y مثلا 51.3890">
+            <input type="text" id="liveDecLat" placeholder="X">
+            <input type="text" id="liveDecLon" placeholder="Y">
           </div>
         </div>
 
         <div id="liveUtmInputs" style="display:none; margin-top:12px;">
           <div class="coord-boxes">
             <input type="number" id="liveUtmZone" placeholder="Zone">
-            <select id="liveUtmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
+            <select id="liveUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select>
           </div>
-          <div class="coord-boxes" style="margin-top:8px;">
-            <input type="text" id="liveUtmE" placeholder="Easting (X)">
-            <input type="text" id="liveUtmN" placeholder="Northing (Y)">
+          <div class="coord-boxes">
+            <input type="text" id="liveUtmE" placeholder="Easting">
+            <input type="text" id="liveUtmN" placeholder="Northing">
           </div>
         </div>
       </div>
@@ -745,23 +1641,20 @@
 
     <div class="card">
       <div class="error-box" id="liveErrorBox"></div>
-      <button type="button" class="btn btn-live" onclick="startLiveSky()">🔄 شروع رصد زنده</button>
+      <button type="button" class="btn btn-live" onclick="startLiveSky()">🌌 شروع رصد زنده</button>
     </div>
   </div>
 
-  <!-- Live view -->
   <div id="liveViewPanel" style="display:none;">
     <div class="live-update-indicator">
       <span><span class="live-dot-pulse"></span> در حال مشاهده زنده</span>
-      <span id="liveLastUpdate">آخرین به‌روزرسانی: —</span>
+      <span id="liveLastUpdate">—</span>
     </div>
 
-    <div class="live-stats-single">
-      <div class="live-stat-card active-sat">
-        <span class="icon">🛰️</span>
-        <span class="num" id="liveStatSat">0</span>
-        <span class="lbl">ماهواره در دید</span>
-      </div>
+    <div class="live-stat-card">
+      <span class="icon">🛰️</span>
+      <span class="num" id="liveStatSat">0</span>
+      <span class="lbl">ماهواره در دید</span>
     </div>
 
     <div class="live-time-slider-wrap">
@@ -779,230 +1672,304 @@
     <div id="liveMapView"></div>
 
     <div class="live-map-legend">
-      <div class="legend-item">
-        <span class="legend-icon">🛰️</span>
-        <span>ماهواره</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-icon">✈️</span>
-        <span>هواپیما</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-icon">👁️</span>
-        <span>موقعیت شما</span>
-      </div>
+      <div class="legend-item"><span class="legend-icon">🛰️</span><span>ماهواره</span></div>
+      <div class="legend-item"><span class="legend-icon">✈️</span><span>هواپیما</span></div>
+      <div class="legend-item"><span class="legend-icon">👁️</span><span>موقعیت شما</span></div>
     </div>
 
     <div class="live-guidance">
       <h4>📋 راهنمای آسمان زنده</h4>
       <p>
-        • نقشه به صورت زنده ماهواره‌ها و هواپیماهای در حال عبور از بالای موقعیت شما را نشان می‌دهد.<br>
-        • برای دیدن وضعیت آسمان در گذشته، نوار زمان را به سمت چپ بکشید (تا ۶۰ دقیقه قبل).<br>
+        • نقشه به صورت زنده ماهواره‌ها و هواپیماهای در حال عبور را نشان می‌دهد.<br>
+        • برای دیدن وضعیت گذشته، نوار زمان را به سمت چپ بکشید (تا ۶۰ دقیقه قبل).<br>
         • موقعیت ماهواره‌ها در زمان گذشته دقیق محاسبه می‌شود.<br>
         • هواپیماها در زمان گذشته به‌صورت تقریبی نمایش داده می‌شوند.<br>
-        • برای مشاهده‌ی جزئیات هر شیء، روی نشانگر آن ضربه بزنید.
+        • برای جزئیات هر شیء، روی نشانگر آن ضربه بزنید.
       </p>
     </div>
   </div>
 </div>
 
-<!-- ===================== PREDICTION PAGE ===================== -->
-<div id="predictionPage">
-  <div class="pred-header">
-    <h2>🔮 پیش‌بینی عبور ماهواره</h2>
-    <button class="pred-close-btn" onclick="closePrediction()">✕</button>
+<!-- ======================================================================== -->
+<!--                        CALIBRATION PAGE (OVERLAY)                        -->
+<!-- ======================================================================== -->
+<div id="calibrationPage">
+  <div class="cal-header">
+    <h2>🧭 کالیبراسیون قطب‌نما</h2>
+    <button class="cal-close-btn" onclick="cancelCalibration()">✕</button>
   </div>
 
-  <div class="card">
-    <label class="field-label">📍 محل رصد</label>
-    <div class="two-col">
-      <div class="mode-card active" id="predModeAutoCard" onclick="setPredLocationMode('auto')">
-        <span class="icon">🎯</span> GPS
-      </div>
-      <div class="mode-card" id="predModeManualCard" onclick="setPredLocationMode('manual')">
-        <span class="icon">⌨️</span> دستی
-      </div>
-      <div class="mode-card" id="predModeMapCard" onclick="setPredLocationMode('map')">
-        <span class="icon">🗺️</span> نقشه
-      </div>
+  <div id="calStep1" class="card">
+    <div class="cal-step-title">آموزش کالیبراسیون</div>
+    <p class="cal-desc">
+      برای اینکه قطب‌نمای گوشی <b>دقیق</b> کار کنه، باید اون رو کالیبره کنی.
+    </p>
+
+    <div class="infinity-wrap">
+      <svg class="infinity-svg" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#22d3ee" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#22d3ee" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="infinity-path" d="M 60,60 C 60,30 30,30 30,60 C 30,90 60,90 60,60 C 60,30 90,30 90,60 C 90,90 120,90 120,60 C 120,30 150,30 150,60 C 150,90 120,90 120,60 C 120,30 90,30 90,60 C 90,90 60,90 60,60 Z" />
+        <path class="infinity-trail" d="M 60,60 C 60,30 30,30 30,60 C 30,90 60,90 60,60 C 60,30 90,30 90,60 C 90,90 120,90 120,60 C 120,30 150,30 150,60 C 150,90 120,90 120,60 C 120,30 90,30 90,60 C 90,90 60,90 60,60 Z" />
+        <circle class="infinity-dot" r="5">
+          <animateMotion dur="3s" repeatCount="indefinite" path="M 60,60 C 60,30 30,30 30,60 C 30,90 60,90 60,60 C 60,30 90,30 90,60 C 90,90 120,90 120,60 C 120,30 150,30 150,60 C 150,90 120,90 120,60 C 120,30 90,30 90,60 C 90,90 60,90 60,60 Z" />
+        </circle>
+      </svg>
     </div>
 
-    <div id="predAutoLocPanel">
-      <button type="button" class="btn btn-outline" style="margin-top:12px" onclick="getPredLocation()">📡 دریافت موقعیت من</button>
-      <div class="status-msg" id="predLocStatus"></div>
-      <div class="coord-boxes" id="predAutoCoordBoxes" style="display:none;">
-        <input type="text" id="predAutoLat" readonly placeholder="X">
-        <input type="text" id="predAutoLon" readonly placeholder="Y">
-      </div>
+    <p class="cal-desc">
+      گوشی رو <b>به شکل عدد ۸ یا علامت بی‌نهایت (∞)</b> حرکت بده — ۵ تا ۱۰ بار.
+    </p>
+
+    <div class="cal-tips">
+      <div class="tip-title">💡 نکات مهم:</div>
+      • از اجسام فلزی، لپ‌تاپ و شارژر دور باش<br>
+      • در فضای باز یا نزدیک پنجره باش<br>
+      • حرکات رو <b>آروم و پیوسته</b> انجام بده
     </div>
 
-    <div id="predMapLocPanel" style="display:none;">
-      <div class="status-msg" style="color:#a0a0c8;">روی نقشه ضربه بزنید.</div>
-      <div id="predPickerMap" style="width:100%; height:280px; border-radius:12px; margin-top:8px;"></div>
-      <div class="coord-boxes" id="predMapCoordBoxes" style="display:none; margin-top:10px;">
-        <input type="text" id="predMapLat" readonly placeholder="X">
-        <input type="text" id="predMapLon" readonly placeholder="Y">
-      </div>
-    </div>
-
-    <div id="predManualLocPanel" style="display:none;">
-      <label class="field-label" style="font-size:12px;">نوع فرمت مختصات را انتخاب کنید</label>
-      <div class="coord-fmt-row">
-        <div class="mode-card" onclick="setPredCoordFormat('dms', this)">درجه/دقیقه/ثانیه</div>
-        <div class="mode-card" onclick="setPredCoordFormat('dec', this)">Decimal Degree</div>
-        <div class="mode-card" onclick="setPredCoordFormat('utm', this)">UTM</div>
-      </div>
-
-      <div id="predDmsInputs" style="display:none; margin-top:12px;">
-        <label class="field-label" style="font-size:12px;">عرض جغرافیایی (X)</label>
-        <div class="two-col">
-          <input type="number" id="predLatD" placeholder="درجه">
-          <input type="number" id="predLatM" placeholder="دقیقه">
-          <input type="number" id="predLatS" placeholder="ثانیه">
-          <select id="predLatDir"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
-        </div>
-        <label class="field-label" style="font-size:12px;">طول جغرافیایی (Y)</label>
-        <div class="two-col">
-          <input type="number" id="predLonD" placeholder="درجه">
-          <input type="number" id="predLonM" placeholder="دقیقه">
-          <input type="number" id="predLonS" placeholder="ثانیه">
-          <select id="predLonDir"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
-        </div>
-      </div>
-
-      <div id="predDecInputs" style="display:none; margin-top:12px;">
-        <div class="coord-boxes">
-          <input type="text" id="predDecLat" placeholder="X مثلا 35.6892">
-          <input type="text" id="predDecLon" placeholder="Y مثلا 51.3890">
-        </div>
-      </div>
-
-      <div id="predUtmInputs" style="display:none; margin-top:12px;">
-        <div class="coord-boxes">
-          <input type="number" id="predUtmZone" placeholder="Zone مثلا 39">
-          <select id="predUtmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
-        </div>
-        <div class="coord-boxes" style="margin-top:8px;">
-          <input type="text" id="predUtmE" placeholder="Easting (X)">
-          <input type="text" id="predUtmN" placeholder="Northing (Y)">
-        </div>
-      </div>
-    </div>
+    <button type="button" class="btn btn-primary" style="margin-top:18px;" onclick="beginCalibration()">شروع کالیبراسیون</button>
   </div>
 
-  <div class="card">
-    <label class="field-label">🕐 زمان شروع پیش‌بینی</label>
-    <div class="dt-grid">
-      <select id="predStartYear"></select>
-      <select id="predStartMonth"></select>
-      <select id="predStartDay"></select>
+  <div id="calStep2" class="card" style="display:none;">
+    <div class="cal-step-title">در حال کالیبراسیون...</div>
+
+    <div class="infinity-wrap" style="padding:10px 0;">
+      <svg class="infinity-svg" viewBox="0 0 220 120" style="width:180px; height:105px;">
+        <path class="infinity-path" d="M 60,60 C 60,30 30,30 30,60 C 30,90 60,90 60,60 C 60,30 90,30 90,60 C 90,90 120,90 120,60 C 120,30 150,30 150,60 C 150,90 120,90 120,60 C 120,30 90,30 90,60 C 90,90 60,90 60,60 Z" />
+        <circle class="infinity-dot" r="4">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M 60,60 C 60,30 30,30 30,60 C 30,90 60,90 60,60 C 60,30 90,30 90,60 C 90,90 120,90 120,60 C 120,30 150,30 150,60 C 150,90 120,90 120,60 C 120,30 90,30 90,60 C 90,90 60,90 60,60 Z" />
+        </circle>
+      </svg>
     </div>
-    <div class="dt-grid-time">
-      <select id="predStartHour"></select>
-      <select id="predStartMinute"></select>
+
+    <div class="cal-progress-wrap">
+      <div class="cal-progress-label">
+        <span>پیشرفت</span>
+        <span id="calProgressLabel">0%</span>
+      </div>
+      <div class="cal-progress-bar">
+        <div class="cal-progress-fill" id="calProgressFill"></div>
+      </div>
+      <div class="cal-progress-pct" id="calProgressPct">0%</div>
+    </div>
+
+    <div class="cal-quality bad" id="calQuality">❌ حرکت بده</div>
+
+    <div class="cal-stats">
+      <div class="cal-stat"><span class="lbl">چرخش</span><span class="val" id="calStatRotation">0°</span></div>
+      <div class="cal-stat"><span class="lbl">پایداری</span><span class="val" id="calStatStability">—</span></div>
+      <div class="cal-stat"><span class="lbl">زمان</span><span class="val" id="calStatTime">0:00</span></div>
+    </div>
+
+    <div class="cal-hint" id="calHint">گوشی رو به شکل عدد ۸ حرکت بده...</div>
+
+    <div id="calSuccessBox" style="display:none; text-align:center; margin-top:14px;">
+      <div class="cal-success-anim">✅</div>
+      <p style="color:#6ee7b7; font-size:15px; font-weight:700; margin:8px 0;">کالیبراسیون موفق!</p>
+      <button type="button" class="btn btn-success" onclick="finishCalibrationSuccess()">ادامه — استفاده از قطب‌نما</button>
     </div>
   </div>
 
-  <div class="card">
-    <label class="field-label">🕐 زمان پایان پیش‌بینی</label>
-    <div class="dt-grid">
-      <select id="predEndYear"></select>
-      <select id="predEndMonth"></select>
-      <select id="predEndDay"></select>
+  <div id="calStep3" class="card" style="display:none; text-align:center;">
+    <div style="font-size:60px;">⚠️</div>
+    <h3 style="color:var(--accent-amber); margin:8px 0;">کالیبراسیون کامل نشد</h3>
+    <p class="cal-desc" style="margin-top:10px;">
+      در ۳۰ ثانیه نتونستیم کالیبراسیون رو کامل کنیم.<br>
+      لطفاً دوباره تلاش کن یا از <b>لیست کشویی</b> استفاده کن.
+    </p>
+    <div style="display:flex; gap:10px; margin-top:20px; flex-direction:column;">
+      <button type="button" class="btn btn-primary" onclick="retryCalibration()">🔄 تلاش مجدد</button>
+      <button type="button" class="btn btn-outline" onclick="cancelCalibration()">📋 استفاده از لیست</button>
     </div>
-    <div class="dt-grid-time">
-      <select id="predEndHour"></select>
-      <select id="predEndMinute"></select>
-    </div>
   </div>
-
-  <div class="card">
-    <div class="error-box" id="predErrorBox"></div>
-    <button type="button" class="btn btn-predict" onclick="runPrediction()">🚀 شروع پیش‌بینی</button>
-  </div>
-
-  <div id="predProgress" class="pred-progress" style="display:none;">
-    <p style="margin:0; color:#a8c8ff; font-size:14px;" id="predProgressText">در حال بررسی ماهواره‌ها...</p>
-    <div class="pred-progress-bar"><div class="pred-progress-fill" id="predProgressFill"></div></div>
-    <p style="margin:8px 0 0; color:#7ee8fa; font-size:12px;" id="predProgressDetail"></p>
-  </div>
-
-  <div id="predResults"></div>
 </div>
 
-<!-- ===================== MODALS ===================== -->
+<!-- ======================================================================== -->
+<!--                            MODALS                                        -->
+<!-- ======================================================================== -->
+
+<!-- Guide: Review -->
+<div class="modal-overlay" id="guideReview">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('guideReview')">✕</button>
+    <h2>📖 راهنمای بررسی شیء</h2>
+    <div class="guide-section">
+      <h4>🎯 این بخش چیکار می‌کنه؟</h4>
+      <p>اگه یه نور توی آسمون دیدی و نمی‌دونی چی بوده، مشخصاتش رو اینجا وارد کن. رصدیار بهت می‌گه اون نور ماهواره بوده، هواپیما، یا شیء ناشناس.</p>
+    </div>
+    <div class="guide-section">
+      <h4>📍 ۱. محل مشاهده</h4>
+      <p>موقعیتت رو با GPS، دستی، یا از روی نقشه انتخاب کن. دقت موقعیت روی دقت نتیجه تأثیر مستقیم داره.</p>
+    </div>
+    <div class="guide-section">
+      <h4>🕓 ۲. تاریخ و ساعت</h4>
+      <p>زمان مشاهده رو دقیق وارد کن. حتی چند دقیقه خطا می‌تونه نتیجه رو تغییر بده.</p>
+    </div>
+    <div class="guide-section">
+      <h4>🧭 ۳. سمت مشاهده</h4>
+      <p>جهتی که شیء رو در اون دیدی انتخاب کن (نسبت به شمال جغرافیایی). اگه نمی‌دونی، از قطب‌نمای گوشی استفاده کن.</p>
+    </div>
+    <div class="guide-section">
+      <h4>➡️ ۴. جهت حرکت</h4>
+      <p>جهتی که شیء در آسمان حرکت می‌کرد انتخاب کن. این به تشخیص دقیق‌تر کمک می‌کنه.</p>
+    </div>
+    <div class="guide-section">
+      <h4>✅ ۵. نتیجه</h4>
+      <p>اگه فقط ماهواره پیدا شد، اگه فقط هواپیما بود، یا هر دو، در نتیجه نمایش داده می‌شن. اگه هیچ‌کدوم پیدا نشد، یعنی شیء ناشناس بوده.</p>
+    </div>
+    <div class="guide-section">
+      <h4>🕘 تاریخچه</h4>
+      <p>با دکمه «تاریخچه مشاهدات» می‌تونی همه‌ی بررسی‌های قبلیت رو ببینی.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Guide: Predict -->
+<div class="modal-overlay" id="guidePredict">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('guidePredict')">✕</button>
+    <h2>📖 راهنمای پیش‌بینی</h2>
+    <div class="guide-section">
+      <h4>🎯 این بخش چیکار می‌کنه؟</h4>
+      <p>می‌تونی ببینی در ساعات آینده چه ماهواره‌هایی از بالای موقعیت تو عبور می‌کنند. برای برنامه‌ریزی رصد یا عکاسی عالیه.</p>
+    </div>
+    <div class="guide-section">
+      <h4>📍 ۱. محل رصد</h4>
+      <p>موقعیتت رو مشخص کن (GPS، دستی، یا نقشه).</p>
+    </div>
+    <div class="guide-section">
+      <h4>🕐 ۲. بازه‌ی زمانی</h4>
+      <p>زمان شروع و پایان پیش‌بینی رو وارد کن. بازه‌های طولانی‌تر (۱۲ یا ۲۴ ساعت) زمان بیشتری می‌برن.</p>
+    </div>
+    <div class="guide-section">
+      <h4>🛰️ ۳. نتیجه</h4>
+      <p>لیستی از ماهواره‌های قابل مشاهده با زمان دقیق، سمت ظهور، و جهت حرکت نمایش داده می‌شه.</p>
+    </div>
+    <div class="guide-section">
+      <h4>📥 ۴. دانلود</h4>
+      <p>می‌تونی نتایج رو به‌صورت فایل اکسل (CSV) دانلود کنی.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Guide: Live -->
+<div class="modal-overlay" id="guideLive">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('guideLive')">✕</button>
+    <h2>📖 راهنمای آسمان زنده</h2>
+    <div class="guide-section">
+      <h4>🎯 این بخش چیکار می‌کنه؟</h4>
+      <p>در لحظه نشون می‌ده چه ماهواره‌ها و هواپیماهایی در آسمان اطراف تو در حال حرکتند.</p>
+    </div>
+    <div class="guide-section">
+      <h4>📍 ۱. محل رصد</h4>
+      <p>موقعیتت رو مشخص کن (GPS، دستی، یا نقشه).</p>
+    </div>
+    <div class="guide-section">
+      <h4>🕐 ۲. نوار زمان</h4>
+      <p>می‌تونی نوار زمان رو به عقب ببری و ببینی چه چیزهایی در گذشته از آسمانت عبور کرده‌اند (تا ۶۰ دقیقه قبل).</p>
+    </div>
+    <div class="guide-section">
+      <h4>🗺️ ۳. نقشه زنده</h4>
+      <p>🛰️ ماهواره — ✈️ هواپیما — 👁️ موقعیت تو. روی هرکدوم ضربه بزنی جزئیاتش رو می‌بینی.</p>
+    </div>
+    <div class="guide-section">
+      <h4>⚡ ۴. به‌روزرسانی زنده</h4>
+      <p>موقعیت ماهواره‌ها هر ۱ ثانیه و هواپیماها هر ۱۰ ثانیه به‌روزرسانی می‌شه.</p>
+    </div>
+  </div>
+</div>
+
+<!-- History Modal -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
-    <button class="close-btn" onclick="closeModal('historyModal')">✕</button>
+    <button class="modal-close" onclick="closeModal('historyModal')">✕</button>
     <h2>🕘 تاریخچه مشاهدات</h2>
     <div id="historyList"></div>
   </div>
 </div>
 
-<div class="modal-overlay" id="guideModal">
-  <div class="modal-box">
-    <button class="close-btn" onclick="closeModal('guideModal')">✕</button>
-    <h2>📘 راهنمای استفاده از رصدیار</h2>
-    <div class="guide-section">
-      <h4>درباره رصدیار</h4>
-      <p>رصدیار یک سامانه هوشمند و مستقل برای تشخیص و شناسایی اجسام نورانی مشاهده‌شده در آسمان شب است.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۱. ثبت مشاهده</h4>
-      <p>موقعیت، زمان، سمت مشاهده و جهت حرکت شیء را وارد کنید تا سامانه آن را با داده‌های ماهواره‌ای و هوانوردی مقایسه کند.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۲. آسمان زنده</h4>
-      <p>با دکمه «آسمان زنده» می‌توانید در لحظه ببینید چه ماهواره‌ها و هواپیماهایی در آسمان شما در حال حرکت هستند. نوار زمان امکان مشاهده وضعیت آسمان در گذشته را نیز فراهم می‌کند.</p>
-    </div>
-    <div class="guide-section">
-      <h4>۳. پیش‌بینی عبور ماهواره</h4>
-      <p>می‌توانید ببینید در بازه‌ی زمانی مشخص، چه ماهواره‌هایی از بالای موقعیت شما عبور می‌کنند.</p>
-    </div>
-  </div>
-</div>
-
+<!-- Admin Login -->
 <div class="modal-overlay" id="adminLoginModal">
   <div class="modal-box">
-    <button class="close-btn" onclick="closeModal('adminLoginModal')">✕</button>
+    <button class="modal-close" onclick="closeModal('adminLoginModal')">✕</button>
     <h2>⚙️ ورود مدیر سیستم</h2>
-    <label class="field-label" style="font-size:13px;">نام کاربری</label>
+    <label class="card-label" style="font-size:13px;">نام کاربری</label>
     <input type="text" id="adminUser" placeholder="نام کاربری">
-    <label class="field-label" style="font-size:13px;">رمز عبور</label>
+    <div class="spacer-sm"></div>
+    <label class="card-label" style="font-size:13px;">رمز عبور</label>
     <input type="password" id="adminPass" placeholder="رمز عبور">
     <div class="error-box" id="adminLoginError"></div>
-    <button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="tryAdminLogin()">ورود</button>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-primary" onclick="tryAdminLogin()">ورود</button>
   </div>
 </div>
 
+<!-- Admin Dashboard -->
 <div class="modal-overlay" id="adminDashModal">
   <div class="modal-box">
-    <button class="close-btn" onclick="closeModal('adminDashModal')">✕</button>
-    <h2>🛠️ پنل مدیر سیستم</h2>
+    <button class="modal-close" onclick="closeModal('adminDashModal')">✕</button>
+    <h2>🛠️ پنل مدیر</h2>
 
     <div class="guide-section">
-      <h4>به‌روزرسانی پایگاه داده ماهواره‌ها</h4>
-      <p>این پایگاه داده روی خود مخزن گیت‌هاب ذخیره می‌شود.</p>
+      <h4>📡 به‌روزرسانی پایگاه داده</h4>
+      <p>این اطلاعات روی مخزن گیت‌هاب ذخیره می‌شه تا کاربران عادی نیازی به تماس زنده با CelesTrak نداشته باشند.</p>
     </div>
 
-    <label class="field-label" style="font-size:13px;">نام کاربری گیت‌هاب (owner)</label>
+    <label class="card-label" style="font-size:13px;">نام کاربری گیت‌هاب</label>
     <input type="text" id="ghOwner" value="yahoseinnnnn0313-eng">
-    <label class="field-label" style="font-size:13px;">نام مخزن (repository)</label>
+    <div class="spacer-sm"></div>
+    <label class="card-label" style="font-size:13px;">نام مخزن</label>
     <input type="text" id="ghRepo" value="didban-app">
-    <label class="field-label" style="font-size:13px;">GitHub Personal Access Token</label>
+    <div class="spacer-sm"></div>
+    <label class="card-label" style="font-size:13px;">GitHub Token</label>
     <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxx">
 
-    <button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="autoUpdateTle()">🔄 دریافت خودکار و به‌روزرسانی</button>
-    <p style="text-align:center; font-size:12px; color:#a0a0c8; margin:10px 0;">— یا در صورت شکست دریافت خودکار —</p>
-    <label class="field-label" style="font-size:13px;">چسباندن دستی متن TLE</label>
-    <textarea id="manualTleText" rows="6" style="width:100%; border-radius:10px; padding:10px; background:rgba(0,0,0,.25); color:#fff; border:1px solid rgba(255,255,255,.15); font-family:monospace; font-size:11px;" placeholder="متن دریافتی از celestrak.org را اینجا بچسبانید..."></textarea>
-    <button type="button" class="btn btn-outline" style="margin-top:10px;" onclick="manualUpdateTle()">📥 ثبت این متن در پایگاه داده</button>
+    <div class="spacer"></div>
+    <button type="button" class="btn btn-primary" onclick="autoUpdateTle()">🔄 دریافت و به‌روزرسانی</button>
+
+    <p style="text-align:center; font-size:12px; color:var(--text-muted); margin:16px 0;">— یا —</p>
+
+    <label class="card-label" style="font-size:13px;">چسباندن دستی TLE</label>
+    <textarea id="manualTleText" rows="6" style="font-family:monospace; font-size:11px;" placeholder="متن TLE را اینجا بچسبانید..."></textarea>
+    <div class="spacer-sm"></div>
+    <button type="button" class="btn btn-outline" onclick="manualUpdateTle()">📥 ثبت متن</button>
 
     <div class="diag-box" id="adminStatus" style="margin-top:16px; display:none;"></div>
   </div>
 </div>
 
 <script>
+/* ========================================================================
+   NAVIGATION
+======================================================================== */
+function navTo(pageId){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById(pageId);
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+function openModal(id){
+  var el = document.getElementById(id);
+  if(el){ el.style.display='block'; el.classList.add('active'); }
+}
+function closeModal(id){
+  var el = document.getElementById(id);
+  if(el){ el.style.display='none'; el.classList.remove('active'); }
+}
+function resetReview(){
+  document.getElementById('formBox').style.display='block';
+  document.getElementById('resultBox').style.display='none';
+  clearError();
+  window.scrollTo(0,0);
+}
+
 /* ========================================================================
    JALALI CALENDAR
 ======================================================================== */
@@ -1110,15 +2077,15 @@ function updateSelectedDirDisplay(){
   if(selectedDirectionKey && DIRECTION_MAP[selectedDirectionKey]){
     var info = DIRECTION_MAP[selectedDirectionKey];
     box.className = 'selected-dir';
-    box.innerHTML = '✅ جهت انتخاب‌شده: ' + info.fa + '<span class="az-value">آزیموت میانه: ' + info.az + '°</span>';
+    box.innerHTML = '✅ ' + info.fa + '<span class="az-value">آزیموت میانه: ' + info.az + '°</span>';
   } else if(selectedAzimuth !== null){
     var key = azimuthToKey(selectedAzimuth);
     var info = DIRECTION_MAP[key];
     box.className = 'selected-dir';
-    box.innerHTML = '✅ جهت انتخاب‌شده: ' + info.fa + ' (طبق قطب‌نما)<span class="az-value">آزیموت دقیق: ' + Math.round(selectedAzimuth) + '°</span>';
+    box.innerHTML = '✅ ' + info.fa + ' (قطب‌نما)<span class="az-value">' + Math.round(selectedAzimuth) + '°</span>';
   } else {
     box.className = 'selected-dir empty';
-    box.innerHTML = 'هنوز جهتی انتخاب نشده است';
+    box.innerHTML = 'هنوز جهتی انتخاب نشده';
   }
 }
 function onDirectionSelect(key){
@@ -1202,7 +2169,7 @@ function fillPredDatePickers(){
 }
 
 /* ========================================================================
-   LOCATION MODE (MAIN)
+   LOCATION MODE (REVIEW)
 ======================================================================== */
 var currentLocMode='auto';
 var currentCoordFormat=null;
@@ -1227,7 +2194,7 @@ function initPickerMap(){
     pickerMarker=L.marker([la,lo]).addTo(pickerMapObj);
     document.getElementById('mapLat').value=la.toFixed(6);
     document.getElementById('mapLon').value=lo.toFixed(6);
-    document.getElementById('mapCoordBoxes').style.display='flex';
+    document.getElementById('mapCoordBoxes').style.display='grid';
   });
 }
 function getLocation(){
@@ -1236,7 +2203,7 @@ function getLocation(){
     navigator.geolocation.getCurrentPosition(function(pos){
       document.getElementById('autoLat').value=pos.coords.latitude.toFixed(6);
       document.getElementById('autoLon').value=pos.coords.longitude.toFixed(6);
-      document.getElementById('autoCoordBoxes').style.display='flex';
+      document.getElementById('autoCoordBoxes').style.display='grid';
       document.getElementById('locStatus').innerText="✅ موقعیت دریافت شد.";
     }, function(err){ document.getElementById('locStatus').innerText="خطا: "+err.message; });
   } else {
@@ -1448,7 +2415,7 @@ function showCalibrationFailed(msg){
   document.getElementById('calStep2').style.display = 'none';
   document.getElementById('calStep3').style.display = 'block';
   if(msg){
-    document.querySelector('#calStep3 p').innerHTML = msg + '<br>لطفاً دوباره تلاش کن یا از <b>لیست کشویی جهت‌ها</b> استفاده کن.';
+    document.querySelector('#calStep3 p').innerHTML = msg + '<br>لطفاً دوباره تلاش کن یا از <b>لیست کشویی</b> استفاده کن.';
   }
 }
 function finishCalibrationSuccess(){
@@ -1731,7 +2698,7 @@ function estimateSatMag(rangeKm, name){
 }
 
 /* ========================================================================
-   MAIN SEARCH
+   MAIN SEARCH (REVIEW)
 ======================================================================== */
 function showError(msg){ var b=document.getElementById('errorBox'); b.innerText=msg; b.style.display='block'; }
 function clearError(){ document.getElementById('errorBox').style.display='none'; }
@@ -1936,44 +2903,44 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   var hasSat=satResults.length>0, hasAc=acResults.length>0;
   var hero=document.getElementById('resultHero');
   var cls='un', title='شیء ناشناس', sub='', icon='❓';
-  if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+(satResults.length===1?' ماهواره در سمت مشاهده‌ی شما':' ماهواره با شرایط رؤیت شما مطابقت داشتند'); icon='🛰️'; }
-  else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+(acResults.length===1?' پرواز در سمت مشاهده‌ی شما':' پرواز با مشخصات شما مطابقت داشتند'); icon='✈️'; }
-  else if(hasSat && hasAc){ cls='mix'; title='هم ماهواره و هم هواپیما'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما در آن لحظه از آن سمت قابل مشاهده بودند'; icon='🛰️✈️'; }
-  else { cls='un'; title='شیء ناشناس'; sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای با این مشخصات مطابقت نداشت.'; icon='❓'; }
+  if(hasSat && !hasAc){ cls='sat'; title='ماهواره شناسایی شد'; sub=satResults.length+(satResults.length===1?' ماهواره با شرایط رؤیت مطابقت داشت':' ماهواره مطابقت داشتند'); icon='🛰️'; }
+  else if(hasAc && !hasSat){ cls='ac'; title='هواپیما شناسایی شد'; sub=acResults.length+(acResults.length===1?' پرواز مطابقت داشت':' پرواز مطابقت داشتند'); icon='✈️'; }
+  else if(hasSat && hasAc){ cls='mix'; title='هم ماهواره و هم هواپیما'; sub=satResults.length+' ماهواره و '+acResults.length+' هواپیما'; icon='🛰️✈️'; }
+  else { cls='un'; title='شیء ناشناس'; sub='هیچ ماهواره یا هواپیمای شناخته‌شده‌ای مطابقت نداشت.'; icon='❓'; }
   hero.className='result-hero '+cls;
   document.getElementById('resultIcon').innerText=icon;
   document.getElementById('resultTitle').innerText=title;
   document.getElementById('resultSub').innerText=sub;
   document.getElementById('infoLoc').innerText=lat.toFixed(4)+', '+lon.toFixed(4);
   document.getElementById('infoTime').innerText=jd+' '+monthNamesFa[jm-1]+' '+jy+' - '+String(jh).padStart(2,'0')+':'+String(jmin).padStart(2,'0');
-  document.getElementById('infoAz').innerText=azimuth+'° ('+azimuthToCompass(azimuth)+') / '+moveDir;
+  document.getElementById('infoAz').innerText=azimuth+'° / '+moveDir;
   satResults.sort(function(a,b){return b.confidence-a.confidence;});
   acResults.sort(function(a,b){return b.confidence-a.confidence;});
   var cardsHtml='';
   satResults.forEach(function(s){
     cardsHtml += buildObjCard('🛰️', s.name, [
-      ['کشور بهره‌بردار', s.country+' <span class="estimate-tag">تخمین</span>'],
-      ['نوع تخمینی', s.type+' <span class="estimate-tag">تخمین</span>'],
-      ['فاصله از شما', s.dist+' کیلومتر'],
-      ['ارتفاع مداری', s.orbitAltKm+' کیلومتر'],
-      ['ارتفاع زاویه‌ای از افق', s.alt+'°'],
-      ['آزیموت', s.az+'° ('+azimuthToCompass(parseFloat(s.az))+')'],
-      ['قدر ظاهری تخمینی', s.mag]
+      ['کشور', s.country+' <span class="estimate-tag">تخمین</span>'],
+      ['نوع', s.type+' <span class="estimate-tag">تخمین</span>'],
+      ['فاصله', s.dist+' km'],
+      ['ارتفاع مداری', s.orbitAltKm+' km'],
+      ['ارتفاع از افق', s.alt+'°'],
+      ['آزیموت', s.az+'°'],
+      ['قدر ظاهری', s.mag]
     ], s.confidence);
   });
   acResults.forEach(function(a){
     var rows=[];
-    if(a.speed) rows.push(['سرعت', a.speed+' کیلومتر بر ساعت']);
-    if(a.alt) rows.push(['ارتفاع پرواز', a.alt+' متر']);
-    rows.push(['شرکت هواپیمایی', guessAirline(a.name)+' <span class="estimate-tag">تخمین</span>']);
-    rows.push(['کشور ثبت هواپیما', a.country]);
-    rows.push(['شماره پرواز/شناسه', a.name+' ('+a.icao+')']);
-    rows.push(['فاصله از شما', a.dist+' کیلومتر']);
-    rows.push(['ارتفاع زاویه‌ای از افق', a.elev+'°']);
+    if(a.speed) rows.push(['سرعت', a.speed+' km/h']);
+    if(a.alt) rows.push(['ارتفاع پرواز', a.alt+' m']);
+    rows.push(['شرکت', guessAirline(a.name)+' <span class="estimate-tag">تخمین</span>']);
+    rows.push(['کشور', a.country]);
+    rows.push(['شناسه', a.name+' ('+a.icao+')']);
+    rows.push(['فاصله', a.dist+' km']);
+    rows.push(['ارتفاع از افق', a.elev+'°']);
     if(a.heading!=null) rows.push(['جهت حرکت', a.heading+'°']);
     cardsHtml += buildObjCard('✈️', a.name, rows, a.confidence);
   });
-  if(errMsg){ cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">توجه: '+errMsg+'</p></div>'; }
+  if(errMsg){ cardsHtml += '<div class="obj-card" style="border-color:#ff8a5c;"><p style="color:#ffb98a; font-size:12px; margin:0;">⚠️ '+errMsg+'</p></div>'; }
   document.getElementById('objectsContainer').innerHTML = cardsHtml;
   var warnBox=document.getElementById('acTimeWarning');
   var warnParts=[];
@@ -1984,33 +2951,33 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
   if(diag){
     var d=document.getElementById('diagContent');
     d.innerHTML =
-      '<div class="diag-row"><span>منبع دیتابیس ماهواره</span><span>'+(diag.usedLocalFile?'فایل محلی ✅':'دریافت زنده')+'</span></div>'+
-      '<div class="diag-row"><span>منابع هواپیما (موفق)</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? diag.acSourcesOk.join(', ') : '—')+'</span></div>'+
-      '<div class="diag-row"><span>تعداد ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
+      '<div class="diag-row"><span>منبع TLE</span><span>'+(diag.usedLocalFile?'فایل محلی ✅':'دریافت زنده')+'</span></div>'+
+      '<div class="diag-row"><span>منابع هواپیما</span><span>'+(diag.acSourcesOk && diag.acSourcesOk.length ? diag.acSourcesOk.join(', ') : '—')+'</span></div>'+
+      '<div class="diag-row"><span>ماهواره‌های بررسی‌شده</span><span>'+diag.satChecked+'</span></div>'+
       '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>'+
       '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>';
   }
   var map=L.map('map').setView([lat, lon], 8);
   mapRef=map;
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(map);
-  var obsIcon=L.divIcon({html:'<div style="background:#2b7de9;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid #fff;">👁️</div>', iconSize:[34,34], className:''});
+  var obsIcon=L.divIcon({html:'<div style="font-size:26px;text-shadow:0 0 10px #3b82f6;">👁️</div>', iconSize:[26,26], iconAnchor:[13,13], className:''});
   L.marker([lat,lon], {icon:obsIcon}).addTo(map).bindPopup('محل مشاهده');
   var sightEnd=projectPoint(lat, lon, azimuth, 60);
-  L.polyline([[lat,lon],sightEnd], {color:'#ffd166', weight:2, dashArray:'3,7', opacity:.8}).addTo(map);
+  L.polyline([[lat,lon],sightEnd], {color:'#fbbf24', weight:2, dashArray:'3,7', opacity:.8}).addTo(map);
   function drawObject(objLat, objLon, heading, iconHtml, popupHtml, lineColor, lineKm){
-    var icon=L.divIcon({html:iconHtml, iconSize:[30,30], className:''});
+    var icon=L.divIcon({html:iconHtml, iconSize:[28,28], iconAnchor:[14,14], className:''});
     L.marker([objLat,objLon],{icon:icon}).addTo(map).bindPopup(popupHtml);
     var ends=endpointFromHeading(objLat, objLon, heading, lineKm||60);
     if(ends) L.polyline(ends, {color:lineColor, weight:2.5, dashArray:'8,8', opacity:.85}).addTo(map);
   }
   satResults.forEach(function(s){
-    drawObject(s.lat, s.lon, s.heading, '<div style="background:#1a7ae0;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">🛰️</div>', '<b>'+s.name+'</b><br>'+s.type, '#6dd5ff', 250);
+    drawObject(s.lat, s.lon, s.heading, '<div style="font-size:24px;filter:drop-shadow(0 0 6px #3b82f6);">🛰️</div>', '<b>'+s.name+'</b><br>'+s.type, '#22d3ee', 250);
   });
   acResults.forEach(function(a){
-    drawObject(a.lat, a.lon, a.heading, '<div style="background:#1a9e6e;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">✈️</div>', '<b>'+a.name+'</b><br>'+a.country, '#7ee6a0', 50);
+    drawObject(a.lat, a.lon, a.heading, '<div style="font-size:22px;filter:drop-shadow(0 0 6px #10b981);">✈️</div>', '<b>'+a.name+'</b><br>'+a.country, '#10b981', 50);
   });
   if(!hasSat && !hasAc){
-    var unkIcon=L.divIcon({html:'<div style="background:#c0396b;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid #fff;">💡</div>', iconSize:[30,30], className:''});
+    var unkIcon=L.divIcon({html:'<div style="font-size:22px;filter:drop-shadow(0 0 6px #ec4899);">💡</div>', iconSize:[22,22], iconAnchor:[11,11], className:''});
     L.marker(sightEnd,{icon:unkIcon}).addTo(map).bindPopup('جهت تقریبی مشاهده');
   }
   saveHistory({lat:lat, lon:lon, dateStr:jd+' '+monthNamesFa[jm-1]+' '+jy, az:azimuth, cls:cls, title:title, mainName: hasSat ? satResults[0].name : (hasAc ? acResults[0].name : null)});
@@ -2028,7 +2995,7 @@ function toggleNearbyAll(){
   nearbyLayers.forEach(function(l){ mapRef.removeLayer(l); });
   nearbyLayers=[];
   if(!nearbyActive){
-    btn.innerText='🔭 نمایش همه‌ی اهداف قابل مشاهده اطراف (۳۶۰°)';
+    btn.innerText='🔭 نمایش همه اهداف اطراف';
     table.style.display='none';
     table.innerHTML='';
     return;
@@ -2036,420 +3003,46 @@ function toggleNearbyAll(){
   btn.innerText='🔭 پنهان کردن اهداف اطراف';
   var satList=cachedAllSat.slice().sort(function(a,b){return parseFloat(a.dist)-parseFloat(b.dist);}).slice(0,50);
   var acList=cachedAllAc.slice().sort(function(a,b){return parseFloat(a.dist)-parseFloat(b.dist);}).slice(0,50);
-  var rows='<tr><th>نوع</th><th>نام</th><th>آزیموت</th><th>ارتفاع افق</th><th>فاصله (km)</th></tr>';
+  var rows='<tr><th>نوع</th><th>نام</th><th>آزیموت</th><th>فاصله</th></tr>';
   satList.forEach(function(s){
-    rows+='<tr><td>🛰️</td><td>'+s.name+'</td><td>'+s.az+'°</td><td>'+(s.alt||'-')+'°</td><td>'+s.dist+'</td></tr>';
-    var icon=L.divIcon({html:'<div style="background:rgba(43,125,233,.55);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #fff;">🛰️</div>', iconSize:[22,22], className:''});
+    rows+='<tr><td>🛰️</td><td>'+s.name+'</td><td>'+s.az+'°</td><td>'+s.dist+'</td></tr>';
+    var icon=L.divIcon({html:'<div style="font-size:18px;opacity:.7;">🛰️</div>', iconSize:[18,18], iconAnchor:[9,9], className:''});
     nearbyLayers.push(L.marker([s.lat,s.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+s.name+'</b>'));
   });
   acList.forEach(function(a){
-    rows+='<tr><td>✈️</td><td>'+a.name+'</td><td>'+(a.az||'-')+'°</td><td>'+a.elev+'°</td><td>'+a.dist+'</td></tr>';
-    var icon=L.divIcon({html:'<div style="background:rgba(26,158,110,.55);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:1px solid #fff;">✈️</div>', iconSize:[22,22], className:''});
+    rows+='<tr><td>✈️</td><td>'+a.name+'</td><td>'+a.elev+'°</td><td>'+a.dist+'</td></tr>';
+    var icon=L.divIcon({html:'<div style="font-size:16px;opacity:.7;">✈️</div>', iconSize:[16,16], iconAnchor:[8,8], className:''});
     nearbyLayers.push(L.marker([a.lat,a.lon],{icon:icon}).addTo(mapRef).bindPopup('<b>'+a.name+'</b>'));
   });
   if(satList.length===0 && acList.length===0){
-    table.style.display='block';
-    table.innerHTML='<tr><td style="padding:14px;">هیچ هدف قابل‌رویتی یافت نشد.</td></tr>';
+    table.style.display='table';
+    table.innerHTML='<tr><td colspan="4" style="padding:20px;">هیچ هدفی یافت نشد.</td></tr>';
   } else {
     table.style.display='table';
     table.innerHTML=rows;
   }
 }
 function buildObjCard(icon, name, rows, confidence){
-  var confColor = confidence>=75 ? '#7ee6a0' : (confidence>=55 ? '#ffd166' : '#ff8a5c');
+  var confColor = confidence>=75 ? '#10b981' : (confidence>=55 ? '#fbbf24' : '#f87171');
   var circumference = 2*Math.PI*30;
   var offset = circumference - (confidence/100)*circumference;
   var html = '<div class="obj-card"><h3>'+icon+' '+name+'</h3>';
   rows.forEach(function(r){ html += '<div class="obj-row"><span class="lbl">'+r[0]+'</span><span class="val">'+r[1]+'</span></div>'; });
-  html += '<div class="conf-wrap"><div class="conf-ring"><svg width="70" height="70">'
-    + '<circle cx="35" cy="35" r="30" stroke="rgba(255,255,255,.15)" stroke-width="6" fill="none"/>'
-    + '<circle cx="35" cy="35" r="30" stroke="'+confColor+'" stroke-width="6" fill="none" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+offset+'" stroke-linecap="round"/>'
+  html += '<div class="conf-wrap"><div class="conf-ring"><svg width="74" height="74">'
+    + '<circle cx="37" cy="37" r="30" stroke="rgba(255,255,255,.1)" stroke-width="6" fill="none"/>'
+    + '<circle cx="37" cy="37" r="30" stroke="'+confColor+'" stroke-width="6" fill="none" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+offset+'" stroke-linecap="round"/>'
     + '</svg><div class="num">'+confidence+'%</div></div>'
-    + '<span style="font-size:12px;color:#a0a0c8;">درصد اطمینان تخمینی</span></div></div>';
+    + '<span style="font-size:12px;color:var(--text-muted);">اطمینان تخمینی</span></div></div>';
   return html;
 }
 
 /* ========================================================================
-   LIVE SKY PAGE — Simplified
-======================================================================== */
-var liveLocMode='auto';
-var liveCoordFormat=null;
-var livePickerMapObj=null, livePickerMarker=null;
-var liveMapObj=null;
-var liveActive = false;
-var liveSatTimer = null;
-var liveAcTimer = null;
-var liveSatRecords = [];       // parsed TLE records
-var liveSatCurrent = [];       // resolved sat positions at display time
-var liveAcCurrent = [];        // current aircraft (used as base for extrapolation)
-var liveTimeOffsetMin = 0;     // 0 = now, up to 60 min ago
-var liveLat = 0, liveLon = 0;
-var liveCurrentDisplayTime = null;
-
-// Fixed filter values
-var LIVE_MIN_ELEV = 10;
-var LIVE_AC_RADIUS_KM = 150;
-var LIVE_MAX_SAT_MAG = 6.5;
-
-function openLiveSky(){
-  document.getElementById('formBox').style.display='none';
-  document.getElementById('loadingBox').style.display='none';
-  document.getElementById('resultBox').style.display='none';
-  document.getElementById('liveSkyPage').style.display='block';
-  document.getElementById('liveSetupPanel').style.display='block';
-  document.getElementById('liveViewPanel').style.display='none';
-  window.scrollTo(0,0);
-}
-function closeLiveSky(){
-  stopLive();
-  document.getElementById('liveSkyPage').style.display='none';
-  document.getElementById('formBox').style.display='block';
-  window.scrollTo(0,0);
-}
-function stopLive(){
-  liveActive = false;
-  if(liveSatTimer){ clearInterval(liveSatTimer); liveSatTimer=null; }
-  if(liveAcTimer){ clearInterval(liveAcTimer); liveAcTimer=null; }
-  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
-}
-function setLiveLocationMode(mode){
-  liveLocMode=mode;
-  document.getElementById('liveModeAutoCard').classList.toggle('active', mode==='auto');
-  document.getElementById('liveModeManualCard').classList.toggle('active', mode==='manual');
-  document.getElementById('liveModeMapCard').classList.toggle('active', mode==='map');
-  document.getElementById('liveAutoLocPanel').style.display = mode==='auto' ? 'block':'none';
-  document.getElementById('liveManualLocPanel').style.display = mode==='manual' ? 'block':'none';
-  document.getElementById('liveMapLocPanel').style.display = mode==='map' ? 'block':'none';
-  if(mode==='map') setTimeout(initLivePickerMap, 50);
-}
-function initLivePickerMap(){
-  if(livePickerMapObj){ livePickerMapObj.invalidateSize(); return; }
-  livePickerMapObj=L.map('livePickerMap').setView([35.6892, 51.3890], 5);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(livePickerMapObj);
-  livePickerMapObj.on('click', function(e){
-    var la=e.latlng.lat, lo=e.latlng.lng;
-    if(livePickerMarker) livePickerMapObj.removeLayer(livePickerMarker);
-    livePickerMarker=L.marker([la,lo]).addTo(livePickerMapObj);
-    document.getElementById('liveMapLat').value=la.toFixed(6);
-    document.getElementById('liveMapLon').value=lo.toFixed(6);
-    document.getElementById('liveMapCoordBoxes').style.display='flex';
-  });
-}
-function getLiveLocation(){
-  if(navigator.geolocation){
-    document.getElementById('liveLocStatus').innerText="در حال دریافت...";
-    navigator.geolocation.getCurrentPosition(function(pos){
-      document.getElementById('liveAutoLat').value=pos.coords.latitude.toFixed(6);
-      document.getElementById('liveAutoLon').value=pos.coords.longitude.toFixed(6);
-      document.getElementById('liveAutoCoordBoxes').style.display='flex';
-      document.getElementById('liveLocStatus').innerText="✅ دریافت شد.";
-    }, function(err){ document.getElementById('liveLocStatus').innerText="خطا: "+err.message; });
-  } else {
-    document.getElementById('liveLocStatus').innerText="مرورگر از GPS پشتیبانی نمی‌کند.";
-  }
-}
-function setLiveCoordFormat(fmt, el){
-  liveCoordFormat=fmt;
-  document.querySelectorAll('#liveManualLocPanel .coord-fmt-row .mode-card').forEach(function(c){ c.classList.remove('active'); });
-  if(el) el.classList.add('active');
-  document.getElementById('liveDmsInputs').style.display = fmt==='dms' ? 'block':'none';
-  document.getElementById('liveDecInputs').style.display = fmt==='dec' ? 'block':'none';
-  document.getElementById('liveUtmInputs').style.display = fmt==='utm' ? 'block':'none';
-}
-function getLiveLocationCoords(){
-  if(liveLocMode==='auto'){
-    var lat=parseFloat(document.getElementById('liveAutoLat').value);
-    var lon=parseFloat(document.getElementById('liveAutoLon').value);
-    if(isNaN(lat)||isNaN(lon)) return null;
-    return [lat, lon];
-  }
-  if(liveLocMode==='map'){
-    var lat=parseFloat(document.getElementById('liveMapLat').value);
-    var lon=parseFloat(document.getElementById('liveMapLon').value);
-    if(isNaN(lat)||isNaN(lon)) return null;
-    return [lat, lon];
-  }
-  if(liveLocMode==='manual'){
-    if(!liveCoordFormat) return null;
-    if(liveCoordFormat==='dec'){
-      var lat=parseFloat(document.getElementById('liveDecLat').value);
-      var lon=parseFloat(document.getElementById('liveDecLon').value);
-      if(isNaN(lat)||isNaN(lon)) return null;
-      return [lat, lon];
-    }
-    if(liveCoordFormat==='dms'){
-      var ld=parseFloat(document.getElementById('liveLatD').value)||0;
-      var lm=parseFloat(document.getElementById('liveLatM').value)||0;
-      var ls=parseFloat(document.getElementById('liveLatS').value)||0;
-      var latDir=document.getElementById('liveLatDir').value;
-      var od=parseFloat(document.getElementById('liveLonD').value)||0;
-      var om=parseFloat(document.getElementById('liveLonM').value)||0;
-      var os=parseFloat(document.getElementById('liveLonS').value)||0;
-      var lonDir=document.getElementById('liveLonDir').value;
-      if(document.getElementById('liveLatD').value===""||document.getElementById('liveLonD').value==="") return null;
-      return [(ld+lm/60+ls/3600)*(latDir==='S'?-1:1), (od+om/60+os/3600)*(lonDir==='W'?-1:1)];
-    }
-    if(liveCoordFormat==='utm'){
-      var zone=parseInt(document.getElementById('liveUtmZone').value);
-      var hem=document.getElementById('liveUtmHem').value;
-      var e=parseFloat(document.getElementById('liveUtmE').value);
-      var n=parseFloat(document.getElementById('liveUtmN').value);
-      if(isNaN(zone)||isNaN(e)||isNaN(n)) return null;
-      return utmToLatLon(zone, hem==='N', e, n);
-    }
-  }
-  return null;
-}
-function liveShowError(msg){ var b=document.getElementById('liveErrorBox'); b.innerText=msg; b.style.display='block'; }
-function liveClearError(){ document.getElementById('liveErrorBox').style.display='none'; }
-
-async function startLiveSky(){
-  liveClearError();
-  var coords = getLiveLocationCoords();
-  if(!coords){ liveShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
-  liveLat = coords[0];
-  liveLon = coords[1];
-
-  try{
-    var tleText = await loadTleData();
-    var lines = tleText.trim().split("\n");
-    liveSatRecords = [];
-    for(var i=0;i+2<lines.length;i+=3){
-      try{
-        var name = lines[i].trim();
-        var un = name.toUpperCase();
-        if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) continue;
-        var satrec = satellite.twoline2satrec(lines[i+1], lines[i+2]);
-        var incl = satrec.inclo * 180 / Math.PI;
-        var maxLat = Math.min(incl, 180 - incl);
-        if(Math.abs(liveLat) > maxLat + 5) continue;
-        var period = 2 * Math.PI / satrec.no;
-        var sma = Math.pow(398600.4418 * Math.pow(period*60, 2) / (4*Math.PI*Math.PI), 1/3);
-        var alt = sma - 6371;
-        if(alt > 2000 || alt < 150) continue;
-        liveSatRecords.push({ satrec: satrec, name: name });
-      }catch(e){}
-    }
-  }catch(e){
-    liveShowError('خطا در دریافت TLE: ' + e.message);
-    return;
-  }
-
-  document.getElementById('liveSetupPanel').style.display='none';
-  document.getElementById('liveViewPanel').style.display='block';
-  liveActive = true;
-  liveTimeOffsetMin = 0;
-  document.getElementById('liveTimeSlider').value = 0;
-  updateLiveTimeDisplay();
-
-  // Init map
-  initLiveMap(liveLat, liveLon);
-
-  // Initial data
-  recomputeLiveSatellites(0);
-  updateLiveAircraft();
-
-  // Satellite recalculation every 1 second (only when slider = now)
-  liveSatTimer = setInterval(function(){
-    if(!liveActive) return;
-    if(liveTimeOffsetMin === 0){
-      recomputeLiveSatellites(0);
-    }
-    updateMarkerLayer();
-    document.getElementById('liveLastUpdate').innerText = 'آخرین به‌روزرسانی: ' + formatTimeHMS(new Date());
-  }, 1000);
-
-  // Aircraft fetch every 10 seconds
-  liveAcTimer = setInterval(function(){
-    if(!liveActive) return;
-    if(liveTimeOffsetMin === 0){
-      updateLiveAircraft();
-    }
-  }, 10000);
-
-  window.scrollTo(0,0);
-}
-
-function initLiveMap(lat, lon){
-  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
-  liveMapObj = L.map('liveMapView').setView([lat, lon], 6);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(liveMapObj);
-  var obsIcon = L.divIcon({
-    html:'<div style="font-size:26px;text-shadow:0 0 10px #3b82f6;">👁️</div>',
-    iconSize:[26,26],
-    iconAnchor:[13,13],
-    className:''
-  });
-  L.marker([lat,lon], {icon: obsIcon}).addTo(liveMapObj).bindPopup('موقعیت شما');
-}
-
-function recomputeLiveSatellites(offsetMin){
-  var offsetMs = -offsetMin * 60 * 1000;
-  var displayTime = new Date(Date.now() + offsetMs);
-  liveCurrentDisplayTime = displayTime;
-  var observerGd = {longitude: toRad(liveLon), latitude: toRad(liveLat), height: 0};
-  var sunEci = sunEciKm(displayTime);
-  var gmst = satellite.gstime(displayTime);
-
-  var results = [];
-  for(var i=0; i<liveSatRecords.length; i++){
-    var rec = liveSatRecords[i];
-    try{
-      var pv = satellite.propagate(rec.satrec, displayTime);
-      if(!pv.position) continue;
-      var ecf = satellite.eciToEcf(pv.position, gmst);
-      var look = satellite.ecfToLookAngles(observerGd, ecf);
-      var altDeg = toDeg(look.elevation);
-      if(altDeg < LIVE_MIN_ELEV) continue;
-      if(!isSunlit(pv.position, sunEci)) continue;
-      var rangeKm = look.rangeSat;
-      var mag = estimateSatMag(rangeKm, rec.name);
-      if(mag > LIVE_MAX_SAT_MAG) continue;
-      var geo = satellite.eciToGeodetic(pv.position, gmst);
-      results.push({
-        name: rec.name,
-        lat: toDeg(geo.latitude),
-        lon: toDeg(geo.longitude),
-        alt: altDeg,
-        az: toDeg(look.azimuth),
-        mag: mag,
-        dist: rangeKm
-      });
-    }catch(e){}
-  }
-  liveSatCurrent = results;
-  document.getElementById('liveStatSat').innerText = results.length;
-}
-
-async function updateLiveAircraft(){
-  try{
-    var acData = await fetchAllAircraft(liveLat, liveLon, LIVE_AC_RADIUS_KM);
-    var list = acData.list;
-    var results = [];
-    for(var i=0;i<list.length;i++){
-      var a = list[i];
-      if(a.onGround) continue;
-      var be = bearingElevation(liveLat, liveLon, a.lat, a.lon, a.altM);
-      if(be.elev < 1) continue;
-      if(be.dist/1000 > LIVE_AC_RADIUS_KM) continue;
-      results.push({
-        name: a.callsign || a.icao,
-        lat: a.lat, lon: a.lon,
-        altM: a.altM, speed: a.speedKmh, heading: a.heading,
-        elev: be.elev, az: be.bearing, dist: be.dist
-      });
-    }
-    liveAcCurrent = results;
-  }catch(e){}
-}
-
-function extrapolateAircraftToTime(offsetMin){
-  // If offsetMin === 0, return as-is
-  if(offsetMin === 0) return liveAcCurrent.slice();
-  var secondsAgo = offsetMin * 60;
-  return liveAcCurrent.map(function(a){
-    if(!a.speed || a.speed < 10) return a;
-    if(a.heading == null) return a;
-    var distKm = a.speed * secondsAgo / 3600;   // how far it traveled in the past
-    var backBearing = (a.heading + 180) % 360;
-    var newPos = projectPoint(a.lat, a.lon, backBearing, distKm);
-    return Object.assign({}, a, { lat: newPos[0], lon: newPos[1] });
-  });
-}
-
-var liveSatLayer = null;
-var liveAcLayer = null;
-
-function updateMarkerLayer(){
-  if(!liveMapObj) return;
-  if(!liveSatLayer) liveSatLayer = L.layerGroup().addTo(liveMapObj);
-  if(!liveAcLayer) liveAcLayer = L.layerGroup().addTo(liveMapObj);
-  liveSatLayer.clearLayers();
-  liveAcLayer.clearLayers();
-
-  // Satellites with 🛰️ emoji
-  liveSatCurrent.forEach(function(s){
-    var icon = L.divIcon({
-      html: '<div style="font-size:22px;text-shadow:0 0 6px rgba(59,130,246,.9);">🛰️</div>',
-      iconSize:[22,22],
-      iconAnchor:[11,11],
-      className: ''
-    });
-    L.marker([s.lat, s.lon], {icon: icon}).addTo(liveSatLayer).bindPopup(
-      '<b>'+s.name+'</b>'+
-      '<br>ارتفاع از افق: '+s.alt.toFixed(1)+'°'+
-      '<br>آزیموت: '+s.az.toFixed(0)+'°'+
-      '<br>قدر: '+s.mag.toFixed(1)
-    );
-  });
-
-  // Aircraft with ✈️ emoji
-  var acList = extrapolateAircraftToTime(liveTimeOffsetMin);
-  acList.forEach(function(a){
-    var icon = L.divIcon({
-      html: '<div style="font-size:20px;text-shadow:0 0 6px rgba(16,185,129,.9);">✈️</div>',
-      iconSize:[20,20],
-      iconAnchor:[10,10],
-      className: ''
-    });
-    L.marker([a.lat, a.lon], {icon: icon}).addTo(liveAcLayer).bindPopup(
-      '<b>'+a.name+'</b>' +
-      (a.altM != null ? '<br>ارتفاع: '+a.altM+'m' : '') +
-      (a.speed != null ? '<br>سرعت: '+a.speed+' km/h' : '') +
-      (a.dist != null ? '<br>فاصله: '+(a.dist/1000).toFixed(1)+' km' : '')
-    );
-  });
-}
-
-function onLiveTimeChange(val){
-  liveTimeOffsetMin = parseInt(val) || 0;
-  updateLiveTimeDisplay();
-  if(liveTimeOffsetMin === 0){
-    // Recalculate for now
-    recomputeLiveSatellites(0);
-    updateLiveAircraft().then(function(){ updateMarkerLayer(); });
-  } else {
-    // Recalculate for past time
-    recomputeLiveSatellites(liveTimeOffsetMin);
-    updateMarkerLayer();
-  }
-}
-
-function updateLiveTimeDisplay(){
-  var el = document.getElementById('liveTimeDisplay');
-  if(liveTimeOffsetMin === 0){
-    el.innerText = 'الان';
-  } else {
-    var past = new Date(Date.now() - liveTimeOffsetMin * 60 * 1000);
-    var hh = String(past.getHours()).padStart(2,'0');
-    var mm = String(past.getMinutes()).padStart(2,'0');
-    var ss = String(past.getSeconds()).padStart(2,'0');
-    el.innerText = hh+':'+mm+':'+ss+' ('+liveTimeOffsetMin+' دقیقه قبل)';
-  }
-}
-
-/* ========================================================================
-   PREDICTION PAGE
+   PREDICTION
 ======================================================================== */
 var predLocMode='auto';
 var predCoordFormat=null;
 var predPickerMapObj=null, predPickerMarker=null;
 var predResultMap=null;
-
-function openPrediction(){
-  document.getElementById('formBox').style.display='none';
-  document.getElementById('loadingBox').style.display='none';
-  document.getElementById('resultBox').style.display='none';
-  document.getElementById('predictionPage').style.display='block';
-  window.scrollTo(0,0);
-}
-function closePrediction(){
-  document.getElementById('predictionPage').style.display='none';
-  document.getElementById('formBox').style.display='block';
-  document.getElementById('predResults').innerHTML='';
-  document.getElementById('predErrorBox').style.display='none';
-  window.scrollTo(0,0);
-}
 function setPredLocationMode(mode){
   predLocMode=mode;
   document.getElementById('predModeAutoCard').classList.toggle('active', mode==='auto');
@@ -2470,7 +3063,7 @@ function initPredPickerMap(){
     predPickerMarker=L.marker([la,lo]).addTo(predPickerMapObj);
     document.getElementById('predMapLat').value=la.toFixed(6);
     document.getElementById('predMapLon').value=lo.toFixed(6);
-    document.getElementById('predMapCoordBoxes').style.display='flex';
+    document.getElementById('predMapCoordBoxes').style.display='grid';
   });
 }
 function getPredLocation(){
@@ -2479,7 +3072,7 @@ function getPredLocation(){
     navigator.geolocation.getCurrentPosition(function(pos){
       document.getElementById('predAutoLat').value=pos.coords.latitude.toFixed(6);
       document.getElementById('predAutoLon').value=pos.coords.longitude.toFixed(6);
-      document.getElementById('predAutoCoordBoxes').style.display='flex';
+      document.getElementById('predAutoCoordBoxes').style.display='grid';
       document.getElementById('predLocStatus').innerText="✅ دریافت شد.";
     }, function(err){ document.getElementById('predLocStatus').innerText="خطا: "+err.message; });
   } else {
@@ -2589,14 +3182,12 @@ async function runPrediction(){
   var coords = getPredLocationCoords();
   if(!coords){ predShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
   var lat = coords[0], lon = coords[1];
-
   var startY=parseInt(document.getElementById('predStartYear').value);
   var startM=parseInt(document.getElementById('predStartMonth').value);
   var startD=parseInt(document.getElementById('predStartDay').value);
   var startH=parseInt(document.getElementById('predStartHour').value);
   var startMin=parseInt(document.getElementById('predStartMinute').value);
   var startDate = jalaliToUtcDate(startY, startM, startD, startH, startMin);
-
   var endY=parseInt(document.getElementById('predEndYear').value);
   var endM=parseInt(document.getElementById('predEndMonth').value);
   var endD=parseInt(document.getElementById('predEndDay').value);
@@ -2612,7 +3203,7 @@ async function runPrediction(){
   var progressFill = document.getElementById('predProgressFill');
   var progressDetail = document.getElementById('predProgressDetail');
   progressBox.style.display='block';
-  progressText.innerText = 'در حال دریافت پایگاه داده ماهواره‌ها...';
+  progressText.innerText = 'در حال دریافت TLE...';
   progressFill.style.width = '0%';
   progressDetail.innerText = '';
 
@@ -2620,7 +3211,7 @@ async function runPrediction(){
     var tleText = await loadTleData();
     var lines = tleText.trim().split("\n");
     var totalSats = Math.floor(lines.length / 3);
-    progressText.innerText = 'در حال بررسی ' + totalSats + ' ماهواره...';
+    progressText.innerText = 'بررسی ' + totalSats + ' ماهواره...';
     var observerGd = {longitude: toRad(lon), latitude: toRad(lat), height: 0};
     var allPasses = [];
     var processed = 0;
@@ -2650,11 +3241,10 @@ async function runPrediction(){
       if(processed % CHUNK_SIZE === 0){
         var pct = Math.round((processed / totalSats) * 100);
         progressFill.style.width = pct + '%';
-        progressDetail.innerText = 'بررسی‌شده: ' + processed + ' — پیدا شده: ' + allPasses.length + ' عبور';
+        progressDetail.innerText = processed + ' از ' + totalSats + ' — ' + allPasses.length + ' عبور';
         await sleep(0);
       }
     }
-
     allPasses.sort(function(a,b){ return a.startTime - b.startTime; });
     progressText.innerText = 'تمام شد!';
     progressFill.style.width = '100%';
@@ -2677,18 +3267,16 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
   lastPredictionPasses = passes;
   lastPredictionMeta = {lat:lat, lon:lon, startDate:startDate, endDate:endDate};
   if(passes.length === 0){
-    container.innerHTML = '<div class="pred-empty">🔭<br><br>در این بازه‌ی زمانی، هیچ ماهواره‌ی قابل مشاهده‌ای از این موقعیت عبور نمی‌کند.</div>';
+    container.innerHTML = '<div class="pred-empty">🔭<br><br>در این بازه، هیچ ماهواره‌ی قابل مشاهده‌ای عبور نمی‌کند.<br>سعی کنید بازه را بیشتر کنید.</div>';
     return;
   }
   var summaryHtml = '<div class="pred-summary">' +
     '<div>📍 مختصات: <b>' + lat.toFixed(4) + ', ' + lon.toFixed(4) + '</b></div>' +
     '<div>🕐 از: <b>' + formatJalaliDateTime(new Date(startDate)) + '</b></div>' +
     '<div>🕐 تا: <b>' + formatJalaliDateTime(new Date(endDate)) + '</b></div>' +
-    '<div>🛰️ تعداد عبور قابل مشاهده: <b>' + passes.length + '</b></div>' +
+    '<div>🛰️ تعداد عبور: <b>' + passes.length + '</b></div>' +
     '</div>';
-  var downloadHtml = '<div class="card" style="max-width:520px; margin:14px auto;">' +
-    '<button type="button" class="btn btn-download" onclick="downloadPredictionCSV()">📥 دانلود نتایج (Excel / CSV)</button>' +
-    '</div>';
+  var downloadHtml = '<button type="button" class="btn btn-download" onclick="downloadPredictionCSV()" style="margin-bottom:14px;">📥 دانلود نتایج (CSV)</button>';
   var mapHtml = '<div id="predMap"></div>';
   var cardsHtml = '<div class="pred-list">';
   passes.forEach(function(p, idx){
@@ -2703,8 +3291,8 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
       '<div class="pred-row-body">' +
         '<div class="cell"><span class="lbl">کشور:</span><span class="val">' + info.country + '</span></div>' +
         '<div class="cell"><span class="lbl">نوع:</span><span class="val">' + info.type + '</span></div>' +
-        '<div class="cell"><span class="lbl">زمان مشاهده:</span><span class="val">' + formatTimeHMS(new Date(p.startTime)) + '</span></div>' +
-        '<div class="cell"><span class="lbl">سمت مشاهده:</span><span class="val">' + startCompass + '</span></div>' +
+        '<div class="cell"><span class="lbl">زمان:</span><span class="val">' + formatTimeHMS(new Date(p.startTime)) + '</span></div>' +
+        '<div class="cell"><span class="lbl">سمت:</span><span class="val">' + startCompass + '</span></div>' +
         '<div class="cell cell-full"><span class="lbl">جهت حرکت:</span><span class="val">' + moveText + '</span></div>' +
       '</div>' +
     '</div>';
@@ -2716,7 +3304,7 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
       if(predResultMap){ predResultMap.remove(); predResultMap = null; }
       predResultMap = L.map('predMap').setView([lat, lon], 5);
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(predResultMap);
-      var icon = L.divIcon({html:'<div style="background:#ec4899;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;">👁️</div>', iconSize:[30,30], className:''});
+      var icon = L.divIcon({html:'<div style="font-size:26px;text-shadow:0 0 10px #ec4899;">👁️</div>', iconSize:[26,26], iconAnchor:[13,13], className:''});
       L.marker([lat,lon],{icon:icon}).addTo(predResultMap).bindPopup('موقعیت شما');
     }
   }, 100);
@@ -2725,7 +3313,7 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
 function downloadPredictionCSV(){
   if(!lastPredictionPasses || lastPredictionPasses.length === 0) return;
   var rows = [];
-  rows.push(['ردیف','نام ماهواره','کشور بهره‌بردار','نوع','تاریخ شمسی','زمان مشاهده','سمت مشاهده','جهت حرکت']);
+  rows.push(['ردیف','نام ماهواره','کشور','نوع','تاریخ','زمان','سمت','جهت حرکت']);
   lastPredictionPasses.forEach(function(p, idx){
     var info = guessSatInfo(p.name);
     var startCompass = azimuthToCompass(p.startAz);
@@ -2758,6 +3346,312 @@ function downloadPredictionCSV(){
 }
 
 /* ========================================================================
+   LIVE SKY
+======================================================================== */
+var liveLocMode='auto';
+var liveCoordFormat=null;
+var livePickerMapObj=null, livePickerMarker=null;
+var liveMapObj=null;
+var liveActive = false;
+var liveSatTimer = null;
+var liveAcTimer = null;
+var liveSatRecords = [];
+var liveSatCurrent = [];
+var liveAcCurrent = [];
+var liveTimeOffsetMin = 0;
+var liveLat = 0, liveLon = 0;
+var LIVE_MIN_ELEV = 10;
+var LIVE_AC_RADIUS_KM = 150;
+var LIVE_MAX_SAT_MAG = 6.5;
+
+function setLiveLocationMode(mode){
+  liveLocMode=mode;
+  document.getElementById('liveModeAutoCard').classList.toggle('active', mode==='auto');
+  document.getElementById('liveModeManualCard').classList.toggle('active', mode==='manual');
+  document.getElementById('liveModeMapCard').classList.toggle('active', mode==='map');
+  document.getElementById('liveAutoLocPanel').style.display = mode==='auto' ? 'block':'none';
+  document.getElementById('liveManualLocPanel').style.display = mode==='manual' ? 'block':'none';
+  document.getElementById('liveMapLocPanel').style.display = mode==='map' ? 'block':'none';
+  if(mode==='map') setTimeout(initLivePickerMap, 50);
+}
+function initLivePickerMap(){
+  if(livePickerMapObj){ livePickerMapObj.invalidateSize(); return; }
+  livePickerMapObj=L.map('livePickerMap').setView([35.6892, 51.3890], 5);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(livePickerMapObj);
+  livePickerMapObj.on('click', function(e){
+    var la=e.latlng.lat, lo=e.latlng.lng;
+    if(livePickerMarker) livePickerMapObj.removeLayer(livePickerMarker);
+    livePickerMarker=L.marker([la,lo]).addTo(livePickerMapObj);
+    document.getElementById('liveMapLat').value=la.toFixed(6);
+    document.getElementById('liveMapLon').value=lo.toFixed(6);
+    document.getElementById('liveMapCoordBoxes').style.display='grid';
+  });
+}
+function getLiveLocation(){
+  if(navigator.geolocation){
+    document.getElementById('liveLocStatus').innerText="در حال دریافت...";
+    navigator.geolocation.getCurrentPosition(function(pos){
+      document.getElementById('liveAutoLat').value=pos.coords.latitude.toFixed(6);
+      document.getElementById('liveAutoLon').value=pos.coords.longitude.toFixed(6);
+      document.getElementById('liveAutoCoordBoxes').style.display='grid';
+      document.getElementById('liveLocStatus').innerText="✅ دریافت شد.";
+    }, function(err){ document.getElementById('liveLocStatus').innerText="خطا: "+err.message; });
+  } else {
+    document.getElementById('liveLocStatus').innerText="مرورگر از GPS پشتیبانی نمی‌کند.";
+  }
+}
+function setLiveCoordFormat(fmt, el){
+  liveCoordFormat=fmt;
+  document.querySelectorAll('#liveManualLocPanel .coord-fmt-row .mode-card').forEach(function(c){ c.classList.remove('active'); });
+  if(el) el.classList.add('active');
+  document.getElementById('liveDmsInputs').style.display = fmt==='dms' ? 'block':'none';
+  document.getElementById('liveDecInputs').style.display = fmt==='dec' ? 'block':'none';
+  document.getElementById('liveUtmInputs').style.display = fmt==='utm' ? 'block':'none';
+}
+function getLiveLocationCoords(){
+  if(liveLocMode==='auto'){
+    var lat=parseFloat(document.getElementById('liveAutoLat').value);
+    var lon=parseFloat(document.getElementById('liveAutoLon').value);
+    if(isNaN(lat)||isNaN(lon)) return null;
+    return [lat, lon];
+  }
+  if(liveLocMode==='map'){
+    var lat=parseFloat(document.getElementById('liveMapLat').value);
+    var lon=parseFloat(document.getElementById('liveMapLon').value);
+    if(isNaN(lat)||isNaN(lon)) return null;
+    return [lat, lon];
+  }
+  if(liveLocMode==='manual'){
+    if(!liveCoordFormat) return null;
+    if(liveCoordFormat==='dec'){
+      var lat=parseFloat(document.getElementById('liveDecLat').value);
+      var lon=parseFloat(document.getElementById('liveDecLon').value);
+      if(isNaN(lat)||isNaN(lon)) return null;
+      return [lat, lon];
+    }
+    if(liveCoordFormat==='dms'){
+      var ld=parseFloat(document.getElementById('liveLatD').value)||0;
+      var lm=parseFloat(document.getElementById('liveLatM').value)||0;
+      var ls=parseFloat(document.getElementById('liveLatS').value)||0;
+      var latDir=document.getElementById('liveLatDir').value;
+      var od=parseFloat(document.getElementById('liveLonD').value)||0;
+      var om=parseFloat(document.getElementById('liveLonM').value)||0;
+      var os=parseFloat(document.getElementById('liveLonS').value)||0;
+      var lonDir=document.getElementById('liveLonDir').value;
+      if(document.getElementById('liveLatD').value===""||document.getElementById('liveLonD').value==="") return null;
+      return [(ld+lm/60+ls/3600)*(latDir==='S'?-1:1), (od+om/60+os/3600)*(lonDir==='W'?-1:1)];
+    }
+    if(liveCoordFormat==='utm'){
+      var zone=parseInt(document.getElementById('liveUtmZone').value);
+      var hem=document.getElementById('liveUtmHem').value;
+      var e=parseFloat(document.getElementById('liveUtmE').value);
+      var n=parseFloat(document.getElementById('liveUtmN').value);
+      if(isNaN(zone)||isNaN(e)||isNaN(n)) return null;
+      return utmToLatLon(zone, hem==='N', e, n);
+    }
+  }
+  return null;
+}
+function liveShowError(msg){ var b=document.getElementById('liveErrorBox'); b.innerText=msg; b.style.display='block'; }
+
+async function startLiveSky(){
+  document.getElementById('liveErrorBox').style.display='none';
+  var coords = getLiveLocationCoords();
+  if(!coords){ liveShowError('لطفاً ابتدا موقعیت خود را مشخص کنید.'); return; }
+  liveLat = coords[0];
+  liveLon = coords[1];
+
+  try{
+    var tleText = await loadTleData();
+    var lines = tleText.trim().split("\n");
+    liveSatRecords = [];
+    for(var i=0;i+2<lines.length;i+=3){
+      try{
+        var name = lines[i].trim();
+        var un = name.toUpperCase();
+        if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) continue;
+        var satrec = satellite.twoline2satrec(lines[i+1], lines[i+2]);
+        var incl = satrec.inclo * 180 / Math.PI;
+        var maxLat = Math.min(incl, 180 - incl);
+        if(Math.abs(liveLat) > maxLat + 5) continue;
+        var period = 2 * Math.PI / satrec.no;
+        var sma = Math.pow(398600.4418 * Math.pow(period*60, 2) / (4*Math.PI*Math.PI), 1/3);
+        var alt = sma - 6371;
+        if(alt > 2000 || alt < 150) continue;
+        liveSatRecords.push({ satrec: satrec, name: name });
+      }catch(e){}
+    }
+  }catch(e){
+    liveShowError('خطا در دریافت TLE: ' + e.message);
+    return;
+  }
+
+  document.getElementById('liveSetupPanel').style.display='none';
+  document.getElementById('liveViewPanel').style.display='block';
+  liveActive = true;
+  liveTimeOffsetMin = 0;
+  document.getElementById('liveTimeSlider').value = 0;
+  updateLiveTimeDisplay();
+
+  initLiveMap(liveLat, liveLon);
+  recomputeLiveSatellites(0);
+  updateLiveAircraft().then(function(){ updateMarkerLayer(); });
+
+  liveSatTimer = setInterval(function(){
+    if(!liveActive) return;
+    if(liveTimeOffsetMin === 0) recomputeLiveSatellites(0);
+    updateMarkerLayer();
+    document.getElementById('liveLastUpdate').innerText = formatTimeHMS(new Date());
+  }, 1000);
+
+  liveAcTimer = setInterval(function(){
+    if(!liveActive) return;
+    if(liveTimeOffsetMin === 0) updateLiveAircraft().then(function(){ updateMarkerLayer(); });
+  }, 10000);
+
+  window.scrollTo(0,0);
+}
+
+function initLiveMap(lat, lon){
+  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
+  liveMapObj = L.map('liveMapView').setView([lat, lon], 6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO'}).addTo(liveMapObj);
+  var obsIcon = L.divIcon({html:'<div style="font-size:28px;text-shadow:0 0 12px #3b82f6;">👁️</div>', iconSize:[28,28], iconAnchor:[14,14], className:''});
+  L.marker([lat,lon], {icon: obsIcon}).addTo(liveMapObj).bindPopup('موقعیت شما');
+}
+
+function recomputeLiveSatellites(offsetMin){
+  var offsetMs = -offsetMin * 60 * 1000;
+  var displayTime = new Date(Date.now() + offsetMs);
+  var observerGd = {longitude: toRad(liveLon), latitude: toRad(liveLat), height: 0};
+  var sunEci = sunEciKm(displayTime);
+  var gmst = satellite.gstime(displayTime);
+  var results = [];
+  for(var i=0; i<liveSatRecords.length; i++){
+    var rec = liveSatRecords[i];
+    try{
+      var pv = satellite.propagate(rec.satrec, displayTime);
+      if(!pv.position) continue;
+      var ecf = satellite.eciToEcf(pv.position, gmst);
+      var look = satellite.ecfToLookAngles(observerGd, ecf);
+      var altDeg = toDeg(look.elevation);
+      if(altDeg < LIVE_MIN_ELEV) continue;
+      if(!isSunlit(pv.position, sunEci)) continue;
+      var rangeKm = look.rangeSat;
+      var mag = estimateSatMag(rangeKm, rec.name);
+      if(mag > LIVE_MAX_SAT_MAG) continue;
+      var geo = satellite.eciToGeodetic(pv.position, gmst);
+      results.push({
+        name: rec.name,
+        lat: toDeg(geo.latitude),
+        lon: toDeg(geo.longitude),
+        alt: altDeg,
+        az: toDeg(look.azimuth),
+        mag: mag,
+        dist: rangeKm
+      });
+    }catch(e){}
+  }
+  liveSatCurrent = results;
+  document.getElementById('liveStatSat').innerText = results.length;
+}
+
+async function updateLiveAircraft(){
+  try{
+    var acData = await fetchAllAircraft(liveLat, liveLon, LIVE_AC_RADIUS_KM);
+    var list = acData.list;
+    var results = [];
+    for(var i=0;i<list.length;i++){
+      var a = list[i];
+      if(a.onGround) continue;
+      var be = bearingElevation(liveLat, liveLon, a.lat, a.lon, a.altM);
+      if(be.elev < 1) continue;
+      if(be.dist/1000 > LIVE_AC_RADIUS_KM) continue;
+      results.push({
+        name: a.callsign || a.icao,
+        lat: a.lat, lon: a.lon,
+        altM: a.altM, speed: a.speedKmh, heading: a.heading,
+        elev: be.elev, az: be.bearing, dist: be.dist
+      });
+    }
+    liveAcCurrent = results;
+  }catch(e){}
+}
+
+function extrapolateAircraftToTime(offsetMin){
+  if(offsetMin === 0) return liveAcCurrent.slice();
+  var secondsAgo = offsetMin * 60;
+  return liveAcCurrent.map(function(a){
+    if(!a.speed || a.speed < 10) return a;
+    if(a.heading == null) return a;
+    var distKm = a.speed * secondsAgo / 3600;
+    var backBearing = (a.heading + 180) % 360;
+    var newPos = projectPoint(a.lat, a.lon, backBearing, distKm);
+    return Object.assign({}, a, { lat: newPos[0], lon: newPos[1] });
+  });
+}
+
+var liveSatLayer = null;
+var liveAcLayer = null;
+
+function updateMarkerLayer(){
+  if(!liveMapObj) return;
+  if(!liveSatLayer) liveSatLayer = L.layerGroup().addTo(liveMapObj);
+  if(!liveAcLayer) liveAcLayer = L.layerGroup().addTo(liveMapObj);
+  liveSatLayer.clearLayers();
+  liveAcLayer.clearLayers();
+
+  liveSatCurrent.forEach(function(s){
+    var icon = L.divIcon({
+      html: '<div style="font-size:22px;filter:drop-shadow(0 0 6px rgba(59,130,246,.9));">🛰️</div>',
+      iconSize:[22,22], iconAnchor:[11,11], className: ''
+    });
+    L.marker([s.lat, s.lon], {icon: icon}).addTo(liveSatLayer).bindPopup(
+      '<b>'+s.name+'</b>'+
+      '<br>ارتفاع: '+s.alt.toFixed(1)+'°'+
+      '<br>آزیموت: '+s.az.toFixed(0)+'°'+
+      '<br>قدر: '+s.mag.toFixed(1)
+    );
+  });
+
+  var acList = extrapolateAircraftToTime(liveTimeOffsetMin);
+  acList.forEach(function(a){
+    var icon = L.divIcon({
+      html: '<div style="font-size:20px;filter:drop-shadow(0 0 6px rgba(16,185,129,.9));">✈️</div>',
+      iconSize:[20,20], iconAnchor:[10,10], className: ''
+    });
+    L.marker([a.lat, a.lon], {icon: icon}).addTo(liveAcLayer).bindPopup(
+      '<b>'+a.name+'</b>' +
+      (a.altM != null ? '<br>ارتفاع: '+a.altM+'m' : '') +
+      (a.speed != null ? '<br>سرعت: '+a.speed+' km/h' : '') +
+      (a.dist != null ? '<br>فاصله: '+(a.dist/1000).toFixed(1)+' km' : '')
+    );
+  });
+}
+
+function onLiveTimeChange(val){
+  liveTimeOffsetMin = parseInt(val) || 0;
+  updateLiveTimeDisplay();
+  if(liveTimeOffsetMin === 0){
+    recomputeLiveSatellites(0);
+    updateLiveAircraft().then(function(){ updateMarkerLayer(); });
+  } else {
+    recomputeLiveSatellites(liveTimeOffsetMin);
+    updateMarkerLayer();
+  }
+}
+
+function updateLiveTimeDisplay(){
+  var el = document.getElementById('liveTimeDisplay');
+  if(liveTimeOffsetMin === 0){
+    el.innerText = 'الان';
+  } else {
+    var past = new Date(Date.now() - liveTimeOffsetMin * 60 * 1000);
+    el.innerText = String(past.getHours()).padStart(2,'0')+':'+String(past.getMinutes()).padStart(2,'0')+' ('+liveTimeOffsetMin+' دقیقه قبل)';
+  }
+}
+
+/* ========================================================================
    HISTORY
 ======================================================================== */
 function saveHistory(entry){
@@ -2767,41 +3661,35 @@ function saveHistory(entry){
   if(hist.length>30) hist=hist.slice(0,30);
   localStorage.setItem('rasadyar_history', JSON.stringify(hist));
 }
-function openHistory(){
+function openModal2_history(){
   var hist=JSON.parse(localStorage.getItem('rasadyar_history')||'[]');
   var list=document.getElementById('historyList');
   if(hist.length===0){
-    list.innerHTML='<p style="color:#a0a0c8; font-size:13px;">هنوز هیچ مشاهده‌ای ثبت نشده است.</p>';
+    list.innerHTML='<p style="color:var(--text-muted); font-size:13px; text-align:center; padding:20px;">هنوز هیچ مشاهده‌ای ثبت نشده است.</p>';
   } else {
     list.innerHTML=hist.map(function(h){
       var icon = h.cls==='sat' ? '🛰️' : (h.cls==='ac' ? '✈️' : (h.cls==='mix' ? '🛰️✈️' : '❓'));
       return '<div class="hist-item"><div class="hi-top"><span>'+icon+' '+h.title+'</span><span>'+h.dateStr+'</span></div>'
-        + '<div style="color:#a0a0c8;">📍 '+h.lat.toFixed(3)+', '+h.lon.toFixed(3)+' | جهت '+h.az+'°'
+        + '<div class="hi-bottom">📍 '+h.lat.toFixed(3)+', '+h.lon.toFixed(3)+' | جهت '+h.az+'°'
         + (h.mainName ? ' | '+h.mainName : '')+'</div></div>';
     }).join('');
   }
-  document.getElementById('historyModal').style.display='block';
+  openModal('historyModal');
 }
-function openGuide(){ document.getElementById('guideModal').style.display='block'; }
-function closeModal(id){ document.getElementById(id).style.display='none'; }
+// Override openHistory
+var openHistory = openModal2_history;
 
 /* ========================================================================
    ADMIN
 ======================================================================== */
 var ADMIN_USERNAME='admin';
 var ADMIN_PASSWORD='rasadyar1404';
-function openAdminLogin(){
-  document.getElementById('adminLoginError').style.display='none';
-  document.getElementById('adminUser').value='';
-  document.getElementById('adminPass').value='';
-  document.getElementById('adminLoginModal').style.display='block';
-}
 function tryAdminLogin(){
   var u=document.getElementById('adminUser').value;
   var p=document.getElementById('adminPass').value;
   if(u===ADMIN_USERNAME && p===ADMIN_PASSWORD){
     closeModal('adminLoginModal');
-    document.getElementById('adminDashModal').style.display='block';
+    openModal('adminDashModal');
   } else {
     var e=document.getElementById('adminLoginError');
     e.innerText='نام کاربری یا رمز عبور اشتباه است.';
@@ -2812,8 +3700,8 @@ function setAdminStatus(msg, isError){
   var box=document.getElementById('adminStatus');
   box.style.display='block';
   box.innerHTML=msg;
-  box.style.borderColor = isError ? '#ff8a5c' : 'rgba(126,230,160,.5)';
-  box.style.color = isError ? '#ffb98a' : '#7ee6a0';
+  box.style.borderColor = isError ? 'rgba(239,68,68,.5)' : 'rgba(16,185,129,.5)';
+  box.style.color = isError ? '#fca5a5' : '#6ee7b7';
 }
 async function commitFileToGitHub(token, owner, repo, path, content, commitMessage){
   var apiBase="https://api.github.com/repos/"+owner+"/"+repo+"/contents/"+path;
