@@ -11,28 +11,14 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
-  --bg-0: #05060f;
-  --bg-1: #0a0e1f;
-  --bg-2: #10162e;
-  --surface: rgba(20, 26, 50, 0.55);
-  --surface-2: rgba(30, 38, 68, 0.5);
-  --border: rgba(120, 150, 220, 0.14);
-  --border-hi: rgba(120, 200, 255, 0.35);
-  --text: #e6ecff;
-  --text-dim: #8b94b8;
-  --text-mute: #5a6382;
-  --accent-1: #22d3ee;
-  --accent-2: #6366f1;
-  --accent-3: #a855f7;
-  --accent-4: #ec4899;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  --bg-0: #05060f; --bg-1: #0a0e1f; --bg-2: #10162e;
+  --surface: rgba(20, 26, 50, 0.55); --surface-2: rgba(30, 38, 68, 0.5);
+  --border: rgba(120, 150, 220, 0.14); --border-hi: rgba(120, 200, 255, 0.35);
+  --text: #e6ecff; --text-dim: #8b94b8; --text-mute: #5a6382;
+  --accent-1: #22d3ee; --accent-2: #6366f1; --accent-3: #a855f7; --accent-4: #ec4899;
+  --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
-  --radius-sm: 10px;
-  --radius: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
+  --radius-sm: 10px; --radius: 16px; --radius-lg: 22px; --radius-xl: 28px;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; padding: 0; min-height: 100vh; }
@@ -45,15 +31,11 @@ body {
     radial-gradient(900px 700px at 100% 20%, rgba(168, 85, 247, 0.12), transparent 55%),
     radial-gradient(700px 700px at 50% 100%, rgba(34, 211, 238, 0.08), transparent 60%),
     linear-gradient(180deg, #05060f 0%, #0a0e1f 50%, #05060f 100%);
-  background-attachment: fixed;
-  overflow-x: hidden;
-  line-height: 1.7;
-  font-size: 14.5px;
-  -webkit-font-smoothing: antialiased;
+  background-attachment: fixed; overflow-x: hidden; line-height: 1.7;
+  font-size: 14.5px; -webkit-font-smoothing: antialiased;
 }
 body::before {
-  content: '';
-  position: fixed; inset: 0;
+  content: ''; position: fixed; inset: 0;
   background-image:
     radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.7), transparent),
     radial-gradient(1px 1px at 60% 70%, rgba(180,200,255,.5), transparent),
@@ -61,14 +43,10 @@ body::before {
     radial-gradient(1px 1px at 35% 80%, rgba(200,220,255,.6), transparent),
     radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,.5), transparent),
     radial-gradient(2px 2px at 45% 15%, rgba(255,255,255,.6), transparent);
-  background-size: 800px 800px;
-  pointer-events: none; opacity: 0.55; z-index: 0;
+  background-size: 800px 800px; pointer-events: none; opacity: 0.55; z-index: 0;
   animation: starDrift 120s linear infinite;
 }
-@keyframes starDrift {
-  from { background-position: 0 0; }
-  to   { background-position: 800px 800px; }
-}
+@keyframes starDrift { from { background-position: 0 0; } to { background-position: 800px 800px; } }
 .app-shell { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 24px 18px 80px; }
 @media (min-width: 900px) { .app-shell { max-width: 720px; } }
 h1, h2, h3, h4 { margin: 0; font-weight: 800; letter-spacing: -0.01em; }
@@ -97,24 +75,20 @@ p { margin: 0; }
 .icon-svg.icon-sm { width: 18px; height: 18px; }
 
 .card {
-  position: relative;
-  background: var(--surface);
+  position: relative; background: var(--surface);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 22px;
-  margin-bottom: 16px;
+  padding: 22px; margin-bottom: 16px;
   box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   overflow: hidden;
 }
 .card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, rgba(120, 200, 255, 0.35), transparent);
   pointer-events: none;
 }
-
 .btn {
   width: 100%; padding: 14px 20px; border: none;
   border-radius: var(--radius); font-family: inherit;
@@ -134,23 +108,19 @@ p { margin: 0; }
 .btn-primary:hover { filter: brightness(1.08); }
 .btn-violet {
   background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+  color: #fff; box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
 }
 .btn-cyan {
   background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+  color: #fff; box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
 }
 .btn-success {
   background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  color: #052e16;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  color: #052e16; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
 }
 .btn-outline {
   background: rgba(120, 160, 220, 0.08); color: var(--text);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(10px);
+  border: 1px solid var(--border); backdrop-filter: blur(10px);
 }
 .btn-outline:hover { border-color: var(--border-hi); background: rgba(120, 160, 220, 0.14); }
 .btn-ghost { background: transparent; color: var(--text-dim); font-weight: 500; padding: 10px; }
@@ -218,25 +188,18 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   border: 1px solid rgba(34, 211, 238, 0.4);
   box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
 }
-
 .dt-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .dt-grid select { padding: 10px 6px; font-size: 13px; text-align: center; padding-left: 6px; background-position: 8px center; }
 .dt-time { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .coord-boxes { display: flex; gap: 10px; margin-top: 10px; }
 .coord-boxes input { text-align: center; }
-
 .status-msg { font-size: 12.5px; color: var(--success); margin-top: 8px; min-height: 18px; }
-
 .error-box {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  color: #fca5a5;
-  padding: 12px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  margin-top: 12px;
-  display: none;
-  line-height: 1.7;
+  color: #fca5a5; padding: 12px 14px;
+  border-radius: var(--radius-sm); font-size: 13px;
+  margin-top: 12px; display: none; line-height: 1.7;
 }
 .error-box.show { display: block; animation: shake 0.4s ease; }
 .error-box strong { color: #fecaca; font-weight: 700; }
@@ -257,7 +220,34 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .app-header h1 { font-size: 34px; font-weight: 900; letter-spacing: 0.01em; margin-bottom: 6px; }
 .app-header .subtitle { color: var(--text-dim); font-size: 12.5px; font-weight: 400; line-height: 1.6; padding: 0 12px; }
 
-/* Menu Stack */
+/* Dedication footer */
+.dedication {
+  text-align: center;
+  margin-top: 28px;
+  padding: 16px 12px 8px;
+  font-size: 12.5px;
+  color: #a5b4fc;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  line-height: 1.9;
+  position: relative;
+}
+.dedication::before,
+.dedication::after {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(165, 180, 252, 0.4), transparent);
+  vertical-align: middle;
+  margin: 0 10px;
+}
+.dedication .martyr {
+  color: #f87171;
+  font-weight: 800;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+}
+
 .menu-stack { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 .menu-card {
   position: relative; display: flex; align-items: center; gap: 16px;
@@ -271,8 +261,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 }
 .menu-card:active { transform: scale(0.985); }
 .menu-card::before {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: radial-gradient(400px 200px at 100% 0%, var(--hover-tint, rgba(34, 211, 238, 0.15)), transparent 70%);
   opacity: 0.8; pointer-events: none;
 }
@@ -296,16 +285,11 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   position: relative; z-index: 1;
 }
 .menu-card:hover .menu-arrow { transform: translateX(-4px); color: var(--accent-1); }
-
 .menu-search    { --hover-tint: rgba(34, 211, 238, 0.15); --icon-bg: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.25)); --icon-border: rgba(34, 211, 238, 0.4); --icon-glow: rgba(34, 211, 238, 0.3); --icon-color: #67e8f9; }
 .menu-predict   { --hover-tint: rgba(168, 85, 247, 0.15); --icon-bg: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.22)); --icon-border: rgba(168, 85, 247, 0.4); --icon-glow: rgba(168, 85, 247, 0.3); --icon-color: #d8b4fe; }
 .menu-live      { --hover-tint: rgba(16, 185, 129, 0.15); --icon-bg: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.22)); --icon-border: rgba(16, 185, 129, 0.4); --icon-glow: rgba(16, 185, 129, 0.3); --icon-color: #6ee7b7; }
 
-/* Small dual menu cards */
-.menu-dual {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; margin-top: 14px;
-}
+.menu-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 .menu-card-sm {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -315,38 +299,29 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   border: 1px solid var(--border);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  cursor: pointer;
-  text-align: center;
+  cursor: pointer; text-align: center;
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-  position: relative;
-  overflow: hidden;
+  position: relative; overflow: hidden;
 }
 .menu-card-sm::before {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: radial-gradient(200px 120px at 50% 0%, var(--hover-tint, rgba(34, 211, 238, 0.15)), transparent 70%);
   pointer-events: none;
 }
 .menu-card-sm:active { transform: scale(0.97); }
 .menu-card-sm:hover { border-color: var(--border-hi); }
 .menu-card-sm .icon-wrap {
-  width: 44px; height: 44px;
-  border-radius: 14px;
+  width: 44px; height: 44px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   background: var(--icon-bg);
   border: 1px solid var(--icon-border);
   box-shadow: 0 0 18px var(--icon-glow);
 }
 .menu-card-sm .icon-wrap .icon-svg { width: 22px; height: 22px; color: var(--icon-color); stroke-width: 1.7; }
-.menu-card-sm .label {
-  font-size: 12.5px; font-weight: 700;
-  color: var(--text);
-  line-height: 1.4;
-}
+.menu-card-sm .label { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.4; }
 .menu-card-sm.about   { --hover-tint: rgba(251, 191, 36, 0.15); --icon-bg: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.22)); --icon-border: rgba(251, 191, 36, 0.35); --icon-glow: rgba(251, 191, 36, 0.25); --icon-color: #fcd34d; }
 .menu-card-sm.admin   { --hover-tint: rgba(99, 102, 241, 0.15); --icon-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.22)); --icon-border: rgba(99, 102, 241, 0.4); --icon-glow: rgba(99, 102, 241, 0.28); --icon-color: #a5b4fc; }
 
-/* Page header */
 .page-header { display: flex; align-items: center; gap: 14px; padding: 10px 0 18px; margin-bottom: 8px; }
 .back-btn {
   width: 42px; height: 42px; border-radius: 14px;
@@ -361,8 +336,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .page-title-wrap h2 { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
 .page-title-wrap p { font-size: 12px; color: var(--text-dim); }
 .guide-trigger {
-  width: 42px; height: 42px;
-  border-radius: 14px;
+  width: 42px; height: 42px; border-radius: 14px;
   background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(99, 102, 241, 0.15));
   border: 1px solid rgba(34, 211, 238, 0.3);
   color: #67e8f9;
@@ -378,32 +352,17 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 }
 .guide-trigger .icon-svg { width: 20px; height: 20px; }
 
-/* Guide modal content */
-.guide-modal-body {
-  font-size: 13.5px;
-  line-height: 2.1;
-  color: #c8d0ea;
-}
-.guide-modal-body h4 {
-  color: #67e8f9;
-  margin: 16px 0 8px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.guide-modal-body { font-size: 13.5px; line-height: 2.1; color: #c8d0ea; }
+.guide-modal-body h4 { color: #67e8f9; margin: 16px 0 8px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
 .guide-modal-body h4:first-child { margin-top: 0; }
 .guide-modal-body p { margin-bottom: 10px; }
 .guide-modal-body strong { color: #e0e7ff; font-weight: 700; }
 .guide-modal-body ul { padding-right: 20px; margin: 8px 0; }
 .guide-modal-body li { margin-bottom: 6px; }
 
-/* Result hero */
 .result-hero {
-  border-radius: var(--radius-lg);
-  padding: 26px 22px;
-  text-align: center;
-  margin-bottom: 16px;
+  border-radius: var(--radius-lg); padding: 26px 22px;
+  text-align: center; margin-bottom: 16px;
   position: relative; overflow: hidden;
   border: 1px solid var(--border);
 }
@@ -430,16 +389,10 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .info-line span:last-child { color: var(--text); font-weight: 600; }
 
 .obj-card {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 12px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
 }
-.obj-card h3 {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 15.5px; font-weight: 700; margin-bottom: 12px;
-}
+.obj-card h3 { display: flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 700; margin-bottom: 12px; }
 .obj-card h3 .icon-svg { color: var(--accent-1); width: 22px; height: 22px; }
 .obj-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -457,8 +410,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 }
 .conf-wrap {
   display: flex; align-items: center; justify-content: center;
-  gap: 14px; margin: 16px 0 4px;
-  padding-top: 14px;
+  gap: 14px; margin: 16px 0 4px; padding-top: 14px;
   border-top: 1px dashed rgba(120, 150, 220, 0.12);
 }
 .conf-ring { position: relative; width: 72px; height: 72px; }
@@ -471,15 +423,11 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .conf-label { font-size: 12px; color: var(--text-mute); }
 
 .map-box {
-  width: 100%; height: 340px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  margin-top: 14px;
-  background: #0a0e1f;
-  position: relative;
+  width: 100%; height: 340px; border-radius: var(--radius);
+  overflow: hidden; border: 1px solid var(--border);
+  margin-top: 14px; background: #0a0e1f; position: relative;
 }
-.map-box .leaflet-container { background: #0a0e1f !important; font-family: inherit !important; }
+.leaflet-container { background: #0a0e1f !important; font-family: inherit !important; }
 .leaflet-popup-content-wrapper {
   background: #16193a !important; color: #e6ecff !important;
   border: 1px solid rgba(120, 200, 255, 0.3) !important;
@@ -497,19 +445,14 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .leaflet-bar a:hover { background: #22264a !important; }
 
 #loadingBox {
-  display: none;
-  position: fixed; inset: 0;
+  display: none; position: fixed; inset: 0;
   background: rgba(5,6,15,0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 800;
-  align-items: center; justify-content: center;
-  flex-direction: column;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  z-index: 800; align-items: center; justify-content: center; flex-direction: column;
 }
 .radar {
-  width: 100px; height: 100px;
-  margin: 0 auto 24px; position: relative;
-  border-radius: 50%;
+  width: 100px; height: 100px; margin: 0 auto 24px;
+  position: relative; border-radius: 50%;
   background:
     radial-gradient(circle at center, rgba(34, 211, 238, 0.15) 0%, transparent 65%),
     conic-gradient(from 0deg, rgba(34, 211, 238, 0.4) 0deg, transparent 90deg, transparent 360deg);
@@ -538,10 +481,8 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .modal-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(5, 6, 15, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1000; padding: 20px 16px;
-  overflow-y: auto;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 1000; padding: 20px 16px; overflow-y: auto;
 }
 .modal-overlay.show { display: block; animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -579,8 +520,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   background-image:
     radial-gradient(800px 600px at 50% 0%, rgba(99, 102, 241, 0.15), transparent 60%),
     radial-gradient(600px 500px at 50% 100%, rgba(34, 211, 238, 0.1), transparent 60%);
-  z-index: 700; overflow-y: auto;
-  padding: 24px 18px 40px;
+  z-index: 700; overflow-y: auto; padding: 24px 18px 40px;
 }
 .calib-wrap { max-width: 520px; margin: 0 auto; }
 .infinity-wrap { display: flex; justify-content: center; align-items: center; padding: 22px 0; margin: 16px 0; }
@@ -595,17 +535,10 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .calib-tips {
   background: rgba(251, 191, 36, 0.06);
   border: 1px solid rgba(251, 191, 36, 0.25);
-  border-radius: var(--radius);
-  padding: 14px 18px;
-  font-size: 12.5px;
-  color: #fde68a; line-height: 2;
-  margin-top: 14px;
+  border-radius: var(--radius); padding: 14px 18px;
+  font-size: 12.5px; color: #fde68a; line-height: 2; margin-top: 14px;
 }
-.calib-tips .tip-title {
-  font-weight: 700; color: #fbbf24;
-  margin-bottom: 6px;
-  display: flex; align-items: center; gap: 6px;
-}
+.calib-tips .tip-title { font-weight: 700; color: #fbbf24; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
 .calib-progress-wrap { margin: 22px 0 12px; }
 .calib-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
 .calib-progress-bar {
@@ -642,8 +575,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(99, 102, 241, 0.08));
   border: 1px solid rgba(34, 211, 238, 0.3);
   color: #67e8f9; font-size: 14px; font-weight: 700;
-  margin-top: 14px;
-  display: flex; flex-direction: column; gap: 4px;
+  margin-top: 14px; display: flex; flex-direction: column; gap: 4px;
 }
 .selected-dir.empty { background: rgba(120, 150, 220, 0.05); border-color: var(--border); color: var(--text-mute); font-weight: 500; font-size: 13px; }
 .selected-dir .az-value { font-size: 12px; font-weight: 500; color: var(--text-dim); }
@@ -693,14 +625,12 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 }
 
 .map-legend {
-  display: flex; justify-content: center;
-  gap: 16px; padding: 12px;
-  margin-top: 12px;
+  display: flex; justify-content: center; gap: 16px;
+  padding: 12px; margin-top: 12px;
   border-radius: var(--radius);
   background: var(--surface-2);
   border: 1px solid var(--border);
-  font-size: 12px;
-  color: var(--text-dim);
+  font-size: 12px; color: var(--text-dim);
   flex-wrap: wrap;
 }
 .legend-item { display: flex; align-items: center; gap: 6px; }
@@ -711,17 +641,14 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 
 .pred-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .pred-row {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
 }
 .pred-row-header {
   padding: 12px 16px;
   background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.08));
   display: flex; align-items: center; gap: 12px;
-  font-size: 13.5px;
-  border-bottom: 1px solid var(--border);
+  font-size: 13.5px; border-bottom: 1px solid var(--border);
 }
 .pred-row-num {
   background: rgba(0, 0, 0, 0.3); color: #d8b4fe;
@@ -735,10 +662,8 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .pred-row-body {
-  padding: 12px 16px;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px 16px;
-  font-size: 12.5px;
+  padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px 16px; font-size: 12.5px;
 }
 .pred-row-body .cell { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
 .pred-row-body .cell .lbl { color: var(--text-mute); }
@@ -746,12 +671,10 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .pred-row-body .cell-full { grid-column: 1 / -1; }
 
 .pred-summary {
-  padding: 18px;
-  border-radius: var(--radius);
+  padding: 18px; border-radius: var(--radius);
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.08));
   border: 1px solid rgba(139, 92, 246, 0.3);
-  font-size: 13px; line-height: 2;
-  margin-bottom: 14px;
+  font-size: 13px; line-height: 2; margin-bottom: 14px;
 }
 .pred-summary b { color: #f0abfc; font-weight: 700; }
 
@@ -777,8 +700,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   font-size: 12px; margin-top: 14px;
   background: var(--surface-2);
   border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
+  overflow: hidden; border: 1px solid var(--border);
 }
 .nearby-table th, .nearby-table td {
   padding: 10px 8px; text-align: center;
@@ -791,15 +713,11 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
   background: rgba(120, 150, 220, 0.04);
   border: 1px dashed rgba(120, 150, 220, 0.18);
   border-radius: var(--radius);
-  padding: 14px 18px;
-  margin-top: 14px;
-  font-size: 12.5px;
-  color: var(--text-dim);
+  padding: 14px 18px; margin-top: 14px;
+  font-size: 12.5px; color: var(--text-dim);
 }
 .diag-box summary {
-  cursor: pointer;
-  color: var(--accent-1);
-  font-weight: 700;
+  cursor: pointer; color: var(--accent-1); font-weight: 700;
   display: flex; align-items: center; gap: 8px;
   list-style: none;
 }
@@ -812,11 +730,7 @@ select option { background: #10162e; color: var(--text); padding: 10px; }
 .diag-row:last-child { border-bottom: none; }
 .diag-row span:last-child { color: var(--text); font-weight: 600; }
 
-.about-content {
-  line-height: 2.1;
-  font-size: 13.5px;
-  color: #c8d0ea;
-}
+.about-content { line-height: 2.1; font-size: 13.5px; color: #c8d0ea; }
 .about-content h4 { color: #d8b4fe; margin: 18px 0 8px; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
 .about-content p { margin-bottom: 10px; }
 .about-content strong { color: #e0e7ff; font-weight: 700; }
@@ -841,7 +755,6 @@ body, html { overflow-x: hidden; }
 </head>
 <body>
 
-<!-- SVG icon library -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-satellite" viewBox="0 0 24 24">
@@ -974,6 +887,11 @@ body, html { overflow-x: hidden; }
       <line x1="12" y1="9" x2="12" y2="13" />
       <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none"/>
     </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24">
+      <polyline points="23 4 23 10 17 10" />
+      <polyline points="1 20 1 14 7 14" />
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+    </symbol>
   </defs>
 </svg>
 
@@ -1013,9 +931,7 @@ body, html { overflow-x: hidden; }
 
   <div class="menu-stack">
     <div class="menu-card menu-search" onclick="navigateTo('pageSearch')">
-      <div class="menu-icon-wrap">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-scan"/></svg>
-      </div>
+      <div class="menu-icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-scan"/></svg></div>
       <div class="menu-content">
         <h3>بررسی شیء مشاهده‌شده</h3>
         <p>شناسایی شی نورانی مشاهده‌شده بر اساس موقعیت، زمان و جهت</p>
@@ -1024,9 +940,7 @@ body, html { overflow-x: hidden; }
     </div>
 
     <div class="menu-card menu-predict" onclick="navigateTo('pagePredict')">
-      <div class="menu-icon-wrap">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>
-      </div>
+      <div class="menu-icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg></div>
       <div class="menu-content">
         <h3>پیش‌بینی عبور ماهواره‌ها</h3>
         <p>مشاهده‌ی ماهواره‌هایی که در آینده از بالای موقعیت شما عبور می‌کنند</p>
@@ -1035,9 +949,7 @@ body, html { overflow-x: hidden; }
     </div>
 
     <div class="menu-card menu-live" onclick="navigateTo('pageLive')">
-      <div class="menu-icon-wrap">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-radar-live"/></svg>
-      </div>
+      <div class="menu-icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-radar-live"/></svg></div>
       <div class="menu-content">
         <h3>مشاهده‌ی زنده‌ی آسمان</h3>
         <p>ردیابی لحظه‌ای ماهواره‌ها و هواپیماهای در حال عبور از بالای سر شما</p>
@@ -1055,6 +967,11 @@ body, html { overflow-x: hidden; }
       <div class="icon-wrap"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-shield-user"/></svg></div>
       <span class="label">ورود مدیر سیستم</span>
     </div>
+  </div>
+
+  <!-- Dedication -->
+  <div class="dedication">
+    به یاد <span class="martyr">شهید</span> میلاد ملک
   </div>
 </div>
 
@@ -1075,160 +992,160 @@ body, html { overflow-x: hidden; }
     </div>
   </div>
 
-  <div class="card">
-    <div class="field-label">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-location"/></svg>
-      موقعیت جغرافیایی ناظر
-    </div>
-    <div class="seg">
-      <div class="seg-item active" id="modeAutoCard" onclick="setLocationMode('auto')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>
-        GPS
+  <!-- FORM PANEL: hidden after analysis -->
+  <div id="searchFormPanel">
+    <div class="card">
+      <div class="field-label">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-location"/></svg>
+        موقعیت جغرافیایی ناظر
       </div>
-      <div class="seg-item" id="modeManualCard" onclick="setLocationMode('manual')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>
-        دستی
+      <div class="seg">
+        <div class="seg-item active" id="modeAutoCard" onclick="setLocationMode('auto')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>GPS
+        </div>
+        <div class="seg-item" id="modeManualCard" onclick="setLocationMode('manual')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی
+        </div>
+        <div class="seg-item" id="modeMapCard" onclick="setLocationMode('map')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه
+        </div>
       </div>
-      <div class="seg-item" id="modeMapCard" onclick="setLocationMode('map')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>
-        نقشه
+
+      <div id="autoLocPanel" style="margin-top:14px;">
+        <button type="button" class="btn btn-outline" onclick="getLocation()">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>
+          دریافت خودکار موقعیت
+        </button>
+        <div class="status-msg" id="locStatus"></div>
+        <div class="coord-boxes" id="autoCoordBoxes" style="display:none;">
+          <input type="text" id="autoLat" readonly placeholder="عرض جغرافیایی">
+          <input type="text" id="autoLon" readonly placeholder="طول جغرافیایی">
+        </div>
+      </div>
+
+      <div id="mapLocPanel" style="display:none; margin-top:14px;">
+        <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید تا موقعیت ناظر ثبت شود.</p>
+        <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
+        <div class="coord-boxes" id="mapCoordBoxes" style="display:none;">
+          <input type="text" id="mapLat" readonly placeholder="عرض جغرافیایی">
+          <input type="text" id="mapLon" readonly placeholder="طول جغرافیایی">
+        </div>
+      </div>
+
+      <div id="manualLocPanel" style="display:none; margin-top:14px;">
+        <div class="field-label" style="margin-top:0;">فرمت ورود مختصات</div>
+        <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="seg-item" onclick="setCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
+          <div class="seg-item" onclick="setCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
+          <div class="seg-item" onclick="setCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
+        </div>
+        <div id="dmsInputs" style="display:none; margin-top:14px;">
+          <label class="field-label" style="font-size:12px;">عرض جغرافیایی</label>
+          <div class="dt-grid">
+            <input type="number" id="latD" placeholder="درجه">
+            <input type="number" id="latM" placeholder="دقیقه">
+            <input type="number" id="latS" placeholder="ثانیه">
+          </div>
+          <select id="latDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
+          <label class="field-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی</label>
+          <div class="dt-grid">
+            <input type="number" id="lonD" placeholder="درجه">
+            <input type="number" id="lonM" placeholder="دقیقه">
+            <input type="number" id="lonS" placeholder="ثانیه">
+          </div>
+          <select id="lonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
+        </div>
+        <div id="decInputs" style="display:none; margin-top:14px;">
+          <div class="coord-boxes" style="margin-top:0;">
+            <input type="text" id="decLat" placeholder="مثلا 35.6892">
+            <input type="text" id="decLon" placeholder="مثلا 51.3890">
+          </div>
+        </div>
+        <div id="utmInputs" style="display:none; margin-top:14px;">
+          <div class="coord-boxes" style="margin-top:0;">
+            <input type="number" id="utmZone" placeholder="Zone">
+            <select id="utmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
+          </div>
+          <div class="coord-boxes">
+            <input type="text" id="utmE" placeholder="Easting">
+            <input type="text" id="utmN" placeholder="Northing">
+          </div>
+        </div>
       </div>
     </div>
 
-    <div id="autoLocPanel" style="margin-top:14px;">
-      <button type="button" class="btn btn-outline" onclick="getLocation()">
-        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>
-        دریافت خودکار موقعیت
+    <div class="card">
+      <div class="field-label">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-calendar"/></svg>
+        تاریخ و ساعت مشاهده
+      </div>
+      <div class="dt-grid">
+        <select id="jYear"></select>
+        <select id="jMonth"></select>
+        <select id="jDay"></select>
+      </div>
+      <div class="dt-time">
+        <select id="jHour"></select>
+        <select id="jMinute"></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="field-label">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-compass"/></svg>
+        سمت مشاهده‌ی شیء
+      </div>
+      <select id="directionSelect" onchange="onDirectionSelect(this.value)">
+        <option value="">— جهت را انتخاب کنید —</option>
+        <option value="N">شمال ⬆</option>
+        <option value="NE">شمال‌شرق ↗</option>
+        <option value="E">شرق ➡</option>
+        <option value="SE">جنوب‌شرق ↘</option>
+        <option value="S">جنوب ⬇</option>
+        <option value="SW">جنوب‌غرب ↙</option>
+        <option value="W">غرب ⬅</option>
+        <option value="NW">شمال‌غرب ↖</option>
+      </select>
+
+      <div style="text-align:center; margin: 14px 0 10px; color:var(--text-mute); font-size:11.5px;">— یا —</div>
+
+      <button type="button" class="btn btn-outline" onclick="startCompassFlow()">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-compass"/></svg>
+        کالیبراسیون و استفاده از قطب‌نما
       </button>
-      <div class="status-msg" id="locStatus"></div>
-      <div class="coord-boxes" id="autoCoordBoxes" style="display:none;">
-        <input type="text" id="autoLat" readonly placeholder="عرض جغرافیایی">
-        <input type="text" id="autoLon" readonly placeholder="طول جغرافیایی">
+      <div class="status-msg" id="compassStatus"></div>
+      <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
+
+      <div class="field-label" style="margin-top:18px;">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg>
+        جهت حرکت شیء
       </div>
+      <select id="moveDir">
+        <option>از شمال به جنوب</option>
+        <option>از جنوب به شمال</option>
+        <option>از شرق به غرب</option>
+        <option>از غرب به شرق</option>
+        <option>از شمال‌شرق به جنوب‌غرب</option>
+        <option>از شمال‌غرب به جنوب‌شرق</option>
+        <option>از جنوب‌شرق به شمال‌غرب</option>
+        <option>از جنوب‌غرب به شمال‌شرق</option>
+      </select>
     </div>
 
-    <div id="mapLocPanel" style="display:none; margin-top:14px;">
-      <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید تا موقعیت ناظر ثبت شود.</p>
-      <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
-      <div class="coord-boxes" id="mapCoordBoxes" style="display:none;">
-        <input type="text" id="mapLat" readonly placeholder="عرض جغرافیایی">
-        <input type="text" id="mapLon" readonly placeholder="طول جغرافیایی">
-      </div>
+    <div class="card">
+      <div class="error-box" id="errorBox"></div>
+      <button type="button" class="btn btn-primary" onclick="validateAndRun()" style="margin-bottom:10px;">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-scan"/></svg>
+        شروع تحلیل و شناسایی
+      </button>
+      <button type="button" class="btn btn-outline" onclick="openHistory()">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-history"/></svg>
+        تاریخچه‌ی مشاهدات
+      </button>
     </div>
+  </div><!-- /searchFormPanel -->
 
-    <div id="manualLocPanel" style="display:none; margin-top:14px;">
-      <div class="field-label" style="margin-top:0;">فرمت ورود مختصات</div>
-      <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="seg-item" onclick="setCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
-        <div class="seg-item" onclick="setCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
-        <div class="seg-item" onclick="setCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
-      </div>
-      <div id="dmsInputs" style="display:none; margin-top:14px;">
-        <label class="field-label" style="font-size:12px;">عرض جغرافیایی</label>
-        <div class="dt-grid">
-          <input type="number" id="latD" placeholder="درجه">
-          <input type="number" id="latM" placeholder="دقیقه">
-          <input type="number" id="latS" placeholder="ثانیه">
-        </div>
-        <select id="latDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
-        <label class="field-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی</label>
-        <div class="dt-grid">
-          <input type="number" id="lonD" placeholder="درجه">
-          <input type="number" id="lonM" placeholder="دقیقه">
-          <input type="number" id="lonS" placeholder="ثانیه">
-        </div>
-        <select id="lonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
-      </div>
-      <div id="decInputs" style="display:none; margin-top:14px;">
-        <div class="coord-boxes" style="margin-top:0;">
-          <input type="text" id="decLat" placeholder="مثلا 35.6892">
-          <input type="text" id="decLon" placeholder="مثلا 51.3890">
-        </div>
-      </div>
-      <div id="utmInputs" style="display:none; margin-top:14px;">
-        <div class="coord-boxes" style="margin-top:0;">
-          <input type="number" id="utmZone" placeholder="Zone">
-          <select id="utmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select>
-        </div>
-        <div class="coord-boxes">
-          <input type="text" id="utmE" placeholder="Easting">
-          <input type="text" id="utmN" placeholder="Northing">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="field-label">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-calendar"/></svg>
-      تاریخ و ساعت مشاهده
-    </div>
-    <div class="dt-grid">
-      <select id="jYear"></select>
-      <select id="jMonth"></select>
-      <select id="jDay"></select>
-    </div>
-    <div class="dt-time">
-      <select id="jHour"></select>
-      <select id="jMinute"></select>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="field-label">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-compass"/></svg>
-      سمت مشاهده‌ی شیء
-    </div>
-    <select id="directionSelect" onchange="onDirectionSelect(this.value)">
-      <option value="">— جهت را انتخاب کنید —</option>
-      <option value="N">شمال ⬆</option>
-      <option value="NE">شمال‌شرق ↗</option>
-      <option value="E">شرق ➡</option>
-      <option value="SE">جنوب‌شرق ↘</option>
-      <option value="S">جنوب ⬇</option>
-      <option value="SW">جنوب‌غرب ↙</option>
-      <option value="W">غرب ⬅</option>
-      <option value="NW">شمال‌غرب ↖</option>
-    </select>
-
-    <div style="text-align:center; margin: 14px 0 10px; color:var(--text-mute); font-size:11.5px;">— یا —</div>
-
-    <button type="button" class="btn btn-outline" onclick="startCompassFlow()">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-compass"/></svg>
-      کالیبراسیون و استفاده از قطب‌نما
-    </button>
-    <div class="status-msg" id="compassStatus"></div>
-    <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
-
-    <div class="field-label" style="margin-top:18px;">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg>
-      جهت حرکت شیء
-    </div>
-    <select id="moveDir">
-      <option>از شمال به جنوب</option>
-      <option>از جنوب به شمال</option>
-      <option>از شرق به غرب</option>
-      <option>از غرب به شرق</option>
-      <option>از شمال‌شرق به جنوب‌غرب</option>
-      <option>از شمال‌غرب به جنوب‌شرق</option>
-      <option>از جنوب‌شرق به شمال‌غرب</option>
-      <option>از جنوب‌غرب به شمال‌شرق</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <div class="error-box" id="errorBox"></div>
-    <button type="button" class="btn btn-primary" onclick="validateAndRun()" style="margin-bottom:10px;">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-scan"/></svg>
-      شروع تحلیل و شناسایی
-    </button>
-    <button type="button" class="btn btn-outline" onclick="openHistory()">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-history"/></svg>
-      تاریخچه‌ی مشاهدات
-    </button>
-  </div>
-
-  <!-- Results box: hidden until analysis is run -->
+  <!-- RESULTS PANEL -->
   <div id="resultBox" style="display:none;">
     <div class="result-hero" id="resultHero">
       <div class="hero-icon"><svg class="icon-svg" viewBox="0 0 24 24"><use id="resultHeroIcon" href="#i-scan"/></svg></div>
@@ -1263,8 +1180,8 @@ body, html { overflow-x: hidden; }
     </details>
 
     <button type="button" class="btn btn-outline" onclick="resetSearch()" style="margin-top:14px;">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg>
-      ثبت مشاهده‌ی جدید
+      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>
+      بررسی مجدد و ثبت مشاهده‌ی جدید
     </button>
   </div>
 </div>
@@ -1286,86 +1203,89 @@ body, html { overflow-x: hidden; }
     </div>
   </div>
 
-  <div class="card">
-    <div class="field-label">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-location"/></svg>
-      موقعیت رصد
-    </div>
-    <div class="seg">
-      <div class="seg-item active" id="predModeAutoCard" onclick="setPredLocationMode('auto')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>GPS
+  <!-- FORM PANEL -->
+  <div id="predictFormPanel">
+    <div class="card">
+      <div class="field-label">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-location"/></svg>
+        موقعیت رصد
       </div>
-      <div class="seg-item" id="predModeManualCard" onclick="setPredLocationMode('manual')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی
+      <div class="seg">
+        <div class="seg-item active" id="predModeAutoCard" onclick="setPredLocationMode('auto')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-target"/></svg>GPS
+        </div>
+        <div class="seg-item" id="predModeManualCard" onclick="setPredLocationMode('manual')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی
+        </div>
+        <div class="seg-item" id="predModeMapCard" onclick="setPredLocationMode('map')">
+          <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه
+        </div>
       </div>
-      <div class="seg-item" id="predModeMapCard" onclick="setPredLocationMode('map')">
-        <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه
+
+      <div id="predAutoLocPanel" style="margin-top:14px;">
+        <button type="button" class="btn btn-outline" onclick="getPredLocation()">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>
+          دریافت موقعیت
+        </button>
+        <div class="status-msg" id="predLocStatus"></div>
+        <div class="coord-boxes" id="predAutoCoordBoxes" style="display:none;">
+          <input type="text" id="predAutoLat" readonly placeholder="عرض">
+          <input type="text" id="predAutoLon" readonly placeholder="طول">
+        </div>
+      </div>
+
+      <div id="predMapLocPanel" style="display:none; margin-top:14px;">
+        <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
+        <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
+        <div class="coord-boxes" id="predMapCoordBoxes" style="display:none;">
+          <input type="text" id="predMapLat" readonly placeholder="عرض">
+          <input type="text" id="predMapLon" readonly placeholder="طول">
+        </div>
+      </div>
+
+      <div id="predManualLocPanel" style="display:none; margin-top:14px;">
+        <div class="field-label" style="margin-top:0;">فرمت مختصات</div>
+        <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="seg-item" onclick="setPredCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
+          <div class="seg-item" onclick="setPredCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
+          <div class="seg-item" onclick="setPredCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
+        </div>
+        <div id="predDmsInputs" style="display:none; margin-top:14px;">
+          <div class="dt-grid"><input type="number" id="predLatD" placeholder="درجه"><input type="number" id="predLatM" placeholder="دقیقه"><input type="number" id="predLatS" placeholder="ثانیه"></div>
+          <select id="predLatDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
+          <div class="dt-grid" style="margin-top:8px;"><input type="number" id="predLonD" placeholder="درجه"><input type="number" id="predLonM" placeholder="دقیقه"><input type="number" id="predLonS" placeholder="ثانیه"></div>
+          <select id="predLonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
+        </div>
+        <div id="predDecInputs" style="display:none; margin-top:14px;">
+          <div class="coord-boxes" style="margin-top:0;"><input type="text" id="predDecLat" placeholder="عرض"><input type="text" id="predDecLon" placeholder="طول"></div>
+        </div>
+        <div id="predUtmInputs" style="display:none; margin-top:14px;">
+          <div class="coord-boxes" style="margin-top:0;"><input type="number" id="predUtmZone" placeholder="Zone"><select id="predUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select></div>
+          <div class="coord-boxes"><input type="text" id="predUtmE" placeholder="E"><input type="text" id="predUtmN" placeholder="N"></div>
+        </div>
       </div>
     </div>
 
-    <div id="predAutoLocPanel" style="margin-top:14px;">
-      <button type="button" class="btn btn-outline" onclick="getPredLocation()">
-        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>
-        دریافت موقعیت
+    <div class="card">
+      <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان شروع بازه‌ی پیش‌بینی</div>
+      <div class="dt-grid"><select id="predStartYear"></select><select id="predStartMonth"></select><select id="predStartDay"></select></div>
+      <div class="dt-time"><select id="predStartHour"></select><select id="predStartMinute"></select></div>
+    </div>
+
+    <div class="card">
+      <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان پایان بازه‌ی پیش‌بینی</div>
+      <div class="dt-grid"><select id="predEndYear"></select><select id="predEndMonth"></select><select id="predEndDay"></select></div>
+      <div class="dt-time"><select id="predEndHour"></select><select id="predEndMinute"></select></div>
+    </div>
+
+    <div class="card">
+      <div class="error-box" id="predErrorBox"></div>
+      <button type="button" class="btn btn-violet" onclick="runPrediction()">
+        <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>
+        اجرای پیش‌بینی
       </button>
-      <div class="status-msg" id="predLocStatus"></div>
-      <div class="coord-boxes" id="predAutoCoordBoxes" style="display:none;">
-        <input type="text" id="predAutoLat" readonly placeholder="عرض">
-        <input type="text" id="predAutoLon" readonly placeholder="طول">
-      </div>
     </div>
-
-    <div id="predMapLocPanel" style="display:none; margin-top:14px;">
-      <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
-      <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
-      <div class="coord-boxes" id="predMapCoordBoxes" style="display:none;">
-        <input type="text" id="predMapLat" readonly placeholder="عرض">
-        <input type="text" id="predMapLon" readonly placeholder="طول">
-      </div>
-    </div>
-
-    <div id="predManualLocPanel" style="display:none; margin-top:14px;">
-      <div class="field-label" style="margin-top:0;">فرمت مختصات</div>
-      <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
-        <div class="seg-item" onclick="setPredCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
-        <div class="seg-item" onclick="setPredCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
-        <div class="seg-item" onclick="setPredCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
-      </div>
-      <div id="predDmsInputs" style="display:none; margin-top:14px;">
-        <div class="dt-grid"><input type="number" id="predLatD" placeholder="درجه"><input type="number" id="predLatM" placeholder="دقیقه"><input type="number" id="predLatS" placeholder="ثانیه"></div>
-        <select id="predLatDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
-        <div class="dt-grid" style="margin-top:8px;"><input type="number" id="predLonD" placeholder="درجه"><input type="number" id="predLonM" placeholder="دقیقه"><input type="number" id="predLonS" placeholder="ثانیه"></div>
-        <select id="predLonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
-      </div>
-      <div id="predDecInputs" style="display:none; margin-top:14px;">
-        <div class="coord-boxes" style="margin-top:0;"><input type="text" id="predDecLat" placeholder="عرض"><input type="text" id="predDecLon" placeholder="طول"></div>
-      </div>
-      <div id="predUtmInputs" style="display:none; margin-top:14px;">
-        <div class="coord-boxes" style="margin-top:0;"><input type="number" id="predUtmZone" placeholder="Zone"><select id="predUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select></div>
-        <div class="coord-boxes"><input type="text" id="predUtmE" placeholder="E"><input type="text" id="predUtmN" placeholder="N"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان شروع بازه‌ی پیش‌بینی</div>
-    <div class="dt-grid"><select id="predStartYear"></select><select id="predStartMonth"></select><select id="predStartDay"></select></div>
-    <div class="dt-time"><select id="predStartHour"></select><select id="predStartMinute"></select></div>
-  </div>
-
-  <div class="card">
-    <div class="field-label"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-clock-predict"/></svg>زمان پایان بازه‌ی پیش‌بینی</div>
-    <div class="dt-grid"><select id="predEndYear"></select><select id="predEndMonth"></select><select id="predEndDay"></select></div>
-    <div class="dt-time"><select id="predEndHour"></select><select id="predEndMinute"></select></div>
-  </div>
-
-  <div class="card">
-    <div class="error-box" id="predErrorBox"></div>
-    <button type="button" class="btn btn-violet" onclick="runPrediction()">
-      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>
-      اجرای پیش‌بینی
-    </button>
-  </div>
+  </div><!-- /predictFormPanel -->
 
   <div id="predProgress" style="display:none; padding:24px; text-align:center; background:var(--surface-2); border-radius:var(--radius); border:1px solid var(--border);">
     <p style="color:#a8c8ff; font-size:13.5px; margin-bottom:14px;" id="predProgressText">در حال پردازش...</p>
@@ -1381,7 +1301,7 @@ body, html { overflow-x: hidden; }
 <!-- LIVE SKY PAGE -->
 <div id="pageLive" class="page-section">
   <div class="page-header">
-    <div class="back-btn" onclick="closeLiveSky()">
+    <div class="back-btn" onclick="navigateTo('pageHome')">
       <svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>
     </div>
     <div class="page-title-wrap">
@@ -1466,19 +1386,22 @@ body, html { overflow-x: hidden; }
       <div class="legend-item ac"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-plane"/></svg>هواپیما</div>
       <div class="legend-item me"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-eye"/></svg>موقعیت شما</div>
     </div>
+
+    <button type="button" class="btn btn-outline" onclick="resetLive()" style="margin-top:14px;">
+      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>
+      مشاهده‌ی منطقه‌ی دیگر
+    </button>
   </div>
 </div>
 
 </div><!-- /app-shell -->
 
-<!-- LOADING -->
 <div id="loadingBox">
   <div class="radar"><div class="radar-sweep"></div></div>
   <p class="loading-title" id="loadingMainText">در حال پردازش داده‌های مداری...</p>
   <p class="loading-sub" id="loadingProgress"></p>
 </div>
 
-<!-- CALIBRATION -->
 <div id="calibrationPage">
   <div class="calib-wrap">
     <div class="page-header">
@@ -1586,7 +1509,6 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- ABOUT MODAL -->
 <div class="modal-overlay" id="aboutModal">
   <div class="modal-box" style="max-width:560px;">
     <button class="modal-close" onclick="closeModal('aboutModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
@@ -1607,12 +1529,10 @@ body, html { overflow-x: hidden; }
       <p><strong>استقلال:</strong> بدون وابستگی به زیرساخت‌های ابری متمرکز، تمام قابلیت‌ها روی مرورگر کاربر اجرا می‌شود.<br>
       <strong>دقت:</strong> استفاده‌ی انحصاری از داده‌های مداری رسمی و استانداردهای نجوم محاسباتی.<br>
       <strong>حریم خصوصی:</strong> هیچ داده‌ای از کاربر به سرورهای شخص ثالث ارسال نمی‌گردد.</p>
-      <p style="color:var(--text-mute); font-size:11.5px; text-align:center; margin-top:20px; padding-top:16px; border-top:1px dashed rgba(120,150,220,0.15);">نسخه ۲.۰ — طراحی و توسعه‌ی مستقل</p>
     </div>
   </div>
 </div>
 
-<!-- GUIDE MODAL (dynamic) -->
 <div class="modal-overlay" id="guideModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('guideModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
@@ -1621,7 +1541,6 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- HISTORY MODAL -->
 <div class="modal-overlay" id="historyModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('historyModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
@@ -1630,7 +1549,6 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- ADMIN LOGIN -->
 <div class="modal-overlay" id="adminLoginModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('adminLoginModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
@@ -1647,7 +1565,6 @@ body, html { overflow-x: hidden; }
   </div>
 </div>
 
-<!-- ADMIN DASHBOARD -->
 <div class="modal-overlay" id="adminDashModal">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('adminDashModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
@@ -1676,14 +1593,52 @@ body, html { overflow-x: hidden; }
 
 <script>
 /* ========================================================================
-   NAVIGATION
+   NAVIGATION + STATE RESET
 ======================================================================== */
 function navigateTo(pageId){
-  if(pageId !== 'pageLive'){ try{ stopLive(); }catch(e){} }
+  // Stop live if leaving
+  if(pageId !== 'pageLive'){
+    try{ stopLive(); }catch(e){}
+  }
+  // Reset page states before showing
+  resetSearchPageState();
+  resetPredictPageState();
+  resetLivePageState();
+
   document.querySelectorAll('.page-section').forEach(function(p){ p.classList.remove('active'); });
   var target = document.getElementById(pageId);
   if(target){ target.classList.add('active'); }
   window.scrollTo(0,0);
+}
+
+function resetSearchPageState(){
+  var form = document.getElementById('searchFormPanel');
+  var res = document.getElementById('resultBox');
+  if(form) form.style.display = 'block';
+  if(res) res.style.display = 'none';
+  // clean map
+  var mapEl = document.getElementById('map');
+  if(mapEl) mapEl.innerHTML = '';
+  if(mapRef){ try{ mapRef.remove(); }catch(e){} mapRef = null; }
+  if(nearbyActive) { nearbyActive = false; }
+}
+
+function resetPredictPageState(){
+  var form = document.getElementById('predictFormPanel');
+  var res = document.getElementById('predResults');
+  var prog = document.getElementById('predProgress');
+  if(form) form.style.display = 'block';
+  if(res) res.innerHTML = '';
+  if(prog) prog.style.display = 'none';
+  if(predResultMap){ try{ predResultMap.remove(); }catch(e){} predResultMap = null; }
+}
+
+function resetLivePageState(){
+  var setup = document.getElementById('liveSetupPanel');
+  var view = document.getElementById('liveViewPanel');
+  if(setup) setup.style.display = 'block';
+  if(view) view.style.display = 'none';
+  if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj = null; }
 }
 
 /* ========================================================================
@@ -1736,9 +1691,9 @@ var GUIDES = {
       <p>این ماژول به‌صورت لحظه‌ای موقعیت تمامی ماهواره‌های فعال و پروازهای هوایی قابل رؤیت از موقعیت شما را با نرخ بروزرسانی یک‌ثانیه‌ای نمایش می‌دهد.</p>
       <h4>پارامترهای فیلتر</h4>
       <ul>
-        <li><strong>حداقل ارتفاع از افق:</strong> ۱۰ درجه (مقدار پیش‌فرض استاندارد)</li>
+        <li><strong>حداقل ارتفاع از افق:</strong> ۱۰ درجه</li>
         <li><strong>حداکثر فاصله‌ی هواپیماها:</strong> ۱۵۰ کیلومتر</li>
-        <li><strong>حداکثر قدر ظاهری ماهواره:</strong> ۶.۵ (محدوده‌ی دید چشم غیرمسلح)</li>
+        <li><strong>حداکثر قدر ظاهری ماهواره:</strong> ۶.۵</li>
       </ul>
       <h4>نوار زمان</h4>
       <p>با استفاده از نوار زمان می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با محاسبات مداری دقیق، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.</p>
@@ -1748,7 +1703,6 @@ var GUIDES = {
         <li><strong>هواپیماها:</strong> با نماد هواپیما</li>
         <li><strong>موقعیت شما:</strong> در مرکز نقشه</li>
       </ul>
-      <p>برای مشاهده‌ی جزئیات هر شیء، روی نشانگر آن ضربه بزنید.</p>
     `
   }
 };
@@ -1760,7 +1714,6 @@ function openGuide(key){
   document.getElementById('guideBody').innerHTML = g.body;
   document.getElementById('guideModal').classList.add('show');
 }
-
 function openAbout(){ document.getElementById('aboutModal').classList.add('show'); }
 function openHistory(){ renderHistoryList(); document.getElementById('historyModal').classList.add('show'); }
 function openAdminLogin(){
@@ -1772,7 +1725,7 @@ function openAdminLogin(){
 function closeModal(id){ document.getElementById(id).classList.remove('show'); }
 
 /* ========================================================================
-   ERROR DISPLAY HELPERS
+   ERROR HELPERS
 ======================================================================== */
 function showErrorBox(boxId, title, items){
   var box = document.getElementById(boxId);
@@ -1906,7 +1859,6 @@ function azimuthToCompass(az){
   if(az < 292.5) return 'غرب';
   return 'شمال‌غرب';
 }
-
 function updateSelectedDirDisplay(){
   var box = document.getElementById('selectedDirDisplay');
   if(selectedDirectionKey && DIRECTION_MAP[selectedDirectionKey]){
@@ -2004,17 +1956,15 @@ function fillPredDatePickers(){
 }
 
 /* ========================================================================
-   MAP TILE HELPER — reliable tile source
+   MAP TILE HELPER
 ======================================================================== */
 function addTileLayer(map){
   var tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-  var layer = L.tileLayer(tileUrl, {
+  return L.tileLayer(tileUrl, {
     attribution: '© OpenStreetMap contributors',
-    maxZoom: 19,
-    crossOrigin: true,
+    maxZoom: 19, crossOrigin: true,
     errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
   }).addTo(map);
-  return layer;
 }
 
 /* ========================================================================
@@ -2518,7 +2468,7 @@ function guessSatInfo(name){
 }
 function estimateSatMag(rangeKm, name){
   var n=(name||'').toUpperCase();
-  var stdMag=4.0; // Default: faint
+  var stdMag=4.0;
   if(n.indexOf('ISS')>-1 || n.indexOf('ZARYA')>-1) stdMag=-2.0;
   else if(n.indexOf('CSS')>-1 || n.indexOf('TIANGONG')>-1) stdMag=-1.0;
   else if(n.indexOf('HST')>-1 || n.indexOf('HUBBLE')>-1) stdMag=1.0;
@@ -2544,7 +2494,6 @@ function validateAndRun(){
   var errors = [];
   var focusEl = null;
 
-  // Validate location
   var lat, lon;
   if(currentLocMode==='auto'){
     lat=parseFloat(document.getElementById('autoLat').value);
@@ -2574,27 +2523,26 @@ function validateAndRun(){
     }
   }
   if(!isNaN(lat) && !isNaN(lon) && (lat<-90||lat>90||lon<-180||lon>180)){
-    errors.push('مقدار مختصات خارج از محدوده‌ی مجاز جغرافیایی است. طول جغرافیایی بین ۱۸۰- تا ۱۸۰+ و عرض بین ۹۰- تا ۹۰+ باشد.');
+    errors.push('مقدار مختصات خارج از محدوده‌ی مجاز جغرافیایی است.');
   }
 
-  // Validate time
   var jy=parseInt(document.getElementById('jYear').value);
   var jm=parseInt(document.getElementById('jMonth').value);
   var jd=parseInt(document.getElementById('jDay').value);
   var jh=parseInt(document.getElementById('jHour').value);
   var jmin=parseInt(document.getElementById('jMinute').value);
+  var obsDate;
   if(isNaN(jy)||isNaN(jm)||isNaN(jd)||isNaN(jh)||isNaN(jmin)){
-    errors.push('تاریخ یا ساعت مشاهده نامعتبر است. لطفاً هر دو مقدار را انتخاب کنید.');
+    errors.push('تاریخ یا ساعت مشاهده نامعتبر است.');
   } else {
-    var obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
+    obsDate=jalaliToUtcDate(jy,jm,jd,jh,jmin);
     if(obsDate.getTime() > Date.now()+60000){
       errors.push('زمان انتخاب‌شده در آینده قرار دارد. امکان تحلیل مشاهده برای زمان آینده وجود ندارد.');
     }
   }
 
-  // Validate direction
   if(selectedAzimuth === null){
-    errors.push('سمت مشاهده‌ی شیء انتخاب نشده است. لطفاً یکی از جهات جغرافیایی را از لیست انتخاب کنید یا از قطب‌نما استفاده نمایید.');
+    errors.push('سمت مشاهده‌ی شیء انتخاب نشده است. لطفاً یکی از جهات جغرافیایی را انتخاب کنید یا از قطب‌نما استفاده نمایید.');
     focusEl = document.getElementById('directionSelect');
   }
 
@@ -2606,8 +2554,13 @@ function validateAndRun(){
 
   var azimuth = selectedAzimuth;
   var moveDir=document.getElementById('moveDir').value;
-  document.getElementById('resultBox').style.display='none';
+
+  // Hide form, show results ONLY
+  document.getElementById('searchFormPanel').style.display='none';
+  document.getElementById('resultBox').style.display='block';
   document.getElementById('loadingBox').style.display='flex';
+  window.scrollTo(0,0);
+
   runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin);
 }
 
@@ -2757,6 +2710,8 @@ async function runAnalysis(lat, lon, obsDate, azimuth, moveDir, jy,jm,jd,jh,jmin
   }catch(fatalErr){
     document.getElementById('loadingBox').style.display='none';
     showErrorBox('errorBox', 'خطای غیرمنتظره', [fatalErr.message]);
+    document.getElementById('searchFormPanel').style.display='block';
+    document.getElementById('resultBox').style.display='none';
   }
 }
 
@@ -2771,8 +2726,7 @@ function endpointFromHeading(objLat, objLon, heading, kmEach){
   return [projectPoint(objLat, objLon, heading, kmEach), projectPoint(objLat, objLon, (heading+180)%360, kmEach)];
 }
 function resetSearch(){
-  document.getElementById('resultBox').style.display='none';
-  document.getElementById('map').innerHTML='';
+  resetSearchPageState();
   window.scrollTo(0,0);
 }
 function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResults, jy,jm,jd,jh,jmin, errMsg, diag, allSatCandidates, allAcCandidates){
@@ -2852,7 +2806,6 @@ function finishAndShow(lat, lon, obsDate, azimuth, moveDir, satResults, acResult
       '<div class="diag-row"><span>هواپیماهای یافت‌شده</span><span>'+diag.acNearby+'</span></div>';
   }
 
-  // Init map
   setTimeout(function(){
     if(mapRef){ try{ mapRef.remove(); }catch(e){} mapRef=null; }
     mapRef=L.map('map').setView([lat, lon], 8);
@@ -3058,7 +3011,6 @@ function getPredLocationCoords(){
   return null;
 }
 
-/* --- Prediction algorithm with proper visibility filter --- */
 function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minElev, observerGd){
   var passes = [];
   var step = 60000;
@@ -3076,7 +3028,6 @@ function findPassesForSatellite(satrec, name, lat, lon, startTime, endTime, minE
       elev = toDeg(look.elevation);
       az = toDeg(look.azimuth);
       rangeKm = look.rangeSat;
-      // Track even daytime passes, but limit by magnitude so faint sats don't bloat
       if(elev > minElev){
         var m = estimateSatMag(rangeKm, name);
         if(m <= 4.0) visible = true;
@@ -3137,7 +3088,7 @@ async function runPrediction(){
       errors.push('زمان پایان باید بعد از زمان شروع باشد. لطفاً بازه‌ی زمانی را اصلاح کنید.');
     }
     if(startDate.getTime() < Date.now() - 3600000){
-      errors.push('زمان شروع نمی‌تواند بیش از یک ساعت در گذشته باشد. لطفاً زمان مناسب‌تری انتخاب کنید.');
+      errors.push('زمان شروع نمی‌تواند بیش از یک ساعت در گذشته باشد.');
     }
   }
 
@@ -3147,6 +3098,9 @@ async function runPrediction(){
   }
 
   var lat = coords[0], lon = coords[1];
+
+  // Hide form, show progress
+  document.getElementById('predictFormPanel').style.display='none';
   var progressBox = document.getElementById('predProgress');
   var progressText = document.getElementById('predProgressText');
   var progressFill = document.getElementById('predProgressFill');
@@ -3155,6 +3109,7 @@ async function runPrediction(){
   progressText.innerText = 'در حال بارگذاری پایگاه داده‌ی مداری...';
   progressFill.style.width = '0%';
   progressDetail.innerText = '';
+  window.scrollTo(0,0);
 
   try{
     var tleText = await loadTleData();
@@ -3180,13 +3135,10 @@ async function runPrediction(){
         var alt = sma - 6371;
         if(alt > 2000 || alt < 150){ processed++; continue; }
         var un = name.toUpperCase();
-        // Skip debris and rocket bodies
         if(un.indexOf('DEB') > -1 || un.indexOf('R/B') > -1) { processed++; continue; }
-        // Skip very faint large constellations (they are numerous and rarely visible)
         if(un.indexOf('STARLINK') > -1) { processed++; continue; }
         if(un.indexOf('ONEWEB') > -1) { processed++; continue; }
         if(un.indexOf('GLOBALSTAR') > -1) { processed++; continue; }
-        // Skip navigation constellations (faint)
         if(un.indexOf('NAVSTAR') > -1 || un.indexOf('GLONASS') > -1) { processed++; continue; }
         if(un.indexOf('GALILEO') > -1 || un.indexOf('BEIDOU') > -1) { processed++; continue; }
         var satPasses = findPassesForSatellite(satrec, name, lat, lon, startMs, endMs, PREDICTION_MIN_ELEV, observerGd);
@@ -3210,6 +3162,7 @@ async function runPrediction(){
     }, 500);
   }catch(e){
     progressBox.style.display='none';
+    document.getElementById('predictFormPanel').style.display='block';
     showErrorBox('predErrorBox', 'خطا در پیش‌بینی', [e.message]);
   }
 }
@@ -3230,8 +3183,11 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
     '<div>🕐 بازه: <b>' + formatJalaliDateTime(new Date(startDate)) + '</b> تا <b>' + formatJalaliDateTime(new Date(endDate)) + '</b></div>' +
     '<div>🛰️ تعداد عبور قابل مشاهده: <b>' + passes.length + '</b></div>' +
     '</div>';
-  var downloadHtml = '<button type="button" class="btn btn-success" onclick="downloadPredictionCSV()" style="margin-bottom:14px;">' +
+  var downloadHtml = '<button type="button" class="btn btn-success" onclick="downloadPredictionCSV()" style="margin-bottom:10px;">' +
     '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg> دانلود خروجی (Excel/CSV)' +
+    '</button>';
+  var resetHtml = '<button type="button" class="btn btn-outline" onclick="resetPrediction()" style="margin-bottom:14px;">' +
+    '<svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> بررسی مجدد و انتخاب بازه‌ی جدید' +
     '</button>';
   var mapHtml = '<div id="predMap" class="map-box"></div>';
   var cardsHtml = '<div class="pred-list">';
@@ -3254,7 +3210,7 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
     '</div>';
   });
   cardsHtml += '</div>';
-  container.innerHTML = summaryHtml + downloadHtml + mapHtml + cardsHtml;
+  container.innerHTML = summaryHtml + downloadHtml + resetHtml + mapHtml + cardsHtml;
   setTimeout(function(){
     if(document.getElementById('predMap')){
       if(predResultMap){ try{ predResultMap.remove(); }catch(e){} predResultMap = null; }
@@ -3265,6 +3221,11 @@ function renderPredictionResults(passes, lat, lon, startDate, endDate){
       setTimeout(function(){ predResultMap.invalidateSize(); }, 100);
     }
   }, 100);
+}
+
+function resetPrediction(){
+  resetPredictPageState();
+  window.scrollTo(0,0);
 }
 
 function downloadPredictionCSV(){
@@ -3321,16 +3282,19 @@ var LIVE_MIN_ELEV = 10;
 var LIVE_AC_RADIUS_KM = 150;
 var LIVE_MAX_SAT_MAG = 6.5;
 
-function closeLiveSky(){
-  stopLive();
-  navigateTo('pageHome');
-}
 function stopLive(){
   liveActive = false;
   if(liveSatTimer){ clearInterval(liveSatTimer); liveSatTimer=null; }
   if(liveAcTimer){ clearInterval(liveAcTimer); liveAcTimer=null; }
   if(liveMapObj){ try{ liveMapObj.remove(); }catch(e){} liveMapObj=null; }
 }
+
+function resetLive(){
+  stopLive();
+  resetLivePageState();
+  window.scrollTo(0,0);
+}
+
 function setLiveLocationMode(mode){
   liveLocMode=mode;
   document.getElementById('liveModeAutoCard').classList.toggle('active', mode==='auto');
@@ -3478,18 +3442,14 @@ async function startLiveSky(){
 
   liveSatTimer = setInterval(function(){
     if(!liveActive) return;
-    if(liveTimeOffsetMin === 0){
-      recomputeLiveSatellites(0);
-    }
+    if(liveTimeOffsetMin === 0){ recomputeLiveSatellites(0); }
     updateMarkerLayer();
     document.getElementById('liveLastUpdate').innerText = formatTimeHMS(new Date());
   }, 1000);
 
   liveAcTimer = setInterval(function(){
     if(!liveActive) return;
-    if(liveTimeOffsetMin === 0){
-      updateLiveAircraft();
-    }
+    if(liveTimeOffsetMin === 0){ updateLiveAircraft(); }
   }, 10000);
 
   window.scrollTo(0,0);
