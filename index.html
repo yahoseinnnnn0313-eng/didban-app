@@ -9,7 +9,7 @@
 <script src="https://unpkg.com/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="//unpkg.com/globe.gl"></script>
+<script src="https://unpkg.com/globe.gl@2.32.0/dist/globe.gl.min.js"></script>
 <style>
 :root{--bg-0:#05060f;--bg-1:#0a0e1f;--bg-2:#10162e;--surface:rgba(20,26,50,0.55);--surface-2:rgba(30,38,68,0.5);--border:rgba(120,150,220,0.14);--border-hi:rgba(120,200,255,0.35);--text:#e6ecff;--text-dim:#8b94b8;--text-mute:#5a6382;--accent-1:#22d3ee;--accent-2:#6366f1;--accent-3:#a855f7;--accent-4:#ec4899;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--shadow-lg:0 20px 60px rgba(0,0,0,0.5);--radius-sm:10px;--radius:16px;--radius-lg:22px;--radius-xl:28px;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -42,6 +42,7 @@ p{margin:0;}
 .btn-success{background:linear-gradient(135deg,#10b981 0%,#34d399 100%);color:#052e16;box-shadow:0 8px 24px rgba(16,185,129,0.35);}
 .btn-outline{background:rgba(120,160,220,0.08);color:var(--text);border:1px solid var(--border);backdrop-filter:blur(10px);}
 .btn-outline:hover{border-color:var(--border-hi);background:rgba(120,160,220,0.14);}
+.btn-mini{width:auto;padding:8px 14px;font-size:12px;border-radius:10px;gap:6px;}
 .field-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:10px;letter-spacing:0.01em;}
 .field-label .icon-svg{color:var(--accent-1);}
 input[type=text],input[type=number],input[type=password],select,textarea{width:100%;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--text);background:rgba(8,12,28,0.6);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;transition:border-color 0.2s,box-shadow 0.2s;appearance:none;-webkit-appearance:none;}
@@ -159,10 +160,13 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .conf-ring svg{transform:rotate(-90deg);}
 .conf-ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--text);}
 .conf-label{font-size:12px;color:var(--text-mute);}
-.globe-box{width:100%;height:380px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:14px;background:#000;position:relative;}
+.globe-wrap{position:relative;width:100%;height:380px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:14px;background:#000;}
+.globe-box{width:100%;height:100%;position:relative;}
 .globe-box canvas{display:block;outline:none;touch-action:none;}
-.globe-marker{pointer-events:none;}
-.globe-marker svg{display:block;}
+.globe-marker{pointer-events:none!important;}
+.globe-marker svg{display:block;pointer-events:none!important;}
+.globe-actions{position:absolute;top:10px;left:10px;z-index:20;display:flex;flex-direction:column;gap:6px;}
+.globe-actions .btn-mini{background:rgba(5,6,15,0.85);border:1px solid var(--border);color:var(--text);backdrop-filter:blur(8px);}
 .map-legend{display:flex;justify-content:center;gap:16px;padding:12px;margin-top:12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--text-dim);flex-wrap:wrap;}
 .legend-item{display:flex;align-items:center;gap:6px;}
 .legend-item svg{width:18px;height:18px;}
@@ -256,28 +260,18 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .diag-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed rgba(120,150,220,0.1);}
 .diag-row:last-child{border-bottom:none;}
 .diag-row span:last-child{color:var(--text);font-weight:600;}
-.diag-note{font-size:11.5px;color:var(--text-mute);padding:8px 0;line-height:1.8;border-top:1px dashed rgba(120,150,220,0.1);margin-top:8px;}
-.threat-alert{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(220,38,38,0.08));border:2px solid rgba(239,68,68,0.5);border-radius:var(--radius-lg);padding:24px 20px;margin-bottom:16px;text-align:center;animation:threatBoxPulse 2s ease-in-out infinite;}
-@keyframes threatBoxPulse{0%,100%{border-color:rgba(239,68,68,0.5);box-shadow:0 0 20px rgba(239,68,68,0.2);}50%{border-color:rgba(239,68,68,0.9);box-shadow:0 0 40px rgba(239,68,68,0.4);}}
-.threat-alert .threat-icon{font-size:48px;margin-bottom:10px;animation:threatIconShake 1.5s ease-in-out infinite;}
-@keyframes threatIconShake{0%,100%{transform:rotate(0deg);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
-.threat-alert h3{color:#fca5a5;font-size:18px;margin-bottom:12px;font-weight:800;}
-.threat-alert p{color:#fecaca;font-size:13.5px;line-height:1.9;text-align:justify;margin-bottom:10px;}
-.threat-alert .threat-advice{background:rgba(239,68,68,0.15);padding:12px;border-radius:var(--radius-sm);border:1px solid rgba(239,68,68,0.3);color:#fff;font-weight:600;margin-top:12px;}
-.day-warning{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);color:#fde68a;padding:12px 14px;border-radius:var(--radius);font-size:12.5px;line-height:1.8;margin-bottom:14px;}
 body,html{overflow-x:hidden;}
 .page-section{display:none;}
 .page-section.active{display:block;animation:pageFade 0.35s ease;}
 @keyframes pageFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .hidden{display:none !important;}
-@media(max-width:400px){.app-shell{padding:18px 14px 60px;}.app-header h1{font-size:28px;}.card{padding:18px;}.menu-card{padding:16px;gap:12px;}.menu-icon-wrap{width:52px;height:52px;}.menu-icon-wrap .icon-svg{width:28px;height:28px;}.globe-box{height:320px;}}
+@media(max-width:400px){.app-shell{padding:18px 14px 60px;}.app-header h1{font-size:28px;}.card{padding:18px;}.menu-card{padding:16px;gap:12px;}.menu-icon-wrap{width:52px;height:52px;}.menu-icon-wrap .icon-svg{width:28px;height:28px;}.globe-wrap{height:320px;}}
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <!-- Improved satellite icon: solar panels + body + dish -->
     <symbol id="i-satellite" viewBox="0 0 24 24">
       <rect x="1.5" y="9.5" width="7" height="5" rx="0.6" fill="currentColor" opacity="0.55" stroke="none"/>
       <rect x="15.5" y="9.5" width="7" height="5" rx="0.6" fill="currentColor" opacity="0.55" stroke="none"/>
@@ -294,11 +288,9 @@ body,html{overflow-x:hidden;}
       <circle cx="12" cy="7" r="0.55" fill="#05060f" stroke="none"/>
       <line x1="12" y1="9" x2="12" y2="9.7" stroke="currentColor" stroke-width="0.6"/>
     </symbol>
-    <!-- Improved plane icon -->
     <symbol id="i-plane" viewBox="0 0 24 24">
       <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" fill="currentColor" stroke="none"/>
     </symbol>
-    <!-- Observer: eye of the observer (target) -->
     <symbol id="i-observer" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" fill="none" opacity="0.6"/>
       <circle cx="12" cy="12" r="4.5" fill="currentColor" opacity="0.85" stroke="none"/>
@@ -464,10 +456,14 @@ body,html{overflow-x:hidden;}
       <div class="info-line"><span>زمان مشاهده</span><span id="infoTime"></span></div>
       <div class="info-line"><span>سمت / حرکت</span><span id="infoAz"></span></div>
     </div>
-    <div id="dayWarning" class="day-warning" style="display:none;"></div>
     <div id="objectsContainer"></div>
     <div id="acTimeWarning" class="diag-box" style="display:none;"></div>
-    <div id="globeContainer" class="globe-box"></div>
+    <div class="globe-wrap">
+      <div class="globe-actions">
+        <button type="button" class="btn btn-mini" onclick="resetGlobeView()">🎯 بازگشت به موقعیت من</button>
+      </div>
+      <div id="globeContainer" class="globe-box"></div>
+    </div>
     <div class="map-legend">
       <div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div>
       <div class="legend-item ac"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg>هواپیما</div>
@@ -476,12 +472,6 @@ body,html{overflow-x:hidden;}
     <details class="diag-box">
       <summary><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-info"/></svg>جزئیات فنی فرایند تحلیل</summary>
       <div id="diagContent" style="margin-top:12px;"></div>
-      <div class="diag-note">
-        <b>راهنمای اصطلاحات:</b><br>
-        • <b>گام اولیه:</b> ابتدا با دقت پایین (هر ۲۰ ثانیه) نقاط مشکوک پیدا می‌شود<br>
-        • <b>گام نهایی:</b> سپس با دقت بالا (هر ۲ ثانیه) کاندیدها پالایش می‌شوند<br>
-        • <b>کاندید اولیه:</b> ماهواره‌هایی که در مرحله‌ی اول احتمال تطابق داشته‌اند
-      </div>
     </details>
     <button type="button" class="btn btn-outline" onclick="resetSearch()" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>بررسی مجدد و ثبت مشاهده‌ی جدید</button>
   </div>
@@ -610,7 +600,12 @@ body,html{overflow-x:hidden;}
         <span>۰</span><span>۵</span><span>۱۰</span><span>۱۵</span><span>۲۰</span><span>۲۵</span><span>۳۰</span><span>۳۵</span><span>۴۰</span><span>۴۵</span><span>۵۰</span><span>۵۵</span><span>۶۰</span>
       </div>
     </div>
-    <div id="liveGlobeContainer" class="globe-box" style="height:440px;"></div>
+    <div class="globe-wrap" style="height:440px;">
+      <div class="globe-actions">
+        <button type="button" class="btn btn-mini" onclick="resetLiveGlobeView()">🎯 بازگشت به موقعیت من</button>
+      </div>
+      <div id="liveGlobeContainer" class="globe-box"></div>
+    </div>
     <div class="map-legend">
       <div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div>
       <div class="legend-item ac"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg>هواپیما</div>
@@ -765,64 +760,87 @@ function toBase64Utf8(str){var bytes=new TextEncoder().encode(str);var bin='';fo
 /* ============ ICON STRINGS ============ */
 var ICON_SAT_SVG='<svg viewBox="0 0 24 24" style="width:22px;height:22px;filter:drop-shadow(0 0 5px #22d3ee);"><rect x="1.5" y="9.5" width="7" height="5" rx="0.6" fill="#0891b2" stroke="#22d3ee" stroke-width="0.4"/><rect x="15.5" y="9.5" width="7" height="5" rx="0.6" fill="#0891b2" stroke="#22d3ee" stroke-width="0.4"/><line x1="3" y1="9.5" x2="3" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="5" y1="9.5" x2="5" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="7" y1="9.5" x2="7" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="17" y1="9.5" x2="17" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="19" y1="9.5" x2="19" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="21" y1="9.5" x2="21" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><rect x="9.5" y="9.7" width="5" height="4.6" rx="0.9" fill="#22d3ee" stroke="#67e8f9" stroke-width="0.3"/><circle cx="12" cy="7" r="2.1" fill="#67e8f9" stroke="#0a0e1f" stroke-width="0.3"/><circle cx="12" cy="7" r="0.55" fill="#0a0e1f"/></svg>';
 var ICON_PLANE_SVG='<svg viewBox="0 0 24 24" style="width:22px;height:22px;filter:drop-shadow(0 0 5px #10b981);"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" fill="#10b981" stroke="#0a0e1f" stroke-width="0.6" stroke-linejoin="round"/></svg>';
-var ICON_OBSERVER_SVG='<svg viewBox="0 0 24 24" style="width:24px;height:24px;filter:drop-shadow(0 0 7px #a5b4fc);"><circle cx="12" cy="12" r="9" stroke="#a5b4fc" stroke-width="1.6" fill="none" opacity="0.6"/><circle cx="12" cy="12" r="4.5" fill="#a5b4fc"/><circle cx="12" cy="12" r="1.7" fill="#fff"/></svg>';
+var ICON_OBSERVER_SVG='<svg viewBox="0 0 24 24" style="width:26px;height:26px;filter:drop-shadow(0 0 8px #a5b4fc);"><circle cx="12" cy="12" r="9" stroke="#a5b4fc" stroke-width="1.6" fill="none" opacity="0.6"/><circle cx="12" cy="12" r="4.5" fill="#a5b4fc"/><circle cx="12" cy="12" r="1.7" fill="#fff"/></svg>';
 
-/* ============ 3D GLOBE ============ */
+/* ============ 3D GLOBE (rewritten for accuracy + performance) ============ */
 var globe3D=null;
-function createGlobe(containerId,lat,lon,altitude,options){
-  options=options||{};
+var globeState={lat:0,lon:0,containerId:null};
+function createGlobe(containerId,lat,lon,altitude){
   var container=document.getElementById(containerId);
   if(!container)return null;
   container.innerHTML='';
+  // اطمینان از عدد بودن
+  lat=Number(lat);lon=Number(lon);
+  if(!isFinite(lat)||!isFinite(lon))return null;
+  globeState.lat=lat;globeState.lon=lon;globeState.containerId=containerId;
   try{
     var world=Globe({rendererConfig:{antialias:false,alpha:true,powerPreference:'high-performance'}})
-      .width(container.clientWidth||400)
-      .height(container.clientHeight||400)
+      .width(container.clientWidth||360)
+      .height(container.clientHeight||380)
       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundImageUrl(null)
       .showAtmosphere(true)
       .atmosphereColor('#22d3ee')
-      .atmosphereAltitude(0.12)
+      .atmosphereAltitude(0.1)
       .htmlElementsData([])
-      .htmlAltitude(0.008)
+      .htmlAltitude(0.006)
       .htmlElement(function(d){
         var el=document.createElement('div');
         el.className='globe-marker';
         el.innerHTML=d.html||'';
-        el.style.pointerEvents='auto';
-        el.style.cursor='pointer';
-        if(d.label){
-          el.onclick=function(){
-            var ex=el._tip;
-            if(ex&&el.contains(ex)){el.removeChild(ex);el._tip=null;return;}
-            var tip=document.createElement('div');
-            tip.style.cssText='position:absolute;background:rgba(5,6,15,0.95);border:1px solid rgba(120,200,255,0.45);border-radius:8px;padding:8px 10px;font-size:11.5px;color:#e6ecff;white-space:nowrap;pointer-events:none;z-index:9999;font-family:Vazirmatn;direction:rtl;top:-40px;left:50%;transform:translateX(-50%);';
-            tip.innerHTML=d.label;
-            el.style.position='relative';
-            el.appendChild(tip);
-            el._tip=tip;
-          };
-        }
+        el.style.pointerEvents='none';
         return el;
-      })
-      (container);
-    world.pointOfView({lat:lat,lng:lon,altitude:altitude||2.5},0);
+      })(container);
     var controls=world.controls();
     controls.autoRotate=false;
     controls.enableZoom=true;
-    controls.enablePan=true;
-    controls.minDistance=110;
+    controls.enablePan=false;
+    controls.minDistance=105;
     controls.maxDistance=800;
-    controls.rotateSpeed=0.6;
-    controls.zoomSpeed=0.9;
+    controls.rotateSpeed=0.55;
+    controls.zoomSpeed=0.85;
+    // مرحله ۱: بلافاصله پس از ساخت
+    try{ world.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0); }catch(e){}
+    // مرحله ۲: پس از پایدار شدن اندازه‌ی کانتینر
+    setTimeout(function(){
+      if(!globe3D)return;
+      try{
+        globe3D.width(container.clientWidth||360);
+        globe3D.height(container.clientHeight||380);
+        globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},800);
+      }catch(e){}
+    },250);
+    // مرحله ۳: پشتیبان نهایی
+    setTimeout(function(){
+      if(!globe3D)return;
+      try{ globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0); }catch(e){}
+    },1500);
     return world;
-  }catch(e){console.warn('Globe 3D failed',e);return null;}
+  }catch(e){console.warn('Globe failed',e);return null;}
 }
 function setGlobeMarkers(world,markers){
   if(!world)return;
-  world.htmlElementsData(markers);
+  world.htmlElementsData(markers||[]);
 }
-function destroyGlobe(){if(globe3D){try{if(globe3D._destructor)globe3D._destructor();}catch(e){}globe3D=null;}}
+function resetGlobeView(){
+  if(!globe3D)return;
+  try{ globe3D.pointOfView({lat:globeState.lat,lng:globeState.lon,altitude:0.5},800); }catch(e){}
+}
+function resetLiveGlobeView(){
+  if(!globe3D)return;
+  try{ globe3D.pointOfView({lat:liveLat,lng:liveLon,altitude:0.6},800); }catch(e){}
+}
+function destroyGlobe(){
+  if(globe3D){
+    try{ if(globe3D._destructor)globe3D._destructor(); }catch(e){}
+    globe3D=null;
+  }
+  // پاک کردن محتوی کانتینرها برای اطمینان
+  ['globeContainer','liveGlobeContainer'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.innerHTML='';
+  });
+}
 
 /* ============ NAVIGATION ============ */
 function navigateTo(pageId){
@@ -861,7 +879,6 @@ function clearSearchForm(){
   daySel.innerHTML='';for(var d=1;d<=maxDay;d++){var opt=document.createElement('option');opt.value=d;opt.textContent=d;daySel.appendChild(opt);}
   daySel.value=now.jd;document.getElementById('jHour').value=now.h;document.getElementById('jMinute').value=0;
   clearErrorBox('errorBox');
-  var dw=document.getElementById('dayWarning');if(dw)dw.style.display='none';
 }
 function clearPredictForm(){
   document.getElementById('predAutoLat').value='';document.getElementById('predAutoLon').value='';document.getElementById('predAutoCoordBoxes').style.display='none';document.getElementById('predLocStatus').innerText='';
@@ -1100,7 +1117,7 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
       if(bestCoarse)candidates.push(bestCoarse);
     }catch(e){}
     processedCount++;
-    if(processedCount%500===0){var pEl=document.getElementById('loadingProgress');if(pEl)pEl.innerText='تحلیل: '+processedCount+' از '+totalSats+' — کاندید: '+candidates.length;await sleep(0);}
+    if(processedCount%500===0){var pEl=document.getElementById('loadingProgress');if(pEl)pEl.innerText='تحلیل: '+processedCount+' از '+totalSats;await sleep(0);}
   }
   diag.retroCoarseCandidates=candidates.length;
   var refinedMatches=[];
@@ -1127,12 +1144,7 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
       var pvNext=satellite.propagate(cand.satrec,nextT);
       var heading=null;
       if(pvNext&&pvNext.position){var gmstN=satellite.gstime(nextT);var geoN=satellite.eciToGeodetic(pvNext.position,gmstN);heading=simpleBearing(subLat,subLon,toDeg(geoN.latitude),toDeg(geoN.longitude));}
-      // فیلتر جهت حرکت
-      if(expectedHeading!=null&&heading!=null){
-        var hDiff=Math.abs(heading-expectedHeading);
-        if(hDiff>180)hDiff=360-hDiff;
-        if(hDiff>60)continue;
-      }
+      if(expectedHeading!=null&&heading!=null){var hDiff=Math.abs(heading-expectedHeading);if(hDiff>180)hDiff=360-hDiff;if(hDiff>60)continue;}
       var score=(100-azDiff2*5)+(alt2*1.5)-(timeDiffSec*0.5);
       if(!bestFine||score>bestFine.score){
         bestFine={name:cand.name,ms:ms2,az:az2,azDiff:azDiff2,elev:alt2,rangeKm:look2.rangeSat,subLat:subLat,subLon:subLon,heading:heading,score:score,timeDiffSec:timeDiffSec};
@@ -1141,7 +1153,6 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
     if(bestFine){var info=guessSatInfo(bestFine.name);bestFine.type=info.type;bestFine.country=info.country;bestFine.mag=estimateSatMag(bestFine.rangeKm,bestFine.name);refinedMatches.push(bestFine);}
   }
   refinedMatches.sort(function(a,b){return b.score-a.score;});
-  // محدود کردن به بهترین ۳ نتیجه
   if(refinedMatches.length>3){
     var topScore=refinedMatches[0].score;
     refinedMatches=refinedMatches.filter(function(m){return m.score>topScore*0.85;}).slice(0,3);
@@ -1158,12 +1169,7 @@ async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd
     var satMatches=[];
     if(!isNight){
       diag.satSkippedDaytime=true;
-      var dw=document.getElementById('dayWarning');
-      dw.style.display='block';
-      dw.innerHTML='☀️ <b>تحلیل در روشنایی روز:</b> در روز ماهواره‌ها با چشم غیرمسلح دیده نمی‌شوند. این تحلیل فقط شامل هواپیماهاست. برای تحلیل ماهواره‌ها، زمان غروب یا شب را انتخاب کنید.';
     } else {
-      var dw=document.getElementById('dayWarning');
-      if(dw)dw.style.display='none';
       if(mainText)mainText.innerText='تحلیل گذشته‌نگر ۳ دقیقه‌ای...';
       satMatches=await analyzeRetrospectiveWindow(lat,lon,obsDate,azimuth,moveDir,diag);
     }
@@ -1205,8 +1211,7 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
   var cls,title,sub,icon;
   if(isUnknown){
     cls='threat';title='🚨 شیء ناشناس — تهدید احتمالی';
-    if(diag.satSkippedDaytime){sub='در روشنایی روز ماهواره قابل مشاهده نیست. هیچ هواپیمای تاییدشده‌ای هم از آن جهت عبور نکرده.';}
-    else{sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';}
+    sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';
     icon='alert';
   }else if(hasSat&&!hasAc){cls='sat';title='✓ ماهواره تاییدشده';sub=satMatches.length+' ماهواره با مشخصات شما مطابقت دارد.';icon='satellite';}
   else if(hasAc&&!hasSat){cls='ac';title='✓ هواپیمای تاییدشده';sub=acMatches.length+' پرواز با مشخصات شما مطابقت دارد.';icon='plane';}
@@ -1219,18 +1224,6 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
   document.getElementById('infoTime').innerText=jd+' '+monthNamesFa[jm-1]+' '+jy+' - '+String(jh).padStart(2,'0')+':'+String(jmin).padStart(2,'0');
   document.getElementById('infoAz').innerText=azimuth.toFixed(0)+'° ('+azimuthToCompass(azimuth)+') / '+moveDir;
   var cardsHtml='';
-  if(isUnknown){
-    cardsHtml+='<div class="threat-alert">';
-    cardsHtml+='<div class="threat-icon">⚠️</div>';
-    cardsHtml+='<h3>شیء ناشناس شناسایی شد</h3>';
-    if(diag.satSkippedDaytime){
-      cardsHtml+='<p>این مشاهده در روشنایی روز ثبت شده. در روز ماهواره با چشم دیده نمی‌شود. هیچ هواپیمای تاییدشده‌ای نیز از جهت <b>'+azimuthToCompass(azimuth)+'</b> عبور نکرده است.</p>';
-    }else{
-      cardsHtml+='<p>در بازه‌ی ۳ دقیقه قبل از زمان گزارش‌شده، هیچ ماهواره یا هواپیمای تاییدشده‌ای در جهت <b>'+azimuthToCompass(azimuth)+'</b> از موقعیت شما عبور نکرده است.</p>';
-    }
-    cardsHtml+='<p class="threat-advice">لطفاً این مشاهده را به‌عنوان <b>شیء ناشناس (احتمالاً پهپاد، کواد، بالون یا تهدید دیگر)</b> ثبت و اطلاع‌رسانی کنید.</p>';
-    cardsHtml+='</div>';
-  }
   satMatches.forEach(function(s){
     var passDate=new Date(s.ms);
     var timeStr=formatTimeHMS(passDate);
@@ -1268,27 +1261,25 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
   var d=document.getElementById('diagContent');
   d.innerHTML=
     '<div class="diag-row"><span>بازه‌ی تحلیل</span><span>۳ دقیقه قبل از گزارش</span></div>'+
-    '<div class="diag-row"><span>گام اولیه / نهایی</span><span>۱۵s / ۲s</span></div>'+
     '<div class="diag-row"><span>وضعیت نور</span><span>'+(diag.satSkippedDaytime?'☀️ روز':(diag.sunAltCenter<=-18?'🌙 شب کامل':'🌆 گرگ‌ومیش'))+'</span></div>'+
     '<div class="diag-row"><span>ماهواره‌های بررسی‌شده</span><span>'+(diag.satSkippedDaytime?'— (روز)':diag.satChecked)+'</span></div>'+
-    '<div class="diag-row"><span>کاندید اولیه</span><span>'+diag.retroCoarseCandidates+'</span></div>'+
     '<div class="diag-row" style="color:#6ee7b7;"><span>تطابق دقیق ماهواره</span><span>'+diag.retroRefinedMatches+'</span></div>'+
     '<div class="diag-row"><span>هواپیماهای نزدیک</span><span>'+diag.aircraftWithinRadius+'</span></div>'+
     '<div class="diag-row" style="color:#6ee7b7;"><span>هواپیمای مطابق</span><span>'+diag.aircraftMatches+'</span></div>'+
     '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>';
   setTimeout(function(){
     destroyGlobe();
-    globe3D=createGlobe('globeContainer',lat,lon,2.2);
+    globe3D=createGlobe('globeContainer',lat,lon,0.6);
     if(!globe3D)return;
-    var markers=[{lat:lat,lng:lon,html:ICON_OBSERVER_SVG,label:'◉ موقعیت شما'}];
+    var markers=[{lat:lat,lng:lon,html:ICON_OBSERVER_SVG}];
     satMatches.forEach(function(s){
-      markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG,label:'🛰️ '+escapeHtml(s.name)+'<br>زمان: '+formatTimeHMS(new Date(s.ms))});
+      markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG});
     });
     acMatches.forEach(function(a){
-      markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,label:'✈️ '+escapeHtml(a.name)+'<br>'+escapeHtml(a.country)});
+      markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG});
     });
     setGlobeMarkers(globe3D,markers);
-  },200);
+  },150);
   saveHistory({lat:lat,lon:lon,dateStr:jd+' '+monthNamesFa[jm-1]+' '+jy,az:azimuth,cls:cls,title:title,mainName:hasSat?satMatches[0].name:(hasAc?acMatches[0].name:'UNKNOWN')});
 }
 function guessAirline(c){if(!c)return'نامشخص';var p=c.trim().substring(0,3).toUpperCase();var t={IRA:'ایران‌ایر',IRC:'ماهان‌ایر',IRM:'ایران ایرتور',CQH:'کاسپین',QSM:'قشم‌ایر',ATC:'آتا',IRZ:'زاگرس',IRX:'کیش‌ایر',IRU:'آسمان',UAE:'امارات',QTR:'قطر ایرویز',ETD:'الاتحاد',THY:'ترک‌ایرلاین',FDB:'فلای‌دبی',DLH:'لوفت‌هانزا',AFR:'ایرفرانس',KLM:'کا‌ال‌ام',AFL:'ایرفلوت',SIA:'سنگاپور ایرلاینز',QFA:'کانتاس'};return t[p]||'نامشخص';}
@@ -1317,7 +1308,7 @@ function renderHistoryList(){
 }
 function resetSearch(){resetSearchPageState();clearSearchForm();window.scrollTo(0,0);}
 
-/* ============ PREDICTION (70km radius) ============ */
+/* ============ PREDICTION ============ */
 var predLocMode='auto',predCoordFormat=null,predPickerMapObj=null,predPickerMarker=null;
 function setPredLocationMode(mode){predLocMode=mode;document.getElementById('predModeAutoCard').classList.toggle('active',mode==='auto');document.getElementById('predModeManualCard').classList.toggle('active',mode==='manual');document.getElementById('predModeMapCard').classList.toggle('active',mode==='map');document.getElementById('predAutoLocPanel').style.display=mode==='auto'?'block':'none';document.getElementById('predManualLocPanel').style.display=mode==='manual'?'block':'none';document.getElementById('predMapLocPanel').style.display=mode==='map'?'block':'none';if(mode==='map'){setTimeout(function(){initPredPickerMap();if(predPickerMapObj)predPickerMapObj.invalidateSize();},100);}}
 function initPredPickerMap(){if(predPickerMapObj){predPickerMapObj.invalidateSize();return;}predPickerMapObj=L.map('predPickerMap').setView([35.6892,51.3890],5);addTileLayer(predPickerMapObj);predPickerMapObj.on('click',function(e){var la=e.latlng.lat,lo=e.latlng.lng;if(predPickerMarker)predPickerMapObj.removeLayer(predPickerMarker);predPickerMarker=L.marker([la,lo]).addTo(predPickerMapObj);document.getElementById('predMapLat').value=la.toFixed(6);document.getElementById('predMapLon').value=lo.toFixed(6);document.getElementById('predMapCoordBoxes').style.display='flex';});}
@@ -1506,8 +1497,8 @@ var liveTimeDebounce=null;
 var LIVE_MIN_ELEV=-5;
 var LIVE_AC_RADIUS_KM=200;
 var LIVE_GROUND_TRACK_KM=200;
-var LIVE_MAX_SAT_MARKERS=120;
-var LIVE_MAX_AC_MARKERS=80;
+var LIVE_MAX_SAT_MARKERS=80;
+var LIVE_MAX_AC_MARKERS=50;
 var liveSliderAnimTimer=null;
 function stopLive(){liveActive=false;if(liveSatTimer){clearInterval(liveSatTimer);liveSatTimer=null;}if(liveAcTimer){clearInterval(liveAcTimer);liveAcTimer=null;}if(liveTimeDebounce){clearTimeout(liveTimeDebounce);liveTimeDebounce=null;}if(liveSliderAnimTimer){clearInterval(liveSliderAnimTimer);liveSliderAnimTimer=null;}destroyGlobe();}
 function resetLive(){stopLive();resetLivePageState();clearLiveForm();window.scrollTo(0,0);}
@@ -1533,7 +1524,7 @@ async function startLiveSky(){
   if(!coords)errors.push('موقعیت رصد تعیین نشده است.');
   else if(coords[0]<-90||coords[0]>90||coords[1]<-180||coords[1]>180)errors.push('مقدار مختصات خارج از محدوده است.');
   if(errors.length>0){showErrorBox('liveErrorBox','خطا در ورود اطلاعات',errors);return;}
-  liveLat=parseFloat(coords[0]);liveLon=parseFloat(coords[1]);
+  liveLat=Number(coords[0]);liveLon=Number(coords[1]);
   try{
     var tleText=await loadTleData();
     var lines=tleText.trim().split("\n");
@@ -1548,16 +1539,13 @@ async function startLiveSky(){
   liveTimeOffsetMin=0;
   document.getElementById('liveTimeSlider').value=0;
   updateLiveTimeDisplay();
+  // کره را با تاخیر بساز تا کانتینر رندر شده باشد
   setTimeout(function(){
     destroyGlobe();
-    globe3D=createGlobe('liveGlobeContainer',liveLat,liveLon,1.2);
-    if(globe3D){
-      // اطمینان از زوم روی موقعیت کاربر
-      globe3D.pointOfView({lat:liveLat,lng:liveLon,altitude:1.2},600);
-    }
+    globe3D=createGlobe('liveGlobeContainer',liveLat,liveLon,0.6);
     recomputeLiveSatellites(0);
     updateLiveAircraft().then(function(){updateMarkerLayer();});
-  },300);
+  },350);
   liveSatTimer=setInterval(function(){
     if(!liveActive)return;
     if(liveTimeOffsetMin===0)recomputeLiveSatellites(0);
@@ -1628,24 +1616,20 @@ function extrapolateAircraftToTime(offsetMin){
 }
 function updateMarkerLayer(){
   if(!globe3D)return;
-  var markers=[{lat:liveLat,lng:liveLon,html:ICON_OBSERVER_SVG,label:'◉ موقعیت شما ('+liveLat.toFixed(2)+', '+liveLon.toFixed(2)+')'}];
+  var markers=[{lat:liveLat,lng:liveLon,html:ICON_OBSERVER_SVG}];
   var satShown=Math.min(liveSatCurrent.length,LIVE_MAX_SAT_MARKERS);
   for(var i=0;i<satShown;i++){
     var s=liveSatCurrent[i];
     markers.push({
       lat:s.lat,lng:s.lon,
-      html:s.isNearOverhead?ICON_SAT_SVG.replace(/#22d3ee/g,'#f59e0b').replace(/#0891b2/g,'#b45309').replace(/#67e8f9/g,'#fcd34d'):ICON_SAT_SVG,
-      label:'🛰️ '+escapeHtml(s.name)+'<br>ارتفاع: '+s.alt.toFixed(1)+'°<br>آزیموت: '+s.az.toFixed(0)+'°<br>فاصله: '+Math.round(s.groundDistKm)+' km'+(s.isNearOverhead?'<br><span style="color:#f59e0b;">⭐ از بالای سر شما</span>':'')
+      html:s.isNearOverhead?ICON_SAT_SVG.replace(/#22d3ee/g,'#f59e0b').replace(/#0891b2/g,'#b45309').replace(/#67e8f9/g,'#fcd34d'):ICON_SAT_SVG
     });
   }
   var acList=extrapolateAircraftToTime(liveTimeOffsetMin);
   var acShown=Math.min(acList.length,LIVE_MAX_AC_MARKERS);
   for(var j=0;j<acShown;j++){
     var a=acList[j];
-    markers.push({
-      lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,
-      label:'✈️ '+escapeHtml(a.name)+(a.altM!=null?'<br>ارتفاع: '+a.altM+' m':'')+(a.speed!=null?'<br>سرعت: '+a.speed+' km/h':'')
-    });
+    markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG});
   }
   setGlobeMarkers(globe3D,markers);
   var indicator=document.getElementById('liveLastUpdate');
