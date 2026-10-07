@@ -2,37 +2,36 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>رصدیار | سامانه هوشمند رصد آسمان</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/globe.gl@2.32.0/dist/globe.gl.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/globe.gl@2.32.0/dist/globe.gl.min.js"></script>
 <style>
 :root{--bg-0:#05060f;--bg-1:#0a0e1f;--bg-2:#10162e;--surface:rgba(20,26,50,0.55);--surface-2:rgba(30,38,68,0.5);--border:rgba(120,150,220,0.14);--border-hi:rgba(120,200,255,0.35);--text:#e6ecff;--text-dim:#8b94b8;--text-mute:#5a6382;--accent-1:#22d3ee;--accent-2:#6366f1;--accent-3:#a855f7;--accent-4:#ec4899;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--shadow-lg:0 20px 60px rgba(0,0,0,0.5);--radius-sm:10px;--radius:16px;--radius-lg:22px;--radius-xl:28px;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;min-height:100vh;}
-body{font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg-0);background-image:radial-gradient(1200px 800px at 20% -10%,rgba(99,102,241,0.15),transparent 60%),radial-gradient(900px 700px at 100% 20%,rgba(168,85,247,0.12),transparent 55%),radial-gradient(700px 700px at 50% 100%,rgba(34,211,238,0.08),transparent 60%),linear-gradient(180deg,#05060f 0%,#0a0e1f 50%,#05060f 100%);background-attachment:fixed;overflow-x:hidden;line-height:1.7;font-size:14.5px;-webkit-font-smoothing:antialiased;}
+body{font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg-0);background-image:radial-gradient(1200px 800px at 20% -10%,rgba(99,102,241,0.15),transparent 60%),radial-gradient(900px 700px at 100% 20%,rgba(168,85,247,0.12),transparent 55%),radial-gradient(700px 700px at 50% 100%,rgba(34,211,238,0.08),transparent 60%),linear-gradient(180deg,#05060f 0%,#0a0e1f 50%,#05060f 100%);background-attachment:fixed;overflow-x:hidden;line-height:1.6;font-size:14px;-webkit-font-smoothing:antialiased;}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.7),transparent),radial-gradient(1px 1px at 60% 70%,rgba(180,200,255,.5),transparent),radial-gradient(1px 1px at 80% 20%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 35% 80%,rgba(200,220,255,.6),transparent),radial-gradient(1px 1px at 90% 60%,rgba(255,255,255,.5),transparent),radial-gradient(2px 2px at 45% 15%,rgba(255,255,255,.6),transparent);background-size:800px 800px;pointer-events:none;opacity:0.55;z-index:0;animation:starDrift 120s linear infinite;}
 @keyframes starDrift{from{background-position:0 0;}to{background-position:800px 800px;}}
-.app-shell{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:24px 18px 80px;}
+.app-shell{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:14px 16px 40px;}
 @media(min-width:900px){.app-shell{max-width:720px;}}
 h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-0.01em;}
-h1{font-size:32px;line-height:1.2;}
-h2{font-size:22px;line-height:1.3;}
-h3{font-size:17px;line-height:1.4;}
-h4{font-size:14px;line-height:1.5;}
+h1{font-size:30px;line-height:1.2;}
+h2{font-size:20px;line-height:1.3;}
+h3{font-size:16px;line-height:1.4;}
 p{margin:0;}
 .text-gradient{background:linear-gradient(120deg,#67e8f9 0%,#a5b4fc 45%,#f0abfc 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;}
 .text-muted{color:var(--text-dim);}
-.text-small{font-size:12.5px;}
+.text-small{font-size:12px;}
 .icon-svg{display:inline-block;vertical-align:middle;width:24px;height:24px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .icon-svg.icon-sm{width:18px;height:18px;}
-.card{position:relative;background:var(--surface);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:16px;box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,0.04);overflow:hidden;}
+.card{position:relative;background:var(--surface);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,0.04);overflow:hidden;}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(120,200,255,0.35),transparent);pointer-events:none;}
-.btn{width:100%;padding:14px 20px;border:none;border-radius:var(--radius);font-family:inherit;font-size:14.5px;font-weight:700;letter-spacing:0.01em;cursor:pointer;transition:transform 0.15s ease,box-shadow 0.2s ease,filter 0.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;}
+.btn{width:100%;padding:13px 20px;border:none;border-radius:var(--radius);font-family:inherit;font-size:14px;font-weight:700;letter-spacing:0.01em;cursor:pointer;transition:transform 0.15s ease,box-shadow 0.2s ease,filter 0.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;}
 .btn:active{transform:scale(0.975);}
 .btn:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-primary{background:linear-gradient(135deg,#22d3ee 0%,#6366f1 100%);color:#05060f;box-shadow:0 8px 24px rgba(34,211,238,0.28),inset 0 1px 0 rgba(255,255,255,0.25);}
@@ -42,24 +41,24 @@ p{margin:0;}
 .btn-success{background:linear-gradient(135deg,#10b981 0%,#34d399 100%);color:#052e16;box-shadow:0 8px 24px rgba(16,185,129,0.35);}
 .btn-outline{background:rgba(120,160,220,0.08);color:var(--text);border:1px solid var(--border);backdrop-filter:blur(10px);}
 .btn-outline:hover{border-color:var(--border-hi);background:rgba(120,160,220,0.14);}
-.btn-mini{width:auto;padding:8px 14px;font-size:12px;border-radius:10px;gap:6px;}
-.field-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:10px;letter-spacing:0.01em;}
+.btn-mini{width:auto;padding:7px 12px;font-size:11.5px;border-radius:10px;gap:5px;}
+.field-label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:8px;letter-spacing:0.01em;}
 .field-label .icon-svg{color:var(--accent-1);}
-input[type=text],input[type=number],input[type=password],select,textarea{width:100%;padding:12px 14px;font-family:inherit;font-size:14px;color:var(--text);background:rgba(8,12,28,0.6);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;transition:border-color 0.2s,box-shadow 0.2s;appearance:none;-webkit-appearance:none;}
+input[type=text],input[type=number],input[type=password],select,textarea{width:100%;padding:11px 13px;font-family:inherit;font-size:13.5px;color:var(--text);background:rgba(8,12,28,0.6);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;transition:border-color 0.2s,box-shadow 0.2s;appearance:none;-webkit-appearance:none;}
 input::placeholder,textarea::placeholder{color:var(--text-mute);}
 input:focus,select:focus,textarea:focus{border-color:var(--accent-1);box-shadow:0 0 0 3px rgba(34,211,238,0.15);}
 input.invalid,select.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(239,68,68,0.15);animation:shake 0.4s ease;}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
 select{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b94b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:left 14px center;padding-left:34px;cursor:pointer;}
 select option{background:#10162e;color:var(--text);padding:10px;}
-.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;background:rgba(8,12,28,0.5);padding:6px;border-radius:var(--radius);border:1px solid var(--border);}
-.seg-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-dim);font-size:12.5px;font-weight:600;text-align:center;transition:all 0.2s ease;user-select:none;position:relative;}
-.seg-item .icon-svg{width:22px;height:22px;}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px;background:rgba(8,12,28,0.5);padding:5px;border-radius:var(--radius);border:1px solid var(--border);}
+.seg-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:10px 6px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-dim);font-size:12px;font-weight:600;text-align:center;transition:all 0.2s ease;user-select:none;position:relative;}
+.seg-item .icon-svg{width:20px;height:20px;}
 .seg-item.active{background:linear-gradient(135deg,rgba(34,211,238,0.18),rgba(99,102,241,0.22));color:var(--text);border:1px solid rgba(34,211,238,0.4);box-shadow:0 0 20px rgba(34,211,238,0.15);}
-.dt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.dt-grid select{padding:10px 6px;font-size:13px;text-align:center;padding-left:6px;background-position:8px center;}
-.dt-time{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-.coord-boxes{display:flex;gap:10px;margin-top:10px;}
+.dt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.dt-grid select{padding:9px 5px;font-size:12.5px;text-align:center;padding-left:5px;background-position:6px center;}
+.dt-time{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.coord-boxes{display:flex;gap:8px;margin-top:8px;}
 .coord-boxes input{text-align:center;}
 .status-msg{font-size:12.5px;color:var(--success);margin-top:8px;min-height:18px;}
 .error-box{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;margin-top:12px;display:none;line-height:1.7;}
@@ -67,129 +66,155 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .error-box strong{color:#fecaca;font-weight:700;}
 .error-box .err-item{display:flex;align-items:flex-start;gap:8px;margin:4px 0;}
 .error-box .err-item .icon-svg{flex-shrink:0;margin-top:3px;width:14px;height:14px;}
-.app-header{text-align:center;padding:8px 0 20px;position:relative;}
-.app-header .logo-wrap{display:flex;justify-content:center;margin-bottom:14px;}
-.logo-mark{width:88px;height:88px;filter:drop-shadow(0 0 30px rgba(34,211,238,0.4));animation:logoFloat 5s ease-in-out infinite;}
-@keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
-.app-header h1{font-size:34px;font-weight:900;letter-spacing:0.01em;margin-bottom:6px;}
-.app-header .subtitle{color:var(--text-dim);font-size:12.5px;font-weight:400;line-height:1.6;padding:0 12px;}
-.dedication{text-align:center;margin-top:28px;padding:16px 12px 8px;font-size:12.5px;color:#a5b4fc;letter-spacing:0.02em;font-weight:500;line-height:1.9;position:relative;}
-.dedication::before,.dedication::after{content:'';display:inline-block;width:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(165,180,252,0.4),transparent);vertical-align:middle;margin:0 10px;}
+/* ===== HOME PAGE COMPACT ===== */
+.app-header{text-align:center;padding:4px 0 14px;position:relative;}
+.app-header .logo-wrap{display:flex;justify-content:center;margin-bottom:8px;}
+.logo-mark{width:64px;height:64px;filter:drop-shadow(0 0 24px rgba(34,211,238,0.4));animation:logoFloat 5s ease-in-out infinite;}
+@keyframes logoFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.app-header h1{font-size:26px;font-weight:900;letter-spacing:0.01em;margin-bottom:4px;}
+.app-header .subtitle{color:var(--text-dim);font-size:11.5px;font-weight:400;line-height:1.5;padding:0 10px;}
+.dedication{text-align:center;margin-top:12px;padding:8px 12px 4px;font-size:11.5px;color:#a5b4fc;letter-spacing:0.02em;font-weight:500;line-height:1.7;position:relative;}
+.dedication::before,.dedication::after{content:'';display:inline-block;width:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(165,180,252,0.4),transparent);vertical-align:middle;margin:0 8px;}
 .dedication .martyr{color:#f87171;font-weight:800;text-shadow:0 0 12px rgba(239,68,68,0.5);}
-.menu-stack{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
-.menu-card{position:relative;display:flex;align-items:center;gap:16px;padding:20px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);cursor:pointer;overflow:hidden;transition:transform 0.2s ease,border-color 0.2s ease,box-shadow 0.2s ease;}
+.menu-stack{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.menu-card{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);cursor:pointer;overflow:hidden;transition:transform 0.2s ease,border-color 0.2s ease,box-shadow 0.2s ease;}
 .menu-card:active{transform:scale(0.985);}
 .menu-card::before{content:'';position:absolute;inset:0;background:radial-gradient(400px 200px at 100% 0%,var(--hover-tint,rgba(34,211,238,0.15)),transparent 70%);opacity:0.8;pointer-events:none;}
 .menu-card:hover{border-color:var(--border-hi);box-shadow:0 0 30px rgba(34,211,238,0.1);}
-.menu-icon-wrap{width:60px;height:60px;flex-shrink:0;border-radius:18px;display:flex;align-items:center;justify-content:center;background:var(--icon-bg,linear-gradient(135deg,rgba(34,211,238,0.2),rgba(99,102,241,0.25)));border:1px solid var(--icon-border,rgba(34,211,238,0.3));box-shadow:0 0 24px var(--icon-glow,rgba(34,211,238,0.25));position:relative;z-index:1;}
-.menu-icon-wrap .icon-svg{width:32px;height:32px;color:var(--icon-color,#67e8f9);stroke-width:1.6;}
+.menu-icon-wrap{width:46px;height:46px;flex-shrink:0;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--icon-bg,linear-gradient(135deg,rgba(34,211,238,0.2),rgba(99,102,241,0.25)));border:1px solid var(--icon-border,rgba(34,211,238,0.3));box-shadow:0 0 18px var(--icon-glow,rgba(34,211,238,0.25));position:relative;z-index:1;}
+.menu-icon-wrap .icon-svg{width:26px;height:26px;color:var(--icon-color,#67e8f9);stroke-width:1.6;}
 .menu-content{flex:1;min-width:0;position:relative;z-index:1;}
-.menu-content h3{margin-bottom:4px;font-size:16.5px;font-weight:700;}
-.menu-content p{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
-.menu-arrow{width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text-mute);transition:transform 0.2s,color 0.2s;position:relative;z-index:1;}
+.menu-content h3{margin-bottom:2px;font-size:14.5px;font-weight:700;}
+.menu-content p{font-size:11px;color:var(--text-dim);line-height:1.45;}
+.menu-arrow{width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text-mute);transition:transform 0.2s,color 0.2s;position:relative;z-index:1;}
 .menu-card:hover .menu-arrow{transform:translateX(-4px);color:var(--accent-1);}
 .menu-search{--hover-tint:rgba(34,211,238,0.15);--icon-bg:linear-gradient(135deg,rgba(34,211,238,0.2),rgba(59,130,246,0.25));--icon-border:rgba(34,211,238,0.4);--icon-glow:rgba(34,211,238,0.3);--icon-color:#67e8f9;}
 .menu-predict{--hover-tint:rgba(168,85,247,0.15);--icon-bg:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(236,72,153,0.22));--icon-border:rgba(168,85,247,0.4);--icon-glow:rgba(168,85,247,0.3);--icon-color:#d8b4fe;}
 .menu-live{--hover-tint:rgba(16,185,129,0.15);--icon-bg:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.22));--icon-border:rgba(16,185,129,0.4);--icon-glow:rgba(16,185,129,0.3);--icon-color:#6ee7b7;}
-.menu-dual{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
-.menu-card-sm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 12px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);cursor:pointer;text-align:center;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
+.menu-dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.menu-card-sm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 10px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);cursor:pointer;text-align:center;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
 .menu-card-sm::before{content:'';position:absolute;inset:0;background:radial-gradient(200px 120px at 50% 0%,var(--hover-tint,rgba(34,211,238,0.15)),transparent 70%);pointer-events:none;}
 .menu-card-sm:active{transform:scale(0.97);}
 .menu-card-sm:hover{border-color:var(--border-hi);}
-.menu-card-sm .icon-wrap{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--icon-bg);border:1px solid var(--icon-border);box-shadow:0 0 18px var(--icon-glow);}
-.menu-card-sm .icon-wrap .icon-svg{width:22px;height:22px;color:var(--icon-color);stroke-width:1.7;}
-.menu-card-sm .label{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.4;}
+.menu-card-sm .icon-wrap{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--icon-bg);border:1px solid var(--icon-border);box-shadow:0 0 14px var(--icon-glow);}
+.menu-card-sm .icon-wrap .icon-svg{width:18px;height:18px;color:var(--icon-color);stroke-width:1.7;}
+.menu-card-sm .label{font-size:11.5px;font-weight:700;color:var(--text);line-height:1.3;}
 .menu-card-sm.about{--hover-tint:rgba(251,191,36,0.15);--icon-bg:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(245,158,11,0.22));--icon-border:rgba(251,191,36,0.35);--icon-glow:rgba(251,191,36,0.25);--icon-color:#fcd34d;}
 .menu-card-sm.admin{--hover-tint:rgba(99,102,241,0.15);--icon-bg:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.22));--icon-border:rgba(99,102,241,0.4);--icon-glow:rgba(99,102,241,0.28);--icon-color:#a5b4fc;}
-.page-header{display:flex;align-items:center;gap:14px;padding:10px 0 18px;margin-bottom:8px;}
-.back-btn{width:42px;height:42px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+@media(max-height:780px){
+  .app-shell{padding:8px 14px 30px;}
+  .app-header{padding:2px 0 10px;}
+  .logo-mark{width:52px;height:52px;}
+  .app-header h1{font-size:22px;margin-bottom:2px;}
+  .app-header .subtitle{font-size:10.5px;}
+  .app-header .logo-wrap{margin-bottom:5px;}
+  .menu-stack{gap:8px;}
+  .menu-card{padding:11px 14px;gap:10px;}
+  .menu-icon-wrap{width:40px;height:40px;border-radius:12px;}
+  .menu-icon-wrap .icon-svg{width:22px;height:22px;}
+  .menu-content h3{font-size:13.5px;}
+  .menu-content p{font-size:10.5px;}
+  .menu-dual{gap:8px;margin-top:8px;}
+  .menu-card-sm{padding:10px 8px;gap:5px;}
+  .menu-card-sm .icon-wrap{width:30px;height:30px;border-radius:10px;}
+  .menu-card-sm .label{font-size:10.5px;}
+  .dedication{margin-top:8px;padding:6px 8px 2px;font-size:10.5px;}
+}
+.page-header{display:flex;align-items:center;gap:12px;padding:8px 0 14px;margin-bottom:6px;}
+.back-btn{width:40px;height:40px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
 .back-btn:hover{border-color:var(--border-hi);background:rgba(120,160,220,0.12);}
 .back-btn .icon-svg{width:20px;height:20px;transform:rotate(180deg);}
 .page-title-wrap{flex:1;min-width:0;display:flex;align-items:center;gap:12px;}
 .page-title-wrap .titles{flex:1;min-width:0;}
-.page-title-wrap h2{font-size:20px;font-weight:800;margin-bottom:2px;}
-.page-title-wrap p{font-size:12px;color:var(--text-dim);}
-.guide-trigger{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(99,102,241,0.15));border:1px solid rgba(34,211,238,0.3);color:#67e8f9;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;box-shadow:0 0 14px rgba(34,211,238,0.15);}
+.page-title-wrap h2{font-size:18px;font-weight:800;margin-bottom:2px;}
+.page-title-wrap p{font-size:11.5px;color:var(--text-dim);}
+.guide-trigger{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(99,102,241,0.15));border:1px solid rgba(34,211,238,0.3);color:#67e8f9;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;box-shadow:0 0 14px rgba(34,211,238,0.15);}
 .guide-trigger .icon-svg{width:20px;height:20px;}
-.guide-modal-body{font-size:13.5px;line-height:2.15;color:#c8d0ea;text-align:justify;text-justify:inter-word;word-spacing:-0.5px;}
-.guide-modal-body h4{color:#67e8f9;margin:18px 0 10px;font-size:14px;display:flex;align-items:center;gap:8px;text-align:right;}
+/* Guide modal header: title in one line */
+.guide-modal-header{text-align:center;margin-bottom:16px;padding:6px 0 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.guide-modal-header .icon-wrap-lg{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,rgba(34,211,238,0.18),rgba(99,102,241,0.2));border:1px solid rgba(34,211,238,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(34,211,238,0.2);}
+.guide-modal-header .icon-wrap-lg .icon-svg{width:24px;height:24px;color:#67e8f9;}
+.guide-modal-header h2{margin:0;font-size:15px;text-align:center;justify-content:center;padding-left:0;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.guide-modal-body{font-size:13px;line-height:2;color:#c8d0ea;text-align:justify;text-justify:inter-word;word-spacing:-0.5px;}
+.guide-modal-body h4{color:#67e8f9;margin:14px 0 8px;font-size:13.5px;display:flex;align-items:center;gap:8px;text-align:right;}
 .guide-modal-body h4:first-child{margin-top:0;}
-.guide-modal-body p{margin-bottom:12px;text-align:justify;}
+.guide-modal-body p{margin-bottom:10px;text-align:justify;}
 .guide-modal-body strong{color:#e0e7ff;font-weight:700;}
-.guide-modal-body ul{padding-right:20px;margin:8px 0 14px;list-style-position:inside;}
-.guide-modal-body li{margin-bottom:8px;text-align:justify;}
-.guide-modal-header{text-align:center;margin-bottom:20px;padding:8px 0 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:8px;}
-.guide-modal-header .icon-wrap-lg{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(34,211,238,0.18),rgba(99,102,241,0.2));border:1px solid rgba(34,211,238,0.35);display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(34,211,238,0.2);}
-.guide-modal-header .icon-wrap-lg .icon-svg{width:26px;height:26px;color:#67e8f9;}
-.guide-modal-header h2{margin:0;font-size:18px;text-align:center;justify-content:center;padding-left:0;color:var(--text);}
-.about-content{line-height:2.15;font-size:13.5px;color:#c8d0ea;text-align:justify;text-justify:inter-word;}
-.about-content h4{color:#d8b4fe;margin:18px 0 8px;font-size:14.5px;display:flex;align-items:center;gap:8px;text-align:right;}
-.about-content p{margin-bottom:12px;text-align:justify;}
+.guide-modal-body ul{padding-right:20px;margin:6px 0 12px;list-style-position:inside;}
+.guide-modal-body li{margin-bottom:6px;text-align:justify;}
+.about-content{line-height:2;font-size:13px;color:#c8d0ea;text-align:justify;text-justify:inter-word;}
+.about-content h4{color:#d8b4fe;margin:16px 0 6px;font-size:14px;display:flex;align-items:center;gap:8px;text-align:right;}
+.about-content p{margin-bottom:10px;text-align:justify;}
 .about-content strong{color:#e0e7ff;font-weight:700;}
-.about-content ul{padding-right:20px;margin:8px 0;list-style-position:inside;}
-.about-content li{margin-bottom:8px;text-align:justify;}
-.result-hero{border-radius:var(--radius-lg);padding:26px 22px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden;border:1px solid var(--border);}
+.about-content ul{padding-right:20px;margin:6px 0;list-style-position:inside;}
+.about-content li{margin-bottom:6px;text-align:justify;}
+.result-hero{border-radius:var(--radius-lg);padding:20px 18px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden;border:1px solid var(--border);}
 .result-hero.sat{background:linear-gradient(135deg,rgba(34,211,238,0.15),rgba(59,130,246,0.15));border-color:rgba(34,211,238,0.35);}
 .result-hero.ac{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.12));border-color:rgba(16,185,129,0.35);}
 .result-hero.mix{background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(236,72,153,0.12));border-color:rgba(168,85,247,0.35);}
 .result-hero.un{background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(168,85,247,0.12));border-color:rgba(239,68,68,0.3);}
 .result-hero.threat{background:linear-gradient(135deg,rgba(239,68,68,0.28),rgba(220,38,38,0.18));border-color:rgba(239,68,68,0.65);animation:threatPulse 1.8s ease-in-out infinite;}
 @keyframes threatPulse{0%,100%{box-shadow:0 0 30px rgba(239,68,68,0.3),inset 0 0 20px rgba(239,68,68,0.1);}50%{box-shadow:0 0 50px rgba(239,68,68,0.5),inset 0 0 30px rgba(239,68,68,0.2);}}
-.result-hero .hero-icon{display:flex;justify-content:center;margin-bottom:10px;}
-.result-hero .hero-icon .icon-svg{width:56px;height:56px;stroke-width:1.4;}
+.result-hero .hero-icon{display:flex;justify-content:center;margin-bottom:8px;}
+.result-hero .hero-icon .icon-svg{width:48px;height:48px;stroke-width:1.4;}
 .result-hero.sat .hero-icon{color:#67e8f9;filter:drop-shadow(0 0 20px rgba(34,211,238,0.5));}
 .result-hero.ac .hero-icon{color:#6ee7b7;filter:drop-shadow(0 0 20px rgba(16,185,129,0.5));}
 .result-hero.mix .hero-icon{color:#e9d5ff;filter:drop-shadow(0 0 20px rgba(168,85,247,0.5));}
 .result-hero.un .hero-icon{color:#fca5a5;filter:drop-shadow(0 0 20px rgba(239,68,68,0.4));}
 .result-hero.threat .hero-icon{color:#fca5a5;filter:drop-shadow(0 0 25px rgba(239,68,68,0.8));}
-.result-hero h2{margin-bottom:6px;font-size:22px;font-weight:800;}
-.result-hero p.sub{color:#dcdcf5;font-size:13px;line-height:1.7;}
-.info-line{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text-dim);padding:10px 4px;border-bottom:1px solid rgba(120,150,220,0.08);}
+.result-hero h2{margin-bottom:4px;font-size:19px;font-weight:800;}
+.result-hero p.sub{color:#dcdcf5;font-size:12.5px;line-height:1.6;}
+.info-line{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--text-dim);padding:8px 4px;border-bottom:1px solid rgba(120,150,220,0.08);}
 .info-line:last-child{border-bottom:none;}
 .info-line span:last-child{color:var(--text);font-weight:600;}
-.obj-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px;}
-.obj-card h3{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:700;margin-bottom:12px;}
-.obj-card h3 .icon-svg{color:var(--accent-1);width:22px;height:22px;}
-.obj-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:7px 0;border-bottom:1px dashed rgba(120,150,220,0.1);}
+.obj-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.obj-card h3{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:700;margin-bottom:10px;}
+.obj-card h3 .icon-svg{color:var(--accent-1);width:20px;height:20px;}
+.obj-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;padding:6px 0;border-bottom:1px dashed rgba(120,150,220,0.1);}
 .obj-row:last-child{border-bottom:none;}
 .obj-row .lbl{color:var(--text-mute);}
 .obj-row .val{font-weight:600;color:var(--text);}
-.estimate-tag{display:inline-block;font-size:10px;background:rgba(120,200,255,0.12);color:var(--accent-1);padding:2px 7px;border-radius:6px;margin-right:6px;font-weight:600;}
-.conf-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0 4px;padding-top:14px;border-top:1px dashed rgba(120,150,220,0.12);}
-.conf-ring{position:relative;width:72px;height:72px;}
+.estimate-tag{display:inline-block;font-size:9.5px;background:rgba(120,200,255,0.12);color:var(--accent-1);padding:2px 6px;border-radius:6px;margin-right:5px;font-weight:600;}
+.conf-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin:14px 0 2px;padding-top:12px;border-top:1px dashed rgba(120,150,220,0.12);}
+.conf-ring{position:relative;width:64px;height:64px;}
 .conf-ring svg{transform:rotate(-90deg);}
-.conf-ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--text);}
-.conf-label{font-size:12px;color:var(--text-mute);}
-.globe-wrap{position:relative;width:100%;height:380px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:14px;background:#000;}
+.conf-ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--text);}
+.conf-label{font-size:11.5px;color:var(--text-mute);}
+.globe-wrap{position:relative;width:100%;height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:12px;background:#000;}
 .globe-box{width:100%;height:100%;position:relative;}
 .globe-box canvas{display:block;outline:none;touch-action:none;}
-.globe-marker{pointer-events:none!important;}
-.globe-marker svg{display:block;pointer-events:none!important;}
-.globe-actions{position:absolute;top:10px;left:10px;z-index:20;display:flex;flex-direction:column;gap:6px;}
+.globe-marker{pointer-events:none;}
+.globe-marker>div{pointer-events:none;}
+.globe-marker svg{display:block;pointer-events:none;}
+.globe-actions{position:absolute;top:8px;left:8px;z-index:20;display:flex;flex-direction:column;gap:5px;}
 .globe-actions .btn-mini{background:rgba(5,6,15,0.85);border:1px solid var(--border);color:var(--text);backdrop-filter:blur(8px);}
-.map-legend{display:flex;justify-content:center;gap:16px;padding:12px;margin-top:12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--text-dim);flex-wrap:wrap;}
+.map-legend{display:flex;justify-content:center;gap:14px;padding:10px;margin-top:10px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);font-size:11.5px;color:var(--text-dim);flex-wrap:wrap;}
 .legend-item{display:flex;align-items:center;gap:6px;}
 .legend-item svg{width:18px;height:18px;}
 .legend-item.sat{color:#22d3ee;}
 .legend-item.ac{color:#10b981;}
 .legend-item.me{color:#a5b4fc;}
+.nearby-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:12px;background:var(--surface-2);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
+.nearby-table th,.nearby-table td{padding:9px 6px;text-align:center;border-bottom:1px solid rgba(120,150,220,0.08);}
+.nearby-table th{background:rgba(120,200,255,0.06);color:var(--accent-1);font-weight:700;font-size:11px;}
+.nearby-table td{color:var(--text);}
 #loadingBox{display:none;position:fixed;inset:0;background:rgba(5,6,15,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:800;align-items:center;justify-content:center;flex-direction:column;}
-.radar{width:100px;height:100px;margin:0 auto 24px;position:relative;border-radius:50%;background:radial-gradient(circle at center,rgba(34,211,238,0.15) 0%,transparent 65%),conic-gradient(from 0deg,rgba(34,211,238,0.4) 0deg,transparent 90deg,transparent 360deg);border:1px solid rgba(34,211,238,0.3);box-shadow:inset 0 0 30px rgba(34,211,238,0.1),0 0 40px rgba(34,211,238,0.2);}
+.radar{width:90px;height:90px;margin:0 auto 20px;position:relative;border-radius:50%;background:radial-gradient(circle at center,rgba(34,211,238,0.15) 0%,transparent 65%),conic-gradient(from 0deg,rgba(34,211,238,0.4) 0deg,transparent 90deg,transparent 360deg);border:1px solid rgba(34,211,238,0.3);box-shadow:inset 0 0 30px rgba(34,211,238,0.1),0 0 40px rgba(34,211,238,0.2);}
 .radar::before,.radar::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(34,211,238,0.15);}
 .radar::before{inset:20%;}
 .radar::after{inset:40%;}
 .radar-sweep{position:absolute;top:50%;left:50%;width:50%;height:2px;background:linear-gradient(90deg,#67e8f9,transparent);transform-origin:0 50%;animation:sweep 1.6s linear infinite;box-shadow:0 0 12px rgba(103,232,249,0.9);border-radius:2px;}
 @keyframes sweep{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-#loadingBox .loading-title{color:#a8c8ff;font-size:14px;font-weight:600;margin-bottom:8px;}
-#loadingBox .loading-sub{color:var(--text-mute);font-size:12.5px;}
+#loadingBox .loading-title{color:#a8c8ff;font-size:13.5px;font-weight:600;margin-bottom:6px;}
+#loadingBox .loading-sub{color:var(--text-mute);font-size:12px;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,6,15,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:1000;padding:20px 16px;overflow-y:auto;}
 .modal-overlay.show{display:block;animation:fadeIn 0.2s ease;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.modal-box{max-width:520px;margin:40px auto;background:linear-gradient(180deg,#10162e 0%,#0a0e1f 100%);border:1px solid var(--border);border-radius:var(--radius-xl);padding:26px;box-shadow:0 30px 80px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.05);animation:slideUp 0.25s ease;position:relative;}
+.modal-box{max-width:520px;margin:30px auto;background:linear-gradient(180deg,#10162e 0%,#0a0e1f 100%);border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px;box-shadow:0 30px 80px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.05);animation:slideUp 0.25s ease;position:relative;}
 @keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.modal-box h2{font-size:20px;margin-bottom:18px;display:flex;align-items:center;gap:10px;padding-left:40px;}
+.modal-box h2{font-size:18px;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-left:40px;}
 .modal-box h2 .icon-svg{color:var(--accent-1);}
-.modal-close{position:absolute;top:18px;left:18px;width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close{position:absolute;top:16px;left:16px;width:32px;height:32px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .modal-close:hover{border-color:rgba(239,68,68,0.4);color:#fca5a5;}
 .modal-close .icon-svg{width:16px;height:16px;}
 #calibrationPage{display:none;position:fixed;inset:0;background:var(--bg-0);background-image:radial-gradient(800px 600px at 50% 0%,rgba(99,102,241,0.15),transparent 60%),radial-gradient(600px 500px at 50% 100%,rgba(34,211,238,0.1),transparent 60%);z-index:700;overflow-y:auto;padding:24px 18px 40px;}
@@ -222,11 +247,11 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .success-anim{text-align:center;font-size:60px;animation:bounceScale 0.6s ease;display:flex;justify-content:center;color:var(--success);filter:drop-shadow(0 0 20px rgba(16,185,129,0.6));margin-bottom:12px;}
 .success-anim .icon-svg{width:70px;height:70px;stroke-width:1.5;}
 @keyframes bounceScale{0%{transform:scale(0);}50%{transform:scale(1.2);}100%{transform:scale(1);}}
-.selected-dir{text-align:center;padding:14px 16px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(34,211,238,0.08),rgba(99,102,241,0.08));border:1px solid rgba(34,211,238,0.3);color:#67e8f9;font-size:14px;font-weight:700;margin-top:14px;display:flex;flex-direction:column;gap:4px;}
-.selected-dir.empty{background:rgba(120,150,220,0.05);border-color:var(--border);color:var(--text-mute);font-weight:500;font-size:13px;}
-.selected-dir .az-value{font-size:12px;font-weight:500;color:var(--text-dim);}
-.time-slider-wrap{padding:18px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:14px;}
-.time-label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:12px;font-weight:600;}
+.selected-dir{text-align:center;padding:12px 14px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(34,211,238,0.08),rgba(99,102,241,0.08));border:1px solid rgba(34,211,238,0.3);color:#67e8f9;font-size:13.5px;font-weight:700;margin-top:12px;display:flex;flex-direction:column;gap:3px;}
+.selected-dir.empty{background:rgba(120,150,220,0.05);border-color:var(--border);color:var(--text-mute);font-weight:500;font-size:12.5px;}
+.selected-dir .az-value{font-size:11.5px;font-weight:500;color:var(--text-dim);}
+.time-slider-wrap{padding:14px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:12px;}
+.time-label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-dim);margin-bottom:10px;font-weight:600;}
 .time-label span:last-child{color:var(--accent-1);font-family:'Courier New',monospace;font-weight:700;}
 #liveTimeSlider{width:100%;height:6px;border-radius:3px;background:rgba(8,12,28,0.7);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;direction:ltr;border:1px solid var(--border);}
 #liveTimeSlider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#6366f1);border:2px solid #fff;box-shadow:0 0 14px rgba(34,211,238,0.9);cursor:pointer;}
@@ -237,35 +262,44 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .live-indicator{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text-mute);padding:6px 4px;margin-bottom:8px;}
 .live-dot{display:inline-block;width:8px;height:8px;background:#ef4444;border-radius:50%;margin-left:6px;animation:pulseLive 1.5s ease-in-out infinite;box-shadow:0 0 10px #ef4444;}
 @keyframes pulseLive{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.75);}}
-.pred-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.pred-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
 .pred-row{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.pred-row-header{padding:12px 16px;background:linear-gradient(90deg,rgba(139,92,246,0.15),rgba(236,72,153,0.08));display:flex;align-items:center;gap:12px;font-size:13.5px;border-bottom:1px solid var(--border);}
-.pred-row-num{background:rgba(0,0,0,0.3);color:#d8b4fe;min-width:28px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;padding:0 6px;}
-.pred-row-name{flex:1;font-weight:700;color:var(--text);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pred-row-body{padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:12.5px;}
-.pred-row-body .cell{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;}
-.pred-row-body .cell .lbl{color:var(--text-mute);text-align:right;}
-.pred-row-body .cell .val{color:var(--text);font-weight:600;text-align:center;}
-.pred-row-body .cell-full{grid-column:1/-1;}
-.pred-summary{padding:18px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(236,72,153,0.08));border:1px solid rgba(139,92,246,0.3);font-size:13px;line-height:2;margin-bottom:14px;}
+.pred-row-header{padding:10px 14px;background:linear-gradient(90deg,rgba(139,92,246,0.15),rgba(236,72,153,0.08));display:flex;align-items:center;gap:10px;font-size:13px;border-bottom:1px solid var(--border);}
+.pred-row-num{background:rgba(0,0,0,0.3);color:#d8b4fe;min-width:26px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;padding:0 6px;}
+.pred-row-name{flex:1;font-weight:700;color:var(--text);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pred-row-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;}
+.pred-row-body .cell{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 0;border-bottom:1px dashed rgba(120,150,220,0.08);}
+.pred-row-body .cell:last-child{border-bottom:none;}
+.pred-row-body .cell .lbl{color:var(--text-mute);flex-shrink:0;}
+.pred-row-body .cell .val{color:var(--text);font-weight:600;text-align:center;flex:1;}
+.pred-summary{padding:14px;border-radius:var(--radius);background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(236,72,153,0.08));border:1px solid rgba(139,92,246,0.3);font-size:12.5px;line-height:1.9;margin-bottom:12px;}
 .pred-summary b{color:#f0abfc;font-weight:700;}
-.hist-item{padding:14px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:10px;font-size:13px;}
+.hist-item{padding:12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:8px;font-size:12.5px;}
 .hist-item .hi-top{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:6px;color:var(--text);}
-.hist-item .hi-bottom{color:var(--text-dim);font-size:12px;display:flex;flex-wrap:wrap;gap:8px;}
-.empty-state{text-align:center;padding:40px 24px;border-radius:var(--radius);background:rgba(120,150,220,0.04);border:1px dashed rgba(120,150,220,0.2);color:var(--text-dim);font-size:13.5px;line-height:1.9;}
-.empty-state .icon-svg{width:40px;height:40px;color:var(--text-mute);margin-bottom:12px;}
-.diag-box{background:rgba(120,150,220,0.04);border:1px dashed rgba(120,150,220,0.18);border-radius:var(--radius);padding:14px 18px;margin-top:14px;font-size:12.5px;color:var(--text-dim);}
+.hist-item .hi-bottom{color:var(--text-dim);font-size:11.5px;display:flex;flex-wrap:wrap;gap:8px;}
+.empty-state{text-align:center;padding:32px 20px;border-radius:var(--radius);background:rgba(120,150,220,0.04);border:1px dashed rgba(120,150,220,0.2);color:var(--text-dim);font-size:13px;line-height:1.8;}
+.empty-state .icon-svg{width:36px;height:36px;color:var(--text-mute);margin-bottom:10px;}
+.diag-box{background:rgba(120,150,220,0.04);border:1px dashed rgba(120,150,220,0.18);border-radius:var(--radius);padding:12px 16px;margin-top:12px;font-size:12px;color:var(--text-dim);}
 .diag-box summary{cursor:pointer;color:var(--accent-1);font-weight:700;display:flex;align-items:center;gap:8px;list-style:none;}
 .diag-box summary::-webkit-details-marker{display:none;}
 .diag-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed rgba(120,150,220,0.1);}
 .diag-row:last-child{border-bottom:none;}
 .diag-row span:last-child{color:var(--text);font-weight:600;}
+/* Live info popup */
+.live-info-popup{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(180deg,rgba(16,22,46,0.98),rgba(10,14,31,0.98));border:1px solid var(--border-hi);border-radius:var(--radius);padding:12px 16px;font-size:12.5px;color:var(--text);box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:90%;text-align:right;direction:rtl;animation:slideUp 0.2s ease;}
+.live-info-popup .close-x{position:absolute;top:6px;left:8px;cursor:pointer;color:var(--text-mute);font-size:16px;line-height:1;padding:4px;}
+.live-info-popup .close-x:hover{color:#fca5a5;}
+.live-info-popup h4{margin:0 0 6px 0;color:#67e8f9;font-size:13.5px;display:flex;align-items:center;gap:6px;}
+.live-info-popup .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dashed rgba(120,150,220,0.1);}
+.live-info-popup .row:last-child{border-bottom:none;}
+.live-info-popup .row span:first-child{color:var(--text-mute);}
+.live-info-popup .row span:last-child{color:var(--text);font-weight:600;}
 body,html{overflow-x:hidden;}
 .page-section{display:none;}
 .page-section.active{display:block;animation:pageFade 0.35s ease;}
 @keyframes pageFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .hidden{display:none !important;}
-@media(max-width:400px){.app-shell{padding:18px 14px 60px;}.app-header h1{font-size:28px;}.card{padding:18px;}.menu-card{padding:16px;gap:12px;}.menu-icon-wrap{width:52px;height:52px;}.menu-icon-wrap .icon-svg{width:28px;height:28px;}.globe-wrap{height:320px;}}
+@media(max-width:400px){.app-shell{padding:10px 12px 30px;}.app-header h1{font-size:22px;}.card{padding:14px;}.menu-card{padding:11px 12px;gap:10px;}.menu-icon-wrap{width:40px;height:40px;}.menu-icon-wrap .icon-svg{width:22px;height:22px;}.globe-wrap{height:300px;}}
 </style>
 </head>
 <body>
@@ -385,33 +419,33 @@ body,html{overflow-x:hidden;}
         <div class="seg-item" id="modeManualCard" onclick="setLocationMode('manual')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی</div>
         <div class="seg-item" id="modeMapCard" onclick="setLocationMode('map')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه</div>
       </div>
-      <div id="autoLocPanel" style="margin-top:14px;">
+      <div id="autoLocPanel" style="margin-top:12px;">
         <button type="button" class="btn btn-outline" onclick="getLocation()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>دریافت خودکار موقعیت</button>
         <div class="status-msg" id="locStatus"></div>
         <div class="coord-boxes" id="autoCoordBoxes" style="display:none;"><input type="text" id="autoLat" readonly placeholder="عرض"><input type="text" id="autoLon" readonly placeholder="طول"></div>
       </div>
-      <div id="mapLocPanel" style="display:none; margin-top:14px;">
+      <div id="mapLocPanel" style="display:none; margin-top:12px;">
         <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید تا موقعیت ناظر ثبت شود.</p>
-        <div id="pickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
+        <div id="pickerMap" style="width:100%; height:260px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
         <div class="coord-boxes" id="mapCoordBoxes" style="display:none;"><input type="text" id="mapLat" readonly placeholder="عرض"><input type="text" id="mapLon" readonly placeholder="طول"></div>
       </div>
-      <div id="manualLocPanel" style="display:none; margin-top:14px;">
+      <div id="manualLocPanel" style="display:none; margin-top:12px;">
         <div class="field-label" style="margin-top:0;">فرمت ورود مختصات</div>
         <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
           <div class="seg-item" onclick="setCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
           <div class="seg-item" onclick="setCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
           <div class="seg-item" onclick="setCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
         </div>
-        <div id="dmsInputs" style="display:none; margin-top:14px;">
-          <label class="field-label" style="font-size:12px;">عرض جغرافیایی</label>
+        <div id="dmsInputs" style="display:none; margin-top:12px;">
+          <label class="field-label" style="font-size:11.5px;">عرض جغرافیایی</label>
           <div class="dt-grid"><input type="number" id="latD" placeholder="درجه"><input type="number" id="latM" placeholder="دقیقه"><input type="number" id="latS" placeholder="ثانیه"></div>
           <select id="latDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
-          <label class="field-label" style="font-size:12px; margin-top:12px;">طول جغرافیایی</label>
+          <label class="field-label" style="font-size:11.5px; margin-top:10px;">طول جغرافیایی</label>
           <div class="dt-grid"><input type="number" id="lonD" placeholder="درجه"><input type="number" id="lonM" placeholder="دقیقه"><input type="number" id="lonS" placeholder="ثانیه"></div>
           <select id="lonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
         </div>
-        <div id="decInputs" style="display:none; margin-top:14px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="decLat" placeholder="مثلا 35.6892"><input type="text" id="decLon" placeholder="مثلا 51.3890"></div></div>
-        <div id="utmInputs" style="display:none; margin-top:14px;">
+        <div id="decInputs" style="display:none; margin-top:12px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="decLat" placeholder="مثلا 35.6892"><input type="text" id="decLon" placeholder="مثلا 51.3890"></div></div>
+        <div id="utmInputs" style="display:none; margin-top:12px;">
           <div class="coord-boxes" style="margin-top:0;"><input type="number" id="utmZone" placeholder="Zone"><select id="utmHem"><option value="N">نیمکره شمالی</option><option value="S">نیمکره جنوبی</option></select></div>
           <div class="coord-boxes"><input type="text" id="utmE" placeholder="Easting"><input type="text" id="utmN" placeholder="Northing"></div>
         </div>
@@ -429,11 +463,11 @@ body,html{overflow-x:hidden;}
         <option value="N">شمال ⬆</option><option value="NE">شمال‌شرق ↗</option><option value="E">شرق ➡</option><option value="SE">جنوب‌شرق ↘</option>
         <option value="S">جنوب ⬇</option><option value="SW">جنوب‌غرب ↙</option><option value="W">غرب ⬅</option><option value="NW">شمال‌غرب ↖</option>
       </select>
-      <div style="text-align:center; margin: 14px 0 10px; color:var(--text-mute); font-size:11.5px;">— یا —</div>
+      <div style="text-align:center; margin: 12px 0 8px; color:var(--text-mute); font-size:11px;">— یا —</div>
       <button type="button" class="btn btn-outline" onclick="startCompassFlow()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-compass"/></svg>کالیبراسیون و استفاده از قطب‌نما</button>
       <div class="status-msg" id="compassStatus"></div>
       <div class="selected-dir empty" id="selectedDirDisplay">هنوز جهتی انتخاب نشده است</div>
-      <div class="field-label" style="margin-top:18px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg>جهت حرکت شیء</div>
+      <div class="field-label" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg>جهت حرکت شیء</div>
       <select id="moveDir">
         <option>از شمال به جنوب</option><option>از جنوب به شمال</option><option>از شرق به غرب</option><option>از غرب به شرق</option>
         <option>از شمال‌شرق به جنوب‌غرب</option><option>از شمال‌غرب به جنوب‌شرق</option><option>از جنوب‌شرق به شمال‌غرب</option><option>از جنوب‌غرب به شمال‌شرق</option>
@@ -441,7 +475,7 @@ body,html{overflow-x:hidden;}
     </div>
     <div class="card">
       <div class="error-box" id="errorBox"></div>
-      <button type="button" class="btn btn-primary" onclick="validateAndRun()" style="margin-bottom:10px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-scan"/></svg>شروع تحلیل</button>
+      <button type="button" class="btn btn-primary" onclick="validateAndRun()" style="margin-bottom:8px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-scan"/></svg>شروع تحلیل</button>
       <button type="button" class="btn btn-outline" onclick="openHistory()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-history"/></svg>تاریخچه‌ی مشاهدات</button>
     </div>
   </div>
@@ -451,13 +485,18 @@ body,html{overflow-x:hidden;}
       <h2 id="resultTitle">در حال پردازش...</h2>
       <p class="sub" id="resultSub"></p>
     </div>
-    <div class="card" style="padding:14px 18px;">
+    <div class="card" style="padding:12px 14px;">
       <div class="info-line"><span>موقعیت ناظر</span><span id="infoLoc"></span></div>
       <div class="info-line"><span>زمان مشاهده</span><span id="infoTime"></span></div>
       <div class="info-line"><span>سمت / حرکت</span><span id="infoAz"></span></div>
     </div>
     <div id="objectsContainer"></div>
     <div id="acTimeWarning" class="diag-box" style="display:none;"></div>
+    <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()" style="margin-bottom:12px;">
+      <svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-radar-live"/></svg>
+      <span id="nearbyBtnText">مشاهده تمامی اهداف اطراف</span>
+    </button>
+    <table class="nearby-table" id="nearbyTable" style="display:none;"></table>
     <div class="globe-wrap">
       <div class="globe-actions">
         <button type="button" class="btn btn-mini" onclick="resetGlobeView()">🎯 بازگشت به موقعیت من</button>
@@ -473,7 +512,7 @@ body,html{overflow-x:hidden;}
       <summary><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-info"/></svg>جزئیات فنی فرایند تحلیل</summary>
       <div id="diagContent" style="margin-top:12px;"></div>
     </details>
-    <button type="button" class="btn btn-outline" onclick="resetSearch()" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>بررسی مجدد و ثبت مشاهده‌ی جدید</button>
+    <button type="button" class="btn btn-outline" onclick="resetSearch()" style="margin-top:12px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>بررسی مجدد و ثبت مشاهده‌ی جدید</button>
   </div>
 </div>
 
@@ -490,31 +529,31 @@ body,html{overflow-x:hidden;}
         <div class="seg-item" id="predModeManualCard" onclick="setPredLocationMode('manual')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی</div>
         <div class="seg-item" id="predModeMapCard" onclick="setPredLocationMode('map')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه</div>
       </div>
-      <div id="predAutoLocPanel" style="margin-top:14px;">
+      <div id="predAutoLocPanel" style="margin-top:12px;">
         <button type="button" class="btn btn-outline" onclick="getPredLocation()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>دریافت موقعیت</button>
         <div class="status-msg" id="predLocStatus"></div>
         <div class="coord-boxes" id="predAutoCoordBoxes" style="display:none;"><input type="text" id="predAutoLat" readonly placeholder="عرض"><input type="text" id="predAutoLon" readonly placeholder="طول"></div>
       </div>
-      <div id="predMapLocPanel" style="display:none; margin-top:14px;">
+      <div id="predMapLocPanel" style="display:none; margin-top:12px;">
         <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
-        <div id="predPickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
+        <div id="predPickerMap" style="width:100%; height:260px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
         <div class="coord-boxes" id="predMapCoordBoxes" style="display:none;"><input type="text" id="predMapLat" readonly placeholder="عرض"><input type="text" id="predMapLon" readonly placeholder="طول"></div>
       </div>
-      <div id="predManualLocPanel" style="display:none; margin-top:14px;">
+      <div id="predManualLocPanel" style="display:none; margin-top:12px;">
         <div class="field-label" style="margin-top:0;">فرمت مختصات</div>
         <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
           <div class="seg-item" onclick="setPredCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
           <div class="seg-item" onclick="setPredCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
           <div class="seg-item" onclick="setPredCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
         </div>
-        <div id="predDmsInputs" style="display:none; margin-top:14px;">
+        <div id="predDmsInputs" style="display:none; margin-top:12px;">
           <div class="dt-grid"><input type="number" id="predLatD" placeholder="درجه"><input type="number" id="predLatM" placeholder="دقیقه"><input type="number" id="predLatS" placeholder="ثانیه"></div>
           <select id="predLatDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
           <div class="dt-grid" style="margin-top:8px;"><input type="number" id="predLonD" placeholder="درجه"><input type="number" id="predLonM" placeholder="دقیقه"><input type="number" id="predLonS" placeholder="ثانیه"></div>
           <select id="predLonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
         </div>
-        <div id="predDecInputs" style="display:none; margin-top:14px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="predDecLat" placeholder="عرض"><input type="text" id="predDecLon" placeholder="طول"></div></div>
-        <div id="predUtmInputs" style="display:none; margin-top:14px;">
+        <div id="predDecInputs" style="display:none; margin-top:12px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="predDecLat" placeholder="عرض"><input type="text" id="predDecLon" placeholder="طول"></div></div>
+        <div id="predUtmInputs" style="display:none; margin-top:12px;">
           <div class="coord-boxes" style="margin-top:0;"><input type="number" id="predUtmZone" placeholder="Zone"><select id="predUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select></div>
           <div class="coord-boxes"><input type="text" id="predUtmE" placeholder="E"><input type="text" id="predUtmN" placeholder="N"></div>
         </div>
@@ -535,10 +574,10 @@ body,html{overflow-x:hidden;}
       <button type="button" class="btn btn-violet" onclick="runPrediction()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>اجرای پیش‌بینی</button>
     </div>
   </div>
-  <div id="predProgress" style="display:none; padding:24px; text-align:center; background:var(--surface-2); border-radius:var(--radius); border:1px solid var(--border);">
-    <p style="color:#a8c8ff; font-size:13.5px; margin-bottom:14px;" id="predProgressText">در حال پردازش...</p>
+  <div id="predProgress" style="display:none; padding:20px; text-align:center; background:var(--surface-2); border-radius:var(--radius); border:1px solid var(--border);">
+    <p style="color:#a8c8ff; font-size:13px; margin-bottom:12px;" id="predProgressText">در حال پردازش...</p>
     <div style="height:6px; background:rgba(120,150,220,0.1); border-radius:3px; overflow:hidden;"><div id="predProgressFill" style="height:100%; background:linear-gradient(90deg,#8b5cf6,#ec4899); width:0%; transition:width 0.2s; box-shadow:0 0 15px rgba(168,85,247,0.6);"></div></div>
-    <p style="margin:10px 0 0; color:#7ee8fa; font-size:12px;" id="predProgressDetail"></p>
+    <p style="margin:8px 0 0; color:#7ee8fa; font-size:11.5px;" id="predProgressDetail"></p>
   </div>
   <div id="predResults"></div>
 </div>
@@ -556,31 +595,31 @@ body,html{overflow-x:hidden;}
         <div class="seg-item" id="liveModeManualCard" onclick="setLiveLocationMode('manual')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-keyboard"/></svg>دستی</div>
         <div class="seg-item" id="liveModeMapCard" onclick="setLiveLocationMode('map')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-map"/></svg>نقشه</div>
       </div>
-      <div id="liveAutoLocPanel" style="margin-top:14px;">
+      <div id="liveAutoLocPanel" style="margin-top:12px;">
         <button type="button" class="btn btn-outline" onclick="getLiveLocation()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-target"/></svg>دریافت موقعیت</button>
         <div class="status-msg" id="liveLocStatus"></div>
         <div class="coord-boxes" id="liveAutoCoordBoxes" style="display:none;"><input type="text" id="liveAutoLat" readonly placeholder="عرض"><input type="text" id="liveAutoLon" readonly placeholder="طول"></div>
       </div>
-      <div id="liveMapLocPanel" style="display:none; margin-top:14px;">
+      <div id="liveMapLocPanel" style="display:none; margin-top:12px;">
         <p class="text-small text-muted" style="margin-bottom:8px;">روی نقشه ضربه بزنید.</p>
-        <div id="livePickerMap" style="width:100%; height:280px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
+        <div id="livePickerMap" style="width:100%; height:260px; border-radius:14px; overflow:hidden; border:1px solid var(--border);"></div>
         <div class="coord-boxes" id="liveMapCoordBoxes" style="display:none;"><input type="text" id="liveMapLat" readonly placeholder="عرض"><input type="text" id="liveMapLon" readonly placeholder="طول"></div>
       </div>
-      <div id="liveManualLocPanel" style="display:none; margin-top:14px;">
+      <div id="liveManualLocPanel" style="display:none; margin-top:12px;">
         <div class="field-label" style="margin-top:0;">فرمت مختصات</div>
         <div class="seg" style="grid-template-columns:1fr 1fr 1fr;">
           <div class="seg-item" onclick="setLiveCoordFormat('dms', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-dms"/></svg>DMS</div>
           <div class="seg-item" onclick="setLiveCoordFormat('dec', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-decimal"/></svg>Decimal</div>
           <div class="seg-item" onclick="setLiveCoordFormat('utm', this)"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-utm"/></svg>UTM</div>
         </div>
-        <div id="liveDmsInputs" style="display:none; margin-top:14px;">
+        <div id="liveDmsInputs" style="display:none; margin-top:12px;">
           <div class="dt-grid"><input type="number" id="liveLatD" placeholder="درجه"><input type="number" id="liveLatM" placeholder="دقیقه"><input type="number" id="liveLatS" placeholder="ثانیه"></div>
           <select id="liveLatDir" style="margin-top:6px;"><option value="N">شمالی N</option><option value="S">جنوبی S</option></select>
           <div class="dt-grid" style="margin-top:8px;"><input type="number" id="liveLonD" placeholder="درجه"><input type="number" id="liveLonM" placeholder="دقیقه"><input type="number" id="liveLonS" placeholder="ثانیه"></div>
           <select id="liveLonDir" style="margin-top:6px;"><option value="E">شرقی E</option><option value="W">غربی W</option></select>
         </div>
-        <div id="liveDecInputs" style="display:none; margin-top:14px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="liveDecLat" placeholder="عرض"><input type="text" id="liveDecLon" placeholder="طول"></div></div>
-        <div id="liveUtmInputs" style="display:none; margin-top:14px;">
+        <div id="liveDecInputs" style="display:none; margin-top:12px;"><div class="coord-boxes" style="margin-top:0;"><input type="text" id="liveDecLat" placeholder="عرض"><input type="text" id="liveDecLon" placeholder="طول"></div></div>
+        <div id="liveUtmInputs" style="display:none; margin-top:12px;">
           <div class="coord-boxes" style="margin-top:0;"><input type="number" id="liveUtmZone" placeholder="Zone"><select id="liveUtmHem"><option value="N">شمالی</option><option value="S">جنوبی</option></select></div>
           <div class="coord-boxes"><input type="text" id="liveUtmE" placeholder="E"><input type="text" id="liveUtmN" placeholder="N"></div>
         </div>
@@ -600,18 +639,19 @@ body,html{overflow-x:hidden;}
         <span>۰</span><span>۵</span><span>۱۰</span><span>۱۵</span><span>۲۰</span><span>۲۵</span><span>۳۰</span><span>۳۵</span><span>۴۰</span><span>۴۵</span><span>۵۰</span><span>۵۵</span><span>۶۰</span>
       </div>
     </div>
-    <div class="globe-wrap" style="height:440px;">
+    <div class="globe-wrap" style="height:400px;">
       <div class="globe-actions">
         <button type="button" class="btn btn-mini" onclick="resetLiveGlobeView()">🎯 بازگشت به موقعیت من</button>
       </div>
       <div id="liveGlobeContainer" class="globe-box"></div>
+      <div id="liveInfoPopup" class="live-info-popup" style="display:none;"></div>
     </div>
     <div class="map-legend">
       <div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div>
       <div class="legend-item ac"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg>هواپیما</div>
       <div class="legend-item me"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-observer"/></svg>موقعیت شما</div>
     </div>
-    <button type="button" class="btn btn-outline" onclick="resetLive()" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>مشاهده‌ی منطقه‌ی دیگر</button>
+    <button type="button" class="btn btn-outline" onclick="resetLive()" style="margin-top:12px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>مشاهده‌ی منطقه‌ی دیگر</button>
   </div>
 </div>
 
@@ -647,7 +687,7 @@ body,html{overflow-x:hidden;}
         • در فضای باز یا کنار پنجره، دور از سازه‌های بتنی قرار بگیرید.<br>
         • حرکات را نرم و پیوسته، به مدت ۱۰ تا ۳۰ ثانیه تکرار کنید.
       </div>
-      <button type="button" class="btn btn-primary" style="margin-top:18px;" onclick="beginCalibration()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>شروع فرایند کالیبراسیون</button>
+      <button type="button" class="btn btn-primary" style="margin-top:16px;" onclick="beginCalibration()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>شروع فرایند کالیبراسیون</button>
     </div>
     <div id="calStep2" class="card" style="display:none;">
       <div class="calib-title">در حال کالیبراسیون</div>
@@ -669,17 +709,17 @@ body,html{overflow-x:hidden;}
         <div class="calib-stat"><span class="lbl">زمان</span><span class="val" id="calStatTime">0:00</span></div>
       </div>
       <div class="calib-hint" id="calHint">گوشی را به شکل عدد ۸ حرکت دهید...</div>
-      <div id="calSuccessBox" style="display:none; text-align:center; margin-top:14px;">
+      <div id="calSuccessBox" style="display:none; text-align:center; margin-top:12px;">
         <div class="success-anim"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
-        <p style="color:#6ee7b7; font-size:14.5px; font-weight:700; margin:0 0 14px;">کالیبراسیون با موفقیت به پایان رسید</p>
+        <p style="color:#6ee7b7; font-size:14px; font-weight:700; margin:0 0 12px;">کالیبراسیون با موفقیت به پایان رسید</p>
         <button type="button" class="btn btn-success" onclick="finishCalibrationSuccess()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-check"/></svg>ادامه و استفاده از قطب‌نما</button>
       </div>
     </div>
     <div id="calStep3" class="card" style="display:none; text-align:center;">
-      <div style="display:flex;justify-content:center;color:var(--warning);margin-bottom:14px;"><svg class="icon-svg" viewBox="0 0 24 24" style="width:60px;height:60px;"><use href="#i-alert"/></svg></div>
+      <div style="display:flex;justify-content:center;color:var(--warning);margin-bottom:14px;"><svg class="icon-svg" viewBox="0 0 24 24" style="width:56px;height:56px;"><use href="#i-alert"/></svg></div>
       <h3 style="color:#fbbf24;margin-bottom:10px;">کالیبراسیون به اتمام نرسید</h3>
-      <p class="calib-desc" style="margin-bottom:18px;">در بازه‌ی تعیین‌شده، سنسور موفق به دریافت داده‌ی کافی نشد.</p>
-      <div style="display:flex;gap:10px;flex-direction:column;">
+      <p class="calib-desc" style="margin-bottom:16px;">در بازه‌ی تعیین‌شده، سنسور موفق به دریافت داده‌ی کافی نشد.</p>
+      <div style="display:flex;gap:8px;flex-direction:column;">
         <button type="button" class="btn btn-primary" onclick="retryCalibration()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-play"/></svg>تلاش مجدد</button>
         <button type="button" class="btn btn-outline" onclick="cancelCalibration()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg>بازگشت و انتخاب دستی جهت</button>
       </div>
@@ -725,7 +765,7 @@ body,html{overflow-x:hidden;}
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-shield-user"/></svg> ورود مدیر سیستم</h2>
     <label class="field-label" style="font-size:13px;">نام کاربری</label>
     <input type="text" id="adminUser" placeholder="نام کاربری" autocomplete="username">
-    <label class="field-label" style="font-size:13px; margin-top:14px;">رمز عبور</label>
+    <label class="field-label" style="font-size:13px; margin-top:12px;">رمز عبور</label>
     <input type="password" id="adminPass" placeholder="رمز عبور" autocomplete="current-password">
     <div class="error-box" id="adminLoginError"></div>
     <button type="button" class="btn btn-primary" style="margin-top:16px;" onclick="tryAdminLogin()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-lock"/></svg>ورود</button>
@@ -736,19 +776,19 @@ body,html{overflow-x:hidden;}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('adminDashModal')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-x"/></svg></button>
     <h2><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-github"/></svg> پنل مدیریت پایگاه داده</h2>
-    <p class="text-small text-muted" style="margin-bottom:16px; line-height:1.9;">به‌روزرسانی منظم پایگاه داده‌ی TLE باعث افزایش دقت محاسبات می‌شود.</p>
-    <label class="field-label" style="font-size:12.5px;">Owner مخزن گیت‌هاب</label>
-    <input type="text" id="ghOwner" value="yahoseinnnnn0313-eng" style="margin-bottom:10px;">
-    <label class="field-label" style="font-size:12.5px;">نام مخزن</label>
-    <input type="text" id="ghRepo" value="didban-app" style="margin-bottom:10px;">
-    <label class="field-label" style="font-size:12.5px;">Personal Access Token</label>
+    <p class="text-small text-muted" style="margin-bottom:14px; line-height:1.8;">به‌روزرسانی منظم پایگاه داده‌ی TLE باعث افزایش دقت محاسبات می‌شود.</p>
+    <label class="field-label" style="font-size:12px;">Owner مخزن گیت‌هاب</label>
+    <input type="text" id="ghOwner" value="yahoseinnnnn0313-eng" style="margin-bottom:8px;">
+    <label class="field-label" style="font-size:12px;">نام مخزن</label>
+    <input type="text" id="ghRepo" value="didban-app" style="margin-bottom:8px;">
+    <label class="field-label" style="font-size:12px;">Personal Access Token</label>
     <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxx">
-    <button type="button" class="btn btn-primary" style="margin-top:16px;" onclick="autoUpdateTle()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-github"/></svg>دریافت و به‌روزرسانی خودکار</button>
-    <div style="text-align:center;margin:14px 0;color:var(--text-mute);font-size:11.5px;">— یا —</div>
-    <label class="field-label" style="font-size:12.5px;">ورود دستی داده‌ی TLE</label>
+    <button type="button" class="btn btn-primary" style="margin-top:14px;" onclick="autoUpdateTle()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-github"/></svg>دریافت و به‌روزرسانی خودکار</button>
+    <div style="text-align:center;margin:12px 0;color:var(--text-mute);font-size:11px;">— یا —</div>
+    <label class="field-label" style="font-size:12px;">ورود دستی داده‌ی TLE</label>
     <textarea id="manualTleText" rows="5" style="font-family:monospace;font-size:11px;" placeholder="محتوای TLE را اینجا بچسبانید..."></textarea>
-    <button type="button" class="btn btn-outline" style="margin-top:10px;" onclick="manualUpdateTle()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg>ثبت داده‌ی دستی</button>
-    <div class="diag-box" id="adminStatus" style="margin-top:16px;display:none;"></div>
+    <button type="button" class="btn btn-outline" style="margin-top:8px;" onclick="manualUpdateTle()"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg>ثبت داده‌ی دستی</button>
+    <div class="diag-box" id="adminStatus" style="margin-top:14px;display:none;"></div>
   </div>
 </div>
 
@@ -757,39 +797,61 @@ body,html{overflow-x:hidden;}
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toBase64Utf8(str){var bytes=new TextEncoder().encode(str);var bin='';for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin);}
 
-/* ============ ICON STRINGS ============ */
-var ICON_SAT_SVG='<svg viewBox="0 0 24 24" style="width:22px;height:22px;filter:drop-shadow(0 0 5px #22d3ee);"><rect x="1.5" y="9.5" width="7" height="5" rx="0.6" fill="#0891b2" stroke="#22d3ee" stroke-width="0.4"/><rect x="15.5" y="9.5" width="7" height="5" rx="0.6" fill="#0891b2" stroke="#22d3ee" stroke-width="0.4"/><line x1="3" y1="9.5" x2="3" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="5" y1="9.5" x2="5" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="7" y1="9.5" x2="7" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="17" y1="9.5" x2="17" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="19" y1="9.5" x2="19" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="21" y1="9.5" x2="21" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><rect x="9.5" y="9.7" width="5" height="4.6" rx="0.9" fill="#22d3ee" stroke="#67e8f9" stroke-width="0.3"/><circle cx="12" cy="7" r="2.1" fill="#67e8f9" stroke="#0a0e1f" stroke-width="0.3"/><circle cx="12" cy="7" r="0.55" fill="#0a0e1f"/></svg>';
+/* ============ ICON SVG STRINGS ============ */
+function makeSatSvg(color){return '<svg viewBox="0 0 24 24" style="width:22px;height:22px;filter:drop-shadow(0 0 5px '+color+');"><rect x="1.5" y="9.5" width="7" height="5" rx="0.6" fill="'+color+'" opacity="0.7"/><rect x="15.5" y="9.5" width="7" height="5" rx="0.6" fill="'+color+'" opacity="0.7"/><line x1="3" y1="9.5" x2="3" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="5" y1="9.5" x2="5" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="7" y1="9.5" x2="7" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="17" y1="9.5" x2="17" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="19" y1="9.5" x2="19" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><line x1="21" y1="9.5" x2="21" y2="14.5" stroke="#0a0e1f" stroke-width="0.4"/><rect x="9.5" y="9.7" width="5" height="4.6" rx="0.9" fill="'+color+'"/><circle cx="12" cy="7" r="2.1" fill="'+color+'"/><circle cx="12" cy="7" r="0.55" fill="#0a0e1f"/></svg>';}
+var ICON_SAT_SVG=makeSatSvg('#22d3ee');
+var ICON_SAT_SVG_OVERHEAD=makeSatSvg('#f59e0b');
 var ICON_PLANE_SVG='<svg viewBox="0 0 24 24" style="width:22px;height:22px;filter:drop-shadow(0 0 5px #10b981);"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" fill="#10b981" stroke="#0a0e1f" stroke-width="0.6" stroke-linejoin="round"/></svg>';
 var ICON_OBSERVER_SVG='<svg viewBox="0 0 24 24" style="width:26px;height:26px;filter:drop-shadow(0 0 8px #a5b4fc);"><circle cx="12" cy="12" r="9" stroke="#a5b4fc" stroke-width="1.6" fill="none" opacity="0.6"/><circle cx="12" cy="12" r="4.5" fill="#a5b4fc"/><circle cx="12" cy="12" r="1.7" fill="#fff"/></svg>';
 
-/* ============ 3D GLOBE (rewritten for accuracy + performance) ============ */
+/* ============ 3D GLOBE — REWRITTEN FOR GEO-ACCURACY ============ */
 var globe3D=null;
 var globeState={lat:0,lon:0,containerId:null};
+var globeRetryTimers=[];
+
+function clearGlobeRetries(){
+  globeRetryTimers.forEach(function(t){clearTimeout(t);});
+  globeRetryTimers=[];
+}
+
 function createGlobe(containerId,lat,lon,altitude){
   var container=document.getElementById(containerId);
   if(!container)return null;
   container.innerHTML='';
-  // اطمینان از عدد بودن
   lat=Number(lat);lon=Number(lon);
   if(!isFinite(lat)||!isFinite(lon))return null;
+  if(lat<-90||lat>90||lon<-180||lon>180)return null;
   globeState.lat=lat;globeState.lon=lon;globeState.containerId=containerId;
+  clearGlobeRetries();
   try{
     var world=Globe({rendererConfig:{antialias:false,alpha:true,powerPreference:'high-performance'}})
       .width(container.clientWidth||360)
       .height(container.clientHeight||380)
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .globeImageUrl('https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundImageUrl(null)
       .showAtmosphere(true)
       .atmosphereColor('#22d3ee')
-      .atmosphereAltitude(0.1)
+      .atmosphereAltitude(0.08)
       .htmlElementsData([])
-      .htmlAltitude(0.006)
+      .htmlAltitude(0.008)
+      .htmlTransitionDuration(0)
       .htmlElement(function(d){
-        var el=document.createElement('div');
-        el.className='globe-marker';
-        el.innerHTML=d.html||'';
-        el.style.pointerEvents='none';
-        return el;
+        var wrap=document.createElement('div');
+        wrap.className='globe-marker';
+        wrap.style.pointerEvents='none';
+        wrap.style.transformOrigin='center center';
+        wrap.style.transform='rotate('+(d.heading||0)+'deg)';
+        var inner=document.createElement('div');
+        inner.style.pointerEvents=d.onClick?'auto':'none';
+        inner.style.cursor=d.onClick?'pointer':'default';
+        inner.innerHTML=d.html||'';
+        if(d.onClick){
+          var handler=function(e){try{e.stopPropagation();e.preventDefault();}catch(err){}d.onClick(d);};
+          inner.addEventListener('click',handler);
+          inner.addEventListener('touchend',handler);
+        }
+        wrap.appendChild(inner);
+        return wrap;
       })(container);
     var controls=world.controls();
     controls.autoRotate=false;
@@ -799,22 +861,33 @@ function createGlobe(containerId,lat,lon,altitude){
     controls.maxDistance=800;
     controls.rotateSpeed=0.55;
     controls.zoomSpeed=0.85;
-    // مرحله ۱: بلافاصله پس از ساخت
-    try{ world.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0); }catch(e){}
-    // مرحله ۲: پس از پایدار شدن اندازه‌ی کانتینر
-    setTimeout(function(){
+    // ==== کلید اصلی حل مشکل ژئورفرنس ====
+    // از onGlobeReady استفاده می‌کنیم تا pointOfView بعد از ساخت کامل texture اجرا شود
+    if(typeof world.onGlobeReady==='function'){
+      world.onGlobeReady(function(){
+        setTimeout(function(){
+          if(!globe3D)return;
+          try{globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0);}catch(e){}
+        },50);
+      });
+    }
+    // پشتیبان: چند بار در طول زمان
+    globeRetryTimers.push(setTimeout(function(){
       if(!globe3D)return;
       try{
         globe3D.width(container.clientWidth||360);
         globe3D.height(container.clientHeight||380);
-        globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},800);
+        globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0);
       }catch(e){}
-    },250);
-    // مرحله ۳: پشتیبان نهایی
-    setTimeout(function(){
+    },250));
+    globeRetryTimers.push(setTimeout(function(){
       if(!globe3D)return;
-      try{ globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0); }catch(e){}
-    },1500);
+      try{globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0);}catch(e){}
+    },900));
+    globeRetryTimers.push(setTimeout(function(){
+      if(!globe3D)return;
+      try{globe3D.pointOfView({lat:lat,lng:lon,altitude:altitude||0.5},0);}catch(e){}
+    },2000));
     return world;
   }catch(e){console.warn('Globe failed',e);return null;}
 }
@@ -824,22 +897,16 @@ function setGlobeMarkers(world,markers){
 }
 function resetGlobeView(){
   if(!globe3D)return;
-  try{ globe3D.pointOfView({lat:globeState.lat,lng:globeState.lon,altitude:0.5},800); }catch(e){}
+  try{globe3D.pointOfView({lat:globeState.lat,lng:globeState.lon,altitude:0.5},800);}catch(e){}
 }
 function resetLiveGlobeView(){
   if(!globe3D)return;
-  try{ globe3D.pointOfView({lat:liveLat,lng:liveLon,altitude:0.6},800); }catch(e){}
+  try{globe3D.pointOfView({lat:liveLat,lng:liveLon,altitude:0.6},800);}catch(e){}
 }
 function destroyGlobe(){
-  if(globe3D){
-    try{ if(globe3D._destructor)globe3D._destructor(); }catch(e){}
-    globe3D=null;
-  }
-  // پاک کردن محتوی کانتینرها برای اطمینان
-  ['globeContainer','liveGlobeContainer'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el)el.innerHTML='';
-  });
+  clearGlobeRetries();
+  if(globe3D){try{if(globe3D._destructor)globe3D._destructor();}catch(e){}globe3D=null;}
+  ['globeContainer','liveGlobeContainer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
 }
 
 /* ============ NAVIGATION ============ */
@@ -855,6 +922,7 @@ function resetSearchPageState(){
   if(form)form.style.display='block';if(res)res.style.display='none';
   destroyGlobe();disableCompass();
   var cs=document.getElementById('compassStatus');if(cs)cs.innerText='';
+  cachedAllSat=[];cachedAllAc=[];nearbyActive=false;
 }
 function resetPredictPageState(){
   var form=document.getElementById('predictFormPanel');var res=document.getElementById('predResults');var prog=document.getElementById('predProgress');
@@ -863,6 +931,44 @@ function resetPredictPageState(){
 function resetLivePageState(){
   var setup=document.getElementById('liveSetupPanel');var view=document.getElementById('liveViewPanel');
   if(setup)setup.style.display='block';if(view)view.style.display='none';
+}
+function resetTimeToNow(){
+  var now=getNowLocal();
+  document.getElementById('jYear').value=now.jy;
+  document.getElementById('jMonth').value=now.jm;
+  var daySel=document.getElementById('jDay');
+  var maxDay=now.jm<=6?31:(now.jm<=11?30:(isLeapJalali(now.jy)?30:29));
+  daySel.innerHTML='';
+  for(var d=1;d<=maxDay;d++){var opt=document.createElement('option');opt.value=d;opt.textContent=d;daySel.appendChild(opt);}
+  daySel.value=now.jd;
+  document.getElementById('jHour').value=now.h;
+  document.getElementById('jMinute').value=now.min;
+}
+function resetPredTimesToNow(){
+  var now=getNowLocal();
+  document.getElementById('predStartYear').value=now.jy;
+  document.getElementById('predStartMonth').value=now.jm;
+  var startDay=document.getElementById('predStartDay');
+  var maxDayS=now.jm<=6?31:(now.jm<=11?30:(isLeapJalali(now.jy)?30:29));
+  startDay.innerHTML='';
+  for(var d=1;d<=maxDayS;d++){var opt=document.createElement('option');opt.value=d;opt.textContent=d;startDay.appendChild(opt);}
+  startDay.value=now.jd;
+  document.getElementById('predStartHour').value=now.h;
+  document.getElementById('predStartMinute').value=Math.floor(now.min/5)*5;
+  // End = start + 3 hours
+  var endDate=new Date();
+  endDate.setHours(now.h+3);
+  var endJ=toJalali(endDate.getFullYear(),endDate.getMonth()+1,endDate.getDate());
+  document.getElementById('predEndYear').value=endJ[0];
+  document.getElementById('predEndMonth').value=endJ[1];
+  var endDay=document.getElementById('predEndDay');
+  var maxDayE=endJ[1]<=6?31:(endJ[1]<=11?30:(isLeapJalali(endJ[0])?30:29));
+  endDay.innerHTML='';
+  for(var d2=1;d2<=maxDayE;d2++){var opt2=document.createElement('option');opt2.value=d2;opt2.textContent=d2;endDay.appendChild(opt2);}
+  endDay.value=endJ[2];
+  document.getElementById('predEndHour').value=endDate.getHours();
+  var endMin=Math.floor(endDate.getMinutes()/5)*5;
+  document.getElementById('predEndMinute').value=endMin;
 }
 function clearSearchForm(){
   document.getElementById('autoLat').value='';document.getElementById('autoLon').value='';document.getElementById('autoCoordBoxes').style.display='none';document.getElementById('locStatus').innerText='';
@@ -873,12 +979,12 @@ function clearSearchForm(){
   document.getElementById('directionSelect').value='';selectedAzimuth=null;selectedDirectionKey=null;updateSelectedDirDisplay();
   document.getElementById('compassStatus').innerText='';disableCompass();
   document.getElementById('moveDir').selectedIndex=0;
-  var now=getNowLocal();
-  document.getElementById('jYear').value=now.jy;document.getElementById('jMonth').value=now.jm;
-  var daySel=document.getElementById('jDay');var maxDay=now.jm<=6?31:(now.jm<=11?30:(isLeapJalali(now.jy)?30:29));
-  daySel.innerHTML='';for(var d=1;d<=maxDay;d++){var opt=document.createElement('option');opt.value=d;opt.textContent=d;daySel.appendChild(opt);}
-  daySel.value=now.jd;document.getElementById('jHour').value=now.h;document.getElementById('jMinute').value=0;
+  resetTimeToNow();
   clearErrorBox('errorBox');
+  // Reset nearby list
+  nearbyActive=false;cachedAllSat=[];cachedAllAc=[];
+  var btnText=document.getElementById('nearbyBtnText');if(btnText)btnText.innerText='مشاهده تمامی اهداف اطراف';
+  var tbl=document.getElementById('nearbyTable');if(tbl){tbl.style.display='none';tbl.innerHTML='';}
 }
 function clearPredictForm(){
   document.getElementById('predAutoLat').value='';document.getElementById('predAutoLon').value='';document.getElementById('predAutoCoordBoxes').style.display='none';document.getElementById('predLocStatus').innerText='';
@@ -886,6 +992,7 @@ function clearPredictForm(){
   if(predPickerMarker&&predPickerMapObj){predPickerMapObj.removeLayer(predPickerMarker);predPickerMarker=null;}
   ['predLatD','predLatM','predLatS','predLonD','predLonM','predLonS','predDecLat','predDecLon','predUtmZone','predUtmE','predUtmN'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('predLatDir').value='N';document.getElementById('predLonDir').value='E';document.getElementById('predUtmHem').value='N';
+  resetPredTimesToNow();
   clearErrorBox('predErrorBox');
 }
 function clearLiveForm(){
@@ -899,9 +1006,9 @@ function clearLiveForm(){
 
 /* ============ GUIDES ============ */
 var GUIDES={
-  search:{title:'راهنمای بررسی شیء مشاهده‌شده',body:'<p>این ماژول با بهره‌گیری از الگوریتم پیشرفته‌ی محاسبات مداری <strong>SGP4</strong> و تطبیق آن با داده‌های لحظه‌ای ترافیک هوایی، موقعیت شیء نورانی مشاهده‌شده‌ی شما را با دقت بازسازی می‌کند.</p><h4>ورودی‌های ضروری</h4><ul><li><strong>موقعیت ناظر:</strong> مختصات دقیق محل مشاهده را با GPS، نقشه یا ورود دستی تعیین کنید.</li><li><strong>زمان مشاهده:</strong> تاریخ و ساعت دقیق رؤیت را بر اساس تقویم هجری شمسی وارد کنید.</li><li><strong>سمت مشاهده:</strong> جهت جغرافیایی که شیء در آن دیده شده (نسبت به شمال واقعی).</li><li><strong>جهت حرکت:</strong> مسیر ظاهری حرکت شیء در آسمان.</li></ul><h4>شاخص اطمینان</h4><p>درصد اطمینان نشان‌دهنده‌ی میزان هم‌خوانی زاویه‌ای شیء با گزارش شماست. هرچه این عدد بالاتر باشد، احتمال تطابق بیشتر است.</p>'},
-  predict:{title:'راهنمای پیش‌بینی عبور ماهواره‌ها',body:'<p>این ماژول با پردازش مسیر حرکت ماهواره‌های فعال در مدار زمین و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند.</p><h4>پارامترهای ورودی</h4><ul><li><strong>موقعیت رصد:</strong> مختصات جغرافیایی نقطه‌ی مورد نظر برای رصد.</li><li><strong>بازه‌ی زمانی:</strong> تعیین زمان شروع و پایان پیش‌بینی.</li></ul><h4>اطلاعات هر عبور</h4><ul><li>نام و نوع ماهواره</li><li>کشور بهره‌بردار</li><li>زمان دقیق شروع عبور</li><li>سمت مشاهده (آزیموت ورود)</li><li>جهت حرکت در آسمان</li></ul><h4>خروجی CSV</h4><p>نتیجه‌ی تحلیل قابل دانلود به فرمت اکسل بوده و شامل تمامی پارامترهای محاسبه‌شده است.</p>'},
-  live:{title:'راهنمای مشاهده‌ی زنده‌ی آسمان',body:'<p>این ماژول به‌صورت لحظه‌ای موقعیت تمامی ماهواره‌های فعال و پروازهای هوایی قابل رؤیت از موقعیت شما را با نرخ بروزرسانی یک‌ثانیه‌ای نمایش می‌دهد.</p><h4>پارامترهای فیلتر</h4><ul><li><strong>حداقل ارتفاع از افق:</strong> ۱۰ درجه</li><li><strong>حداکثر فاصله‌ی هواپیماها:</strong> ۱۵۰ کیلومتر</li><li><strong>حداکثر قدر ظاهری ماهواره:</strong> ۶.۵</li></ul><h4>نوار زمان</h4><p>با استفاده از نوار زمان می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با محاسبات مداری دقیق، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.</p>'}
+  search:{title:'راهنمای بررسی شیء',body:'<p>این ماژول با بهره‌گیری از الگوریتم پیشرفته‌ی محاسبات مداری <strong>SGP4</strong> و تطبیق آن با داده‌های لحظه‌ای ترافیک هوایی، موقعیت شیء نورانی مشاهده‌شده‌ی شما را با دقت بازسازی می‌کند.</p><h4>ورودی‌های ضروری</h4><ul><li><strong>موقعیت ناظر:</strong> مختصات دقیق محل مشاهده را با GPS، نقشه یا ورود دستی تعیین کنید.</li><li><strong>زمان مشاهده:</strong> تاریخ و ساعت دقیق رؤیت را بر اساس تقویم هجری شمسی وارد کنید.</li><li><strong>سمت مشاهده:</strong> جهت جغرافیایی که شیء در آن دیده شده (نسبت به شمال واقعی).</li><li><strong>جهت حرکت:</strong> مسیر ظاهری حرکت شیء در آسمان.</li></ul><h4>شاخص اطمینان</h4><p>درصد اطمینان نشان‌دهنده‌ی میزان هم‌خوانی زاویه‌ای شیء با گزارش شماست. هرچه این عدد بالاتر باشد، احتمال تطابق بیشتر است.</p>'},
+  predict:{title:'راهنمای پیش‌بینی عبور',body:'<p>این ماژول با پردازش مسیر حرکت ماهواره‌های فعال در مدار زمین و اعمال تصحیحات اتمسفری، زمان‌بندی دقیق عبور آن‌ها از بالای موقعیت شما را محاسبه می‌کند.</p><h4>پارامترهای ورودی</h4><ul><li><strong>موقعیت رصد:</strong> مختصات جغرافیایی نقطه‌ی مورد نظر برای رصد.</li><li><strong>بازه‌ی زمانی:</strong> تعیین زمان شروع و پایان پیش‌بینی.</li></ul><h4>اطلاعات هر عبور</h4><ul><li>نام و نوع ماهواره</li><li>کشور بهره‌بردار</li><li>زمان دقیق شروع عبور</li><li>سمت مشاهده (آزیموت ورود)</li><li>جهت حرکت در آسمان</li></ul><h4>خروجی CSV</h4><p>نتیجه‌ی تحلیل قابل دانلود به فرمت اکسل بوده و شامل تمامی پارامترهای محاسبه‌شده است.</p>'},
+  live:{title:'راهنمای نمایش زنده',body:'<p>این ماژول به‌صورت لحظه‌ای موقعیت تمامی ماهواره‌های فعال و پروازهای هوایی قابل رؤیت از موقعیت شما را با نرخ بروزرسانی یک‌ثانیه‌ای نمایش می‌دهد.</p><h4>پارامترهای فیلتر</h4><ul><li><strong>حداقل ارتفاع از افق:</strong> ۱۰ درجه</li><li><strong>حداکثر فاصله‌ی هواپیماها:</strong> ۱۵۰ کیلومتر</li><li><strong>حداکثر قدر ظاهری ماهواره:</strong> ۶.۵</li></ul><h4>نوار زمان</h4><p>با استفاده از نوار زمان می‌توانید وضعیت آسمان را در ۶۰ دقیقه‌ی گذشته بازسازی کنید. موقعیت ماهواره‌ها در زمان گذشته با محاسبات مداری دقیق، و موقعیت هواپیماها بر اساس تخمین مسیر پروازی محاسبه می‌شود.</p>'}
 };
 function openGuide(key){var g=GUIDES[key];if(!g)return;document.getElementById('guideTitle').innerText=g.title;document.getElementById('guideBody').innerHTML=g.body;document.getElementById('guideModal').classList.add('show');}
 function openAbout(){document.getElementById('aboutModal').classList.add('show');}
@@ -988,7 +1095,8 @@ var compassHandler=null,compassActive=false;
 function startCompassFlow(){if(!('DeviceOrientationEvent' in window)){document.getElementById('compassStatus').innerText="گوشی شما از قطب‌نما پشتیبانی نمی‌کند.";return;}document.getElementById('calibrationPage').style.display='block';document.getElementById('calStep1').style.display='block';document.getElementById('calStep2').style.display='none';document.getElementById('calStep3').style.display='none';window.scrollTo(0,0);}
 function cancelCalibration(){stopCalibrationListener();disableCompass();document.getElementById('calibrationPage').style.display='none';document.getElementById('compassStatus').innerText="کالیبراسیون لغو شد.";window.scrollTo(0,0);}
 function retryCalibration(){document.getElementById('calStep1').style.display='block';document.getElementById('calStep2').style.display='none';document.getElementById('calStep3').style.display='none';}
-function beginCalibration(){document.getElementById('calStep1').style.display='none';document.getElementById('calStep2').style.display='block';calibActive=true;calibLastAlpha=null;calibTotalRotation=0;calibStartTime=Date.now();updateCalibUI(0);document.getElementById('calSuccessBox').style.display='none';if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationEvent.requestPermission().then(function(state){if(state==='granted'){startCalibrationListener();}else{showCalibrationFailed();}}).catch(function(){showCalibrationFailed();});}else{startCalibrationListener();}}
+function beginCalibration(){document.getElementById('calStep1').style.display='none';document.getElementById('calStep2').style.display='block';calibActive=true;calibLastAlpha=null;calibTotalRotation=0;calibStartTime=Date.now();updateCalibUI(0);document.getElementById('calSuccessBox').style.display='none';if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationRequest();}else{startCalibrationListener();}}
+function DeviceOrientationRequest(){DeviceOrientationEvent.requestPermission().then(function(state){if(state==='granted'){startCalibrationListener();}else{showCalibrationFailed();}}).catch(function(){showCalibrationFailed();});}
 function startCalibrationListener(){calibHandler=function(e){if(!calibActive)return;var alpha=e.alpha;if(alpha===null||alpha===undefined)return;if(calibLastAlpha!==null){var delta=alpha-calibLastAlpha;if(delta>180)delta-=360;if(delta<-180)delta+=360;calibTotalRotation+=Math.abs(delta);}calibLastAlpha=alpha;var progress=Math.min(100,(calibTotalRotation/CALIB_TARGET_ROTATION)*100);updateCalibUI(progress);if(progress>=CALIB_SUCCESS_THRESHOLD){calibActive=false;showCalibrationSuccess();}};if('ondeviceorientationabsolute' in window)window.addEventListener('deviceorientationabsolute',calibHandler);else window.addEventListener('deviceorientation',calibHandler);calibTimerInterval=setInterval(function(){if(!calibActive)return;var elapsed=(Date.now()-calibStartTime)/1000;document.getElementById('calStatTime').innerText=Math.floor(elapsed/60)+':'+String(Math.floor(elapsed%60)).padStart(2,'0');if(elapsed*1000>=CALIB_MAX_DURATION){calibActive=false;stopCalibrationListener();document.getElementById('calStep2').style.display='none';document.getElementById('calStep3').style.display='block';}},200);}
 function stopCalibrationListener(){if(calibHandler){window.removeEventListener('deviceorientationabsolute',calibHandler);window.removeEventListener('deviceorientation',calibHandler);calibHandler=null;}if(calibTimerInterval){clearInterval(calibTimerInterval);calibTimerInterval=null;}calibActive=false;}
 function updateCalibUI(progress){progress=Math.max(0,Math.min(100,progress));var pct=Math.round(progress);document.getElementById('calProgressFill').style.width=pct+'%';document.getElementById('calProgressPct').innerText=pct+'%';document.getElementById('calProgressLabel').innerText=pct+'%';document.getElementById('calStatRotation').innerText=Math.round(calibTotalRotation)+'°';if(progress>60)document.getElementById('calStatStability').innerText='مطلوب';else if(progress>30)document.getElementById('calStatStability').innerText='متوسط';else document.getElementById('calStatStability').innerText='ناکافی';var quality=document.getElementById('calQuality'),hint=document.getElementById('calHint');if(pct<40){quality.className='calib-quality bad';quality.innerText='دریافت داده‌ها در جریان است...';hint.innerText='گوشی را به شکل عدد ۸ حرکت دهید';}else if(pct<75){quality.className='calib-quality medium';quality.innerText='نزدیک به تکمیل';hint.innerText='حرکت را ادامه دهید...';}else{quality.className='calib-quality good';quality.innerText='کالیبراسیون کامل شد';hint.innerText='آماده‌ی استفاده از قطب‌نما';}}
@@ -1025,9 +1133,7 @@ function normalizeAdsbAc(a){var altFt=(typeof a.alt_baro==='number')?a.alt_baro:
 async function fetchAdsbFi(lat,lon,radiusNm){var data=await fetchJsonWithProxies("https://opendata.adsb.fi/api/v3/lat/"+lat+"/lon/"+lon+"/dist/"+radiusNm,15000);return((data&&data.ac)||[]).map(normalizeAdsbAc).filter(function(a){return a.icao&&a.lat!=null&&a.lon!=null;});}
 async function fetchAdsbLol(lat,lon,radiusNm){var data=await fetchJsonWithProxies("https://api.adsb.lol/v2/point/"+lat+"/"+lon+"/"+radiusNm,15000);return((data&&data.ac)||[]).map(normalizeAdsbAc).filter(function(a){return a.icao&&a.lat!=null&&a.lon!=null;});}
 async function fetchAllAircraft(lat,lon,radiusKm){var radiusNm=Math.min(250,Math.max(10,Math.round(radiusKm*0.54)));var ok=[],fail=[];try{var list=await fetchAdsbFi(lat,lon,radiusNm);if(list&&list.length>0){ok.push('adsb.fi');return{list:list,sourcesOk:ok,sourcesFail:fail};}}catch(e){fail.push('adsb.fi');}try{var list2=await fetchAdsbLol(lat,lon,radiusNm);ok.push('adsb.lol');return{list:list2||[],sourcesOk:ok,sourcesFail:fail};}catch(e){fail.push('adsb.lol');}return{list:[],sourcesOk:ok,sourcesFail:fail};}
-function calcConfidence(azDiff,azTolerance){var c=95-(azDiff/azTolerance)*45;return Math.max(40,Math.min(95,Math.round(c)));}
 var moveDirHeadings={"از شمال به جنوب":180,"از جنوب به شمال":0,"از شرق به غرب":270,"از غرب به شرق":90,"از شمال‌شرق به جنوب‌غرب":225,"از شمال‌غرب به جنوب‌شرق":135,"از جنوب‌شرق به شمال‌غرب":315,"از جنوب‌غرب به شمال‌شرق":45};
-function adjustConfidenceByMovement(baseConf,objHeading,userMoveDir){if(objHeading==null||!moveDirHeadings.hasOwnProperty(userMoveDir))return baseConf;var expected=moveDirHeadings[userMoveDir];var diff=Math.abs(objHeading-expected);diff=Math.min(diff,360-diff);if(diff<=35)return Math.min(98,baseConf+12);if(diff>=145)return Math.max(20,baseConf-15);return baseConf;}
 function guessSatInfo(name){
   var n=name.toUpperCase();
   if(n.indexOf('STARLINK')>-1)return{type:'اینترنت ماهواره‌ای',country:'آمریکا (اسپیس‌ایکس)'};
@@ -1074,7 +1180,8 @@ function validateAndRun(){
 }
 function sleep(ms){return new Promise(function(res){setTimeout(res,ms);});}
 
-/* ============ RETROSPECTIVE (3 min back) ============ */
+/* ============ RETROSPECTIVE ============ */
+var cachedAllSat=[],cachedAllAc=[],nearbyActive=false;
 async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userMoveDir,diag){
   var WINDOW_BACK_SEC=180;
   var COARSE_STEP_SEC=15,FINE_STEP_SEC=2;
@@ -1090,7 +1197,6 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
   var processedCount=0,totalSats=Math.floor(lines.length/3);
   var coarseTimes=[];
   for(var ms=startMs;ms<=endMs;ms+=COARSE_STEP_SEC*1000){coarseTimes.push(precomputeAtMs(ms));}
-  diag.retroCoarseSlots=coarseTimes.length;
   diag.satChecked=totalSats;
   var expectedHeading=moveDirHeadings[userMoveDir];
   for(var i=0;i+2<lines.length;i+=3){
@@ -1119,7 +1225,6 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
     processedCount++;
     if(processedCount%500===0){var pEl=document.getElementById('loadingProgress');if(pEl)pEl.innerText='تحلیل: '+processedCount+' از '+totalSats;await sleep(0);}
   }
-  diag.retroCoarseCandidates=candidates.length;
   var refinedMatches=[];
   for(var c=0;c<candidates.length;c++){
     var cand=candidates[c];
@@ -1157,18 +1262,17 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
     var topScore=refinedMatches[0].score;
     refinedMatches=refinedMatches.filter(function(m){return m.score>topScore*0.85;}).slice(0,3);
   }
-  diag.retroRefinedMatches=refinedMatches.length;
   return refinedMatches;
 }
 async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd,jh,jmin){
-  var diag={satChecked:0,retroCoarseSlots:0,retroCoarseCandidates:0,retroRefinedMatches:0,aircraftWithinRadius:0,aircraftMatches:0,sunAltCenter:null,usedLocalFile:false,acSourcesOk:[],acSourcesFail:[],satSkippedDaytime:false};
+  var diag={satChecked:0,aircraftWithinRadius:0,aircraftMatches:0,sunAltCenter:null,acSourcesOk:[]};
   diag.sunAltCenter=sunAltitude(obsDate,lat,lon);
   var isNight=diag.sunAltCenter<=-6;
   try{
     var mainText=document.getElementById('loadingMainText');
     var satMatches=[];
     if(!isNight){
-      diag.satSkippedDaytime=true;
+      // روز: فقط هواپیما
     } else {
       if(mainText)mainText.innerText='تحلیل گذشته‌نگر ۳ دقیقه‌ای...';
       satMatches=await analyzeRetrospectiveWindow(lat,lon,obsDate,azimuth,moveDir,diag);
@@ -1180,7 +1284,7 @@ async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd
       if(mainText)mainText.innerText='دریافت داده‌های ترافیک هوایی...';
       try{
         var acData=await fetchAllAircraft(lat,lon,250);
-        diag.acSourcesOk=acData.sourcesOk;diag.acSourcesFail=acData.sourcesFail;
+        diag.acSourcesOk=acData.sourcesOk;
         diag.aircraftWithinRadius=acData.list.length;
         acData.list.forEach(function(a){
           if(a.onGround)return;
@@ -1193,7 +1297,10 @@ async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd
         });
         acMatches.sort(function(a,b){return b.score-a.score;});
       }catch(err){diag.acError=err.message;}
-    }else{diag.acSkippedOldTime=true;}
+    }
+    // ذخیره برای دکمه‌ی "تمامی اهداف اطراف"
+    cachedAllSat=satMatches.slice();
+    cachedAllAc=acData_safe_list(lat,lon,azimuth).slice();
     finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,acMatches,jy,jm,jd,jh,jmin,diag);
   }catch(err){
     document.getElementById('loadingBox').style.display='none';
@@ -1202,6 +1309,21 @@ async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd
     document.getElementById('resultBox').style.display='none';
   }
 }
+// helper: cached aircraft list with az info
+var _cachedAcDataRaw=[];
+function acData_safe_list(lat,lon,azimuth){
+  if(!_cachedAcDataRaw.length)return[];
+  var out=[];
+  _cachedAcDataRaw.forEach(function(a){
+    if(a.onGround)return;
+    var be=bearingElevation(lat,lon,a.lat,a.lon,a.altM);
+    if(be.elev<0)return;
+    var azDiff=Math.abs(be.bearing-azimuth);if(azDiff>180)azDiff=360-azDiff;
+    out.push({name:a.callsign||a.icao,country:a.country||'نامشخص',elev:be.elev.toFixed(1),az:be.bearing.toFixed(1),dist:(be.dist/1000).toFixed(1),alt:a.altM,speed:a.speedKmh,heading:a.heading,lat:a.lat,lon:a.lon,azDiff:azDiff});
+  });
+  out.sort(function(a,b){return parseFloat(a.dist)-parseFloat(b.dist);});
+  return out;
+}
 function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,acMatches,jy,jm,jd,jh,jmin,diag){
   document.getElementById('loadingBox').style.display='none';
   document.getElementById('resultBox').style.display='block';
@@ -1209,11 +1331,8 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
   var isUnknown=!hasSat&&!hasAc;
   var hero=document.getElementById('resultHero');
   var cls,title,sub,icon;
-  if(isUnknown){
-    cls='threat';title='🚨 شیء ناشناس — تهدید احتمالی';
-    sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';
-    icon='alert';
-  }else if(hasSat&&!hasAc){cls='sat';title='✓ ماهواره تاییدشده';sub=satMatches.length+' ماهواره با مشخصات شما مطابقت دارد.';icon='satellite';}
+  if(isUnknown){cls='threat';title='🚨 شیء ناشناس — تهدید احتمالی';sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';icon='alert';}
+  else if(hasSat&&!hasAc){cls='sat';title='✓ ماهواره تاییدشده';sub=satMatches.length+' ماهواره با مشخصات شما مطابقت دارد.';icon='satellite';}
   else if(hasAc&&!hasSat){cls='ac';title='✓ هواپیمای تاییدشده';sub=acMatches.length+' پرواز با مشخصات شما مطابقت دارد.';icon='plane';}
   else{cls='mix';title='✓ شناسایی دوگانه';sub=satMatches.length+' ماهواره و '+acMatches.length+' هواپیما مطابقت دارند.';icon='satellite';}
   hero.className='result-hero '+cls;
@@ -1263,7 +1382,7 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
     '<div class="diag-row"><span>بازه‌ی تحلیل</span><span>۳ دقیقه قبل از گزارش</span></div>'+
     '<div class="diag-row"><span>وضعیت نور</span><span>'+(diag.satSkippedDaytime?'☀️ روز':(diag.sunAltCenter<=-18?'🌙 شب کامل':'🌆 گرگ‌ومیش'))+'</span></div>'+
     '<div class="diag-row"><span>ماهواره‌های بررسی‌شده</span><span>'+(diag.satSkippedDaytime?'— (روز)':diag.satChecked)+'</span></div>'+
-    '<div class="diag-row" style="color:#6ee7b7;"><span>تطابق دقیق ماهواره</span><span>'+diag.retroRefinedMatches+'</span></div>'+
+    '<div class="diag-row" style="color:#6ee7b7;"><span>تطابق ماهواره</span><span>'+satMatches.length+'</span></div>'+
     '<div class="diag-row"><span>هواپیماهای نزدیک</span><span>'+diag.aircraftWithinRadius+'</span></div>'+
     '<div class="diag-row" style="color:#6ee7b7;"><span>هواپیمای مطابق</span><span>'+diag.aircraftMatches+'</span></div>'+
     '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>';
@@ -1271,16 +1390,52 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
     destroyGlobe();
     globe3D=createGlobe('globeContainer',lat,lon,0.6);
     if(!globe3D)return;
-    var markers=[{lat:lat,lng:lon,html:ICON_OBSERVER_SVG}];
+    var markers=[{lat:lat,lng:lon,html:ICON_OBSERVER_SVG,heading:0}];
     satMatches.forEach(function(s){
-      markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG});
+      var h=s.heading!=null?s.heading:0;
+      markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG,heading:h});
     });
     acMatches.forEach(function(a){
-      markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG});
+      var h=a.heading!=null?a.heading:0;
+      markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,heading:h});
     });
     setGlobeMarkers(globe3D,markers);
   },150);
   saveHistory({lat:lat,lon:lon,dateStr:jd+' '+monthNamesFa[jm-1]+' '+jy,az:azimuth,cls:cls,title:title,mainName:hasSat?satMatches[0].name:(hasAc?acMatches[0].name:'UNKNOWN')});
+}
+function toggleNearbyAll(){
+  nearbyActive=!nearbyActive;
+  var btnText=document.getElementById('nearbyBtnText');
+  var table=document.getElementById('nearbyTable');
+  if(!nearbyActive){btnText.innerText='مشاهده تمامی اهداف اطراف';table.style.display='none';table.innerHTML='';return;}
+  btnText.innerText='بستن لیست اهداف';
+  // ادغام لیست‌ها
+  var items=[];
+  cachedAllSat.forEach(function(s){items.push({type:'sat',name:s.name,az:s.az,alt:s.elev,dist:Math.round(s.rangeKm),lat:s.subLat,lon:s.subLon,heading:s.heading});});
+  cachedAllAc.forEach(function(a){items.push({type:'ac',name:a.name,az:a.az,alt:a.elev,dist:a.dist,lat:a.lat,lon:a.lon,heading:a.heading});});
+  items.sort(function(a,b){return parseFloat(a.dist)-parseFloat(b.dist);});
+  if(items.length===0){
+    table.style.display='table';
+    table.innerHTML='<tr><td colspan="5" style="padding:16px;">هیچ هدف قابل رؤیتی یافت نشد.</td></tr>';
+    return;
+  }
+  var rows='<tr><th>نوع</th><th>نام</th><th>آزیموت</th><th>ارتفاع</th><th>فاصله (km)</th></tr>';
+  var limit=Math.min(items.length,80);
+  for(var i=0;i<limit;i++){
+    var it=items[i];
+    var icon=it.type==='sat'?'🛰️':'✈️';
+    rows+='<tr><td>'+icon+'</td><td>'+escapeHtml(it.name)+'</td><td>'+escapeHtml(it.az)+'°</td><td>'+escapeHtml(it.alt)+'°</td><td>'+it.dist+'</td></tr>';
+  }
+  table.style.display='table';
+  table.innerHTML=rows;
+  // اضافه کردن به کره (همه‌ی آیکن‌ها بدون رنگ متمایز ماهواره‌ی "مطابق")
+  if(globe3D){
+    var currentMarkers=globe3D.htmlElementsData();
+    var newMarkers=[{lat:globeState.lat,lng:globeState.lon,html:ICON_OBSERVER_SVG,heading:0}];
+    cachedAllSat.forEach(function(s){newMarkers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG,heading:s.heading||0});});
+    cachedAllAc.forEach(function(a){newMarkers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,heading:a.heading||0});});
+    setGlobeMarkers(globe3D,newMarkers);
+  }
 }
 function guessAirline(c){if(!c)return'نامشخص';var p=c.trim().substring(0,3).toUpperCase();var t={IRA:'ایران‌ایر',IRC:'ماهان‌ایر',IRM:'ایران ایرتور',CQH:'کاسپین',QSM:'قشم‌ایر',ATC:'آتا',IRZ:'زاگرس',IRX:'کیش‌ایر',IRU:'آسمان',UAE:'امارات',QTR:'قطر ایرویز',ETD:'الاتحاد',THY:'ترک‌ایرلاین',FDB:'فلای‌دبی',DLH:'لوفت‌هانزا',AFR:'ایرفرانس',KLM:'کا‌ال‌ام',AFL:'ایرفلوت',SIA:'سنگاپور ایرلاینز',QFA:'کانتاس'};return t[p]||'نامشخص';}
 function buildObjCard(iconName,name,rows,confidence){
@@ -1288,11 +1443,11 @@ function buildObjCard(iconName,name,rows,confidence){
   var circumference=2*Math.PI*30;
   var offset=circumference-(confidence/100)*circumference;
   var icColor=iconName==='satellite'?'#22d3ee':'#10b981';
-  var html='<div class="obj-card"><h3><svg viewBox="0 0 24 24" style="width:24px;height:24px;color:'+icColor+';fill:'+icColor+';stroke:none;"><use href="#i-'+escapeHtml(iconName)+'"/></svg> '+escapeHtml(name)+'</h3>';
+  var html='<div class="obj-card"><h3><svg viewBox="0 0 24 24" style="width:22px;height:22px;color:'+icColor+';fill:'+icColor+';stroke:none;"><use href="#i-'+escapeHtml(iconName)+'"/></svg> '+escapeHtml(name)+'</h3>';
   rows.forEach(function(r){html+='<div class="obj-row"><span class="lbl">'+escapeHtml(r[0])+'</span><span class="val">'+r[1]+'</span></div>';});
-  html+='<div class="conf-wrap"><div class="conf-ring"><svg width="72" height="72">'
-    +'<circle cx="36" cy="36" r="30" stroke="rgba(120,150,220,0.12)" stroke-width="5" fill="none"/>'
-    +'<circle cx="36" cy="36" r="30" stroke="'+confColor+'" stroke-width="5" fill="none" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" style="filter:drop-shadow(0 0 6px '+confColor+');"/>'
+  html+='<div class="conf-wrap"><div class="conf-ring"><svg width="64" height="64">'
+    +'<circle cx="32" cy="32" r="26" stroke="rgba(120,150,220,0.12)" stroke-width="5" fill="none"/>'
+    +'<circle cx="32" cy="32" r="26" stroke="'+confColor+'" stroke-width="5" fill="none" stroke-dasharray="'+(2*Math.PI*26)+'" stroke-dashoffset="'+(2*Math.PI*26-(confidence/100)*(2*Math.PI*26))+'" stroke-linecap="round" style="filter:drop-shadow(0 0 6px '+confColor+');"/>'
     +'</svg><div class="num">'+confidence+'%</div></div>'
     +'<span class="conf-label">شاخص تطابق</span></div></div>';
   return html;
@@ -1348,25 +1503,11 @@ function findPassesForSatellite(satrec,name,obsLat,obsLon,startTime,endTime,minE
     var visible=elev>minElev&&groundDist<maxGroundDistKm;
     if(visible){
       if(!inPass){inPass=true;passData={name:name,startTime:currentTime,startAz:az,peakElev:elev,peakTime:currentTime,peakAz:az,endTime:currentTime,endAz:az,minRange:rangeKm,minGroundDist:groundDist};}
-      else{
-        passData.endTime=currentTime;passData.endAz=az;
-        if(elev>passData.peakElev){passData.peakElev=elev;passData.peakTime=currentTime;passData.peakAz=az;}
-        if(rangeKm<passData.minRange)passData.minRange=rangeKm;
-        if(groundDist<passData.minGroundDist)passData.minGroundDist=groundDist;
-      }
-    } else if(inPass){
-      if(passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){
-        passData.mag=estimateSatMag(passData.minRange,name);
-        passes.push(passData);
-      }
-      inPass=false;passData=null;
-    }
+      else{passData.endTime=currentTime;passData.endAz=az;if(elev>passData.peakElev){passData.peakElev=elev;passData.peakTime=currentTime;passData.peakAz=az;}if(rangeKm<passData.minRange)passData.minRange=rangeKm;if(groundDist<passData.minGroundDist)passData.minGroundDist=groundDist;}
+    } else if(inPass){if(passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){passes.push(passData);}inPass=false;passData=null;}
     currentTime+=step;
   }
-  if(inPass&&passData&&passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){
-    passData.mag=estimateSatMag(passData.minRange,name);
-    passes.push(passData);
-  }
+  if(inPass&&passData&&passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){passes.push(passData);}
   return passes;
 }
 var PREDICTION_MIN_ELEV=20;
@@ -1384,7 +1525,7 @@ async function runPrediction(){
   var endDate=jalaliToUtcDate(endY,endM,endD,endH,endMin);
   if(isNaN(startDate.getTime()))errors.push('زمان شروع نامعتبر است.');
   if(isNaN(endDate.getTime()))errors.push('زمان پایان نامعتبر است.');
-  if(!isNaN(startDate.getTime())&&!isNaN(endDate.getTime())){if(endDate.getTime()<=startDate.getTime())errors.push('زمان پایان باید بعد از شروع باشد.');if(startDate.getTime()<Date.now()-3600000)errors.push('زمان شروع نمی‌تواند بیش از یک ساعت در گذشته باشد.');}
+  if(!isNaN(startDate.getTime())&&!isNaN(endDate.getTime())){if(endDate.getTime()<=startDate.getTime())errors.push('زمان پایان باید بعد از شروع باشد.');}
   if(errors.length>0){showErrorBox('predErrorBox','خطا در ورود اطلاعات',errors);return;}
   var lat=coords[0],lon=coords[1];
   document.getElementById('predictFormPanel').style.display='none';
@@ -1401,7 +1542,7 @@ async function runPrediction(){
     var tleText=await loadTleData();
     var lines=tleText.trim().split("\n");
     var totalSats=Math.floor(lines.length/3);
-    progressText.innerText='تحلیل '+totalSats+' مدار — شعاع '+PREDICTION_RADIUS_KM+' کیلومتری';
+    progressText.innerText='تحلیل '+totalSats+' مدار';
     var observerGd={longitude:toRad(lon),latitude:toRad(lat),height:0};
     var allPasses=[];
     var processed=0;
@@ -1422,7 +1563,7 @@ async function runPrediction(){
         for(var p=0;p<satPasses.length;p++){allPasses.push(satPasses[p]);}
       }catch(e){}
       processed++;
-      if(processed%CHUNK_SIZE===0){var pct=Math.round((processed/totalSats)*100);progressFill.style.width=pct+'%';progressDetail.innerText='پردازش: '+processed+' — عبور یافت‌شده: '+allPasses.length;await sleep(0);}
+      if(processed%CHUNK_SIZE===0){var pct=Math.round((processed/totalSats)*100);progressFill.style.width=pct+'%';progressDetail.innerText='پردازش: '+processed+' — عبور: '+allPasses.length;await sleep(0);}
     }
     allPasses.sort(function(a,b){return a.startTime-b.startTime;});
     progressText.innerText='تحلیل به پایان رسید';
@@ -1435,15 +1576,14 @@ var lastPredictionPasses=null;
 function renderPredictionResults(passes,lat,lon,startDate,endDate){
   var container=document.getElementById('predResults');
   lastPredictionPasses=passes;
-  if(passes.length===0){container.innerHTML='<div class="empty-state"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg><br>در این بازه، هیچ ماهواره‌ای از شعاع '+PREDICTION_RADIUS_KM+' کیلومتری موقعیت شما عبور نمی‌کند.</div>';return;}
+  if(passes.length===0){container.innerHTML='<div class="empty-state"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-info"/></svg><br>در این بازه، هیچ ماهواره‌ای از بالای موقعیت شما عبور نمی‌کند.</div>';return;}
   var summaryHtml='<div class="pred-summary">' +
     '<div>📍 مختصات: <b>'+lat.toFixed(4)+', '+lon.toFixed(4)+'</b></div>' +
-    '<div>📏 شعاع بررسی: <b>'+PREDICTION_RADIUS_KM+' کیلومتر</b></div>' +
     '<div>🕐 بازه: <b>'+escapeHtml(formatJalaliDateTime(new Date(startDate)))+'</b> تا <b>'+escapeHtml(formatJalaliDateTime(new Date(endDate)))+'</b></div>' +
     '<div>🛰️ تعداد عبور: <b>'+passes.length+'</b></div>' +
     '</div>';
-  var downloadHtml='<button type="button" class="btn btn-success" onclick="downloadPredictionCSV()" style="margin-bottom:10px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg> دانلود خروجی (CSV)</button>';
-  var resetHtml='<button type="button" class="btn btn-outline" onclick="resetPrediction()" style="margin-bottom:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> بررسی مجدد</button>';
+  var downloadHtml='<button type="button" class="btn btn-success" onclick="downloadPredictionCSV()" style="margin-bottom:8px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-download"/></svg> دانلود خروجی (CSV)</button>';
+  var resetHtml='<button type="button" class="btn btn-outline" onclick="resetPrediction()" style="margin-bottom:12px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg> بررسی مجدد</button>';
   var cardsHtml='<div class="pred-list">';
   passes.forEach(function(p,idx){
     var info=guessSatInfo(p.name);
@@ -1455,10 +1595,9 @@ function renderPredictionResults(passes,lat,lon,startDate,endDate){
       '<div class="pred-row-body">' +
         '<div class="cell"><span class="lbl">کشور:</span><span class="val">'+escapeHtml(info.country)+'</span></div>' +
         '<div class="cell"><span class="lbl">نوع:</span><span class="val">'+escapeHtml(info.type)+'</span></div>' +
-        '<div class="cell cell-full"><span class="lbl">⏰ زمان رویت:</span><span class="val" style="color:#22d3ee;font-weight:800;">'+escapeHtml(formatTimeHMS(peakDate))+'</span></div>' +
+        '<div class="cell"><span class="lbl">⏰ زمان عبور:</span><span class="val" style="color:#22d3ee;font-weight:800;">'+escapeHtml(formatTimeHMS(peakDate))+'</span></div>' +
         '<div class="cell"><span class="lbl">سمت:</span><span class="val">'+escapeHtml(peakCompass)+'</span></div>' +
-        '<div class="cell"><span class="lbl">ارتفاع اوج:</span><span class="val">'+p.peakElev.toFixed(0)+'°</span></div>' +
-        '<div class="cell cell-full"><span class="lbl">جهت حرکت:</span><span class="val">'+escapeHtml(moveText)+'</span></div>' +
+        '<div class="cell"><span class="lbl">جهت حرکت:</span><span class="val">'+escapeHtml(moveText)+'</span></div>' +
       '</div>' +
     '</div>';
   });
@@ -1468,14 +1607,14 @@ function renderPredictionResults(passes,lat,lon,startDate,endDate){
 function resetPrediction(){resetPredictPageState();clearPredictForm();window.scrollTo(0,0);}
 function downloadPredictionCSV(){
   if(!lastPredictionPasses||lastPredictionPasses.length===0)return;
-  var rows=[['ردیف','نام ماهواره','کشور','نوع','تاریخ شمسی','زمان رویت','سمت','ارتفاع اوج','جهت حرکت']];
+  var rows=[['ردیف','نام ماهواره','کشور','نوع','تاریخ شمسی','زمان عبور','سمت','جهت حرکت']];
   lastPredictionPasses.forEach(function(p,idx){
     var info=guessSatInfo(p.name);
     var moveText=computeMovementDirection(p.startAz,p.peakAz,p.endAz);
     var pDate=new Date(p.peakTime);
     var jd=toJalali(pDate.getFullYear(),pDate.getMonth()+1,pDate.getDate());
     var dateStr=jd[2]+' '+monthNamesFa[jd[1]-1]+' '+jd[0];
-    rows.push([idx+1,p.name,info.country,info.type,dateStr,formatTimeHMS(pDate),azimuthToCompass(p.peakAz),p.peakElev.toFixed(0),moveText]);
+    rows.push([idx+1,p.name,info.country,info.type,dateStr,formatTimeHMS(pDate),azimuthToCompass(p.peakAz),moveText]);
   });
   var csv='\uFEFF'+rows.map(function(row){return row.map(function(cell){var s=String(cell);if(s.indexOf(',')>-1||s.indexOf('"')>-1||s.indexOf('\n')>-1)return '"'+s.replace(/"/g,'""')+'"';return s;}).join(',');}).join('\n');
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
@@ -1500,7 +1639,7 @@ var LIVE_GROUND_TRACK_KM=200;
 var LIVE_MAX_SAT_MARKERS=80;
 var LIVE_MAX_AC_MARKERS=50;
 var liveSliderAnimTimer=null;
-function stopLive(){liveActive=false;if(liveSatTimer){clearInterval(liveSatTimer);liveSatTimer=null;}if(liveAcTimer){clearInterval(liveAcTimer);liveAcTimer=null;}if(liveTimeDebounce){clearTimeout(liveTimeDebounce);liveTimeDebounce=null;}if(liveSliderAnimTimer){clearInterval(liveSliderAnimTimer);liveSliderAnimTimer=null;}destroyGlobe();}
+function stopLive(){liveActive=false;if(liveSatTimer){clearInterval(liveSatTimer);liveSatTimer=null;}if(liveAcTimer){clearInterval(liveAcTimer);liveAcTimer=null;}if(liveTimeDebounce){clearTimeout(liveTimeDebounce);liveTimeDebounce=null;}if(liveSliderAnimTimer){clearInterval(liveSliderAnimTimer);liveSliderAnimTimer=null;}destroyGlobe();hideLiveInfoPopup();}
 function resetLive(){stopLive();resetLivePageState();clearLiveForm();window.scrollTo(0,0);}
 function setLiveLocationMode(mode){liveLocMode=mode;document.getElementById('liveModeAutoCard').classList.toggle('active',mode==='auto');document.getElementById('liveModeManualCard').classList.toggle('active',mode==='manual');document.getElementById('liveModeMapCard').classList.toggle('active',mode==='map');document.getElementById('liveAutoLocPanel').style.display=mode==='auto'?'block':'none';document.getElementById('liveManualLocPanel').style.display=mode==='manual'?'block':'none';document.getElementById('liveMapLocPanel').style.display=mode==='map'?'block':'none';if(mode==='map'){setTimeout(function(){initLivePickerMap();if(livePickerMapObj)livePickerMapObj.invalidateSize();},100);}}
 function initLivePickerMap(){if(livePickerMapObj){livePickerMapObj.invalidateSize();return;}livePickerMapObj=L.map('livePickerMap').setView([35.6892,51.3890],5);addTileLayer(livePickerMapObj);livePickerMapObj.on('click',function(e){var la=e.latlng.lat,lo=e.latlng.lng;if(livePickerMarker)livePickerMapObj.removeLayer(livePickerMarker);livePickerMarker=L.marker([la,lo]).addTo(livePickerMapObj);document.getElementById('liveMapLat').value=la.toFixed(6);document.getElementById('liveMapLon').value=lo.toFixed(6);document.getElementById('liveMapCoordBoxes').style.display='flex';});}
@@ -1539,7 +1678,6 @@ async function startLiveSky(){
   liveTimeOffsetMin=0;
   document.getElementById('liveTimeSlider').value=0;
   updateLiveTimeDisplay();
-  // کره را با تاخیر بساز تا کانتینر رندر شده باشد
   setTimeout(function(){
     destroyGlobe();
     globe3D=createGlobe('liveGlobeContainer',liveLat,liveLon,0.6);
@@ -1570,7 +1708,7 @@ function recomputeLiveSatellites(offsetMin){
       var pv=satellite.propagate(rec.satrec,displayTime);
       if(!pv||!pv.position)continue;
       var geo=satellite.eciToGeodetic(pv.position,gmst);
-      var subLat=toDeg(geo.latitude),subLon=toDeg(geo.longitude),subHeightKm=geo.height;
+      var subLat=toDeg(geo.latitude),subLon=toDeg(geo.longitude);
       var groundDistKm=haversineKm(liveLat,liveLon,subLat,subLon);
       var ecf=satellite.eciToEcf(pv.position,gmst);
       var look=satellite.ecfToLookAngles(observerGd,ecf);
@@ -1578,7 +1716,16 @@ function recomputeLiveSatellites(offsetMin){
       var visible=altDeg>0;
       var nearGroundTrack=groundDistKm<LIVE_GROUND_TRACK_KM;
       if(!visible&&!nearGroundTrack)continue;
-      results.push({name:rec.name,lat:subLat,lon:subLon,alt:altDeg,az:toDeg(look.azimuth),mag:estimateSatMag(look.rangeSat,rec.name),dist:look.rangeSat,groundDistKm:groundDistKm,subHeightKm:subHeightKm,isNearOverhead:nearGroundTrack});
+      // جهت حرکت
+      var nextT=new Date(displayTime.getTime()+5000);
+      var pvNext=satellite.propagate(rec.satrec,nextT);
+      var heading=null;
+      if(pvNext&&pvNext.position){
+        var gmstN=satellite.gstime(nextT);
+        var geoN=satellite.eciToGeodetic(pvNext.position,gmstN);
+        heading=simpleBearing(subLat,subLon,toDeg(geoN.latitude),toDeg(geoN.longitude));
+      }
+      results.push({name:rec.name,lat:subLat,lon:subLon,alt:altDeg,az:toDeg(look.azimuth),mag:estimateSatMag(look.rangeSat,rec.name),dist:look.rangeSat,groundDistKm:groundDistKm,heading:heading,isNearOverhead:nearGroundTrack});
     }catch(e){}
   }
   results.sort(function(a,b){return a.groundDistKm-b.groundDistKm;});
@@ -1594,7 +1741,7 @@ async function updateLiveAircraft(){
       if(a.onGround)continue;
       var be=bearingElevation(liveLat,liveLon,a.lat,a.lon,a.altM);
       if(be.dist/1000>LIVE_AC_RADIUS_KM)continue;
-      results.push({name:a.callsign||a.icao,lat:a.lat,lon:a.lon,altM:a.altM,speed:a.speedKmh,heading:a.heading,elev:be.elev,az:be.bearing,dist:be.dist});
+      results.push({name:a.callsign||a.icao,icao:a.icao,country:a.country||'نامشخص',lat:a.lat,lon:a.lon,altM:a.altM,speed:a.speedKmh,heading:a.heading,elev:be.elev,az:be.bearing,dist:be.dist});
     }
     liveAcCurrent=results;
   }catch(e){}
@@ -1616,25 +1763,74 @@ function extrapolateAircraftToTime(offsetMin){
 }
 function updateMarkerLayer(){
   if(!globe3D)return;
-  var markers=[{lat:liveLat,lng:liveLon,html:ICON_OBSERVER_SVG}];
+  var markers=[{lat:liveLat,lng:liveLon,html:ICON_OBSERVER_SVG,heading:0}];
   var satShown=Math.min(liveSatCurrent.length,LIVE_MAX_SAT_MARKERS);
   for(var i=0;i<satShown;i++){
     var s=liveSatCurrent[i];
+    var h=s.heading||0;
     markers.push({
       lat:s.lat,lng:s.lon,
-      html:s.isNearOverhead?ICON_SAT_SVG.replace(/#22d3ee/g,'#f59e0b').replace(/#0891b2/g,'#b45309').replace(/#67e8f9/g,'#fcd34d'):ICON_SAT_SVG
+      html:s.isNearOverhead?ICON_SAT_SVG_OVERHEAD:ICON_SAT_SVG,
+      heading:h,
+      onClick:function(ev){showLiveInfoSat(ev);},
+      _type:'sat'
     });
   }
   var acList=extrapolateAircraftToTime(liveTimeOffsetMin);
   var acShown=Math.min(acList.length,LIVE_MAX_AC_MARKERS);
   for(var j=0;j<acShown;j++){
     var a=acList[j];
-    markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG});
+    markers.push({
+      lat:a.lat,lng:a.lon,
+      html:ICON_PLANE_SVG,
+      heading:a.heading||0,
+      onClick:function(ev){showLiveInfoAc(ev);},
+      _type:'ac'
+    });
+  }
+  // bind داده‌ی واقعی به هر مارکر
+  for(var k=0;k<markers.length;k++){
+    if(markers[k]._type==='sat'&&k-1<satShown){
+      markers[k]._data=liveSatCurrent[k-1];
+    } else if(markers[k]._type==='ac'){
+      var acIdx=k-1-satShown;
+      if(acIdx>=0&&acIdx<acShown)markers[k]._data=acList[acIdx];
+    }
   }
   setGlobeMarkers(globe3D,markers);
   var indicator=document.getElementById('liveLastUpdate');
   if(indicator)indicator.innerText='🛰️ '+liveSatCurrent.length+' | ✈️ '+acList.length;
 }
+function showLiveInfoSat(d){
+  var s=d._data;
+  if(!s)return;
+  var popup=document.getElementById('liveInfoPopup');
+  popup.style.display='block';
+  popup.innerHTML='<span class="close-x" onclick="hideLiveInfoPopup()">×</span>' +
+    '<h4>🛰️ '+escapeHtml(s.name)+'</h4>' +
+    '<div class="row"><span>ارتفاع از افق</span><span>'+s.alt.toFixed(1)+'°</span></div>' +
+    '<div class="row"><span>آزیموت</span><span>'+s.az.toFixed(0)+'°</span></div>' +
+    '<div class="row"><span>فاصله از ناظر</span><span>'+Math.round(s.dist)+' km</span></div>' +
+    '<div class="row"><span>فاصله از سر شما</span><span>'+Math.round(s.groundDistKm)+' km</span></div>' +
+    '<div class="row"><span>قدر ظاهری</span><span>'+s.mag.toFixed(1)+'</span></div>' +
+    (s.heading!=null?'<div class="row"><span>جهت حرکت</span><span>'+Math.round(s.heading)+'°</span></div>':'') +
+    (s.isNearOverhead?'<div class="row" style="color:#f59e0b;"><span>⭐</span><span>از بالای سر شما می‌گذرد</span></div>':'');
+}
+function showLiveInfoAc(d){
+  var a=d._data;
+  if(!a)return;
+  var popup=document.getElementById('liveInfoPopup');
+  popup.style.display='block';
+  popup.innerHTML='<span class="close-x" onclick="hideLiveInfoPopup()">×</span>' +
+    '<h4>✈️ '+escapeHtml(a.name)+'</h4>' +
+    (a.country?'<div class="row"><span>کشور</span><span>'+escapeHtml(a.country)+'</span></div>':'') +
+    (a.altM!=null?'<div class="row"><span>ارتفاع پرواز</span><span>'+a.altM+' m</span></div>':'') +
+    (a.speed!=null?'<div class="row"><span>سرعت</span><span>'+a.speed+' km/h</span></div>':'') +
+    (a.elev!=null?'<div class="row"><span>ارتفاع از افق</span><span>'+a.elev.toFixed(1)+'°</span></div>':'') +
+    (a.az!=null?'<div class="row"><span>آزیموت</span><span>'+a.az.toFixed(0)+'°</span></div>':'') +
+    (a.heading!=null?'<div class="row"><span>جهت حرکت</span><span>'+a.heading+'°</span></div>':'');
+}
+function hideLiveInfoPopup(){var p=document.getElementById('liveInfoPopup');if(p)p.style.display='none';}
 function onLiveTimeChange(val){
   var newVal=parseInt(val)||0;
   if(liveSliderAnimTimer){clearInterval(liveSliderAnimTimer);liveSliderAnimTimer=null;}
