@@ -161,8 +161,6 @@ select option{background:#10162e;color:var(--text);padding:10px;}
 .globe-wrap{position:relative;width:100%;height:360px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-top:12px;background:#000;}
 .globe-box{width:100%;height:100%;position:relative;}
 .globe-box canvas{display:block;outline:none;touch-action:none;}
-.globe-marker{pointer-events:none;position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
-.globe-marker svg{display:block;pointer-events:none;transform-origin:center center;}
 .globe-actions{position:absolute;top:8px;left:8px;z-index:20;display:flex;flex-direction:column;gap:5px;}
 .globe-actions .btn-mini{background:rgba(5,6,15,0.85);border:1px solid var(--border);color:var(--text);backdrop-filter:blur(8px);}
 .map-legend{display:flex;justify-content:center;gap:16px;padding:12px;margin-top:12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);font-size:12px;color:var(--text-dim);flex-wrap:wrap;}
@@ -336,7 +334,6 @@ body,html{overflow-x:hidden;}
 <div id="pageHome" class="page-section active">
   <header class="app-header">
     <div class="logo-wrap">
-      <!-- NEW LOGO — Radar / Target with satellite contact -->
       <svg class="logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="lgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -353,53 +350,32 @@ body,html{overflow-x:hidden;}
             <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
           </radialGradient>
         </defs>
-
-        <!-- Radar sweep (rotating effect via gradient) -->
         <path d="M50 50 L50 8 A42 42 0 0 1 79 24 Z" fill="url(#lgSweep)"/>
-
-        <!-- Outer radar rings -->
         <circle cx="50" cy="50" r="42" fill="none" stroke="url(#lgGrad)" stroke-width="1" opacity="0.35"/>
         <circle cx="50" cy="50" r="42" fill="none" stroke="url(#lgGrad)" stroke-width="1.8" stroke-dasharray="3 12" opacity="0.75"/>
         <circle cx="50" cy="50" r="30" fill="none" stroke="url(#lgGrad)" stroke-width="1" opacity="0.45"/>
         <circle cx="50" cy="50" r="19" fill="none" stroke="url(#lgGrad)" stroke-width="1.3" opacity="0.65"/>
-
-        <!-- Crosshairs (cardinal lines) -->
         <line x1="50" y1="6" x2="50" y2="24" stroke="url(#lgGrad)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/>
         <line x1="50" y1="76" x2="50" y2="94" stroke="url(#lgGrad)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/>
         <line x1="6" y1="50" x2="24" y2="50" stroke="url(#lgGrad)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/>
         <line x1="76" y1="50" x2="94" y2="50" stroke="url(#lgGrad)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/>
-
-        <!-- Center observer -->
         <circle cx="50" cy="50" r="10" fill="url(#lgCenterGlow)"/>
         <circle cx="50" cy="50" r="3.5" fill="url(#lgGrad)"/>
         <circle cx="50" cy="50" r="1.5" fill="#fff"/>
-
-        <!-- Contact 1 — Satellite (top-right) -->
         <g transform="translate(71 29)">
           <circle r="7" fill="#f59e0b" opacity="0.18"/>
           <circle r="7" fill="none" stroke="#f59e0b" stroke-width="0.8" opacity="0.7"/>
           <circle r="4" fill="#f59e0b"/>
-          <g transform="rotate(-30) scale(0.5)">
-            <rect x="-7" y="-2" width="5" height="4" rx="0.5" fill="#0a0e1f"/>
-            <rect x="2" y="-2" width="5" height="4" rx="0.5" fill="#0a0e1f"/>
-            <rect x="-2" y="-2" width="4" height="4" rx="0.7" fill="#0a0e1f"/>
-          </g>
         </g>
-
-        <!-- Contact 2 — Small blip (bottom-left) -->
         <g transform="translate(28 72)">
           <circle r="4.5" fill="#22d3ee" opacity="0.2"/>
           <circle r="4.5" fill="none" stroke="#22d3ee" stroke-width="0.7" opacity="0.6"/>
           <circle r="2" fill="#22d3ee"/>
         </g>
-
-        <!-- Contact 3 — Small blip -->
         <g transform="translate(75 68)">
           <circle r="2.5" fill="#a855f7" opacity="0.35"/>
           <circle r="1.5" fill="#a855f7"/>
         </g>
-
-        <!-- Corner accent -->
         <circle cx="16" cy="20" r="1.5" fill="#67e8f9" opacity="0.7"/>
       </svg>
     </div>
@@ -430,7 +406,6 @@ body,html{overflow-x:hidden;}
   <div class="dedication">به یاد <span class="martyr">شهید</span> میلاد ملک</div>
 </div>
 
-<!-- SEARCH PAGE -->
 <div id="pageSearch" class="page-section">
   <div class="page-header">
     <div class="back-btn" onclick="navigateTo('pageHome')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
@@ -547,7 +522,6 @@ body,html{overflow-x:hidden;}
   </div>
 </div>
 
-<!-- PREDICT PAGE -->
 <div id="pagePredict" class="page-section">
   <div class="page-header">
     <div class="back-btn" onclick="navigateTo('pageHome')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
@@ -614,7 +588,6 @@ body,html{overflow-x:hidden;}
   <div id="predResults"></div>
 </div>
 
-<!-- LIVE PAGE -->
 <div id="pageLive" class="page-section">
   <div class="page-header">
     <div class="back-btn" onclick="navigateTo('pageHome')"><svg class="icon-svg" viewBox="0 0 24 24"><use href="#i-chevron-left"/></svg></div>
@@ -830,26 +803,13 @@ body,html{overflow-x:hidden;}
 function escapeHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function toBase64Utf8(str){var bytes=new TextEncoder().encode(str);var bin='';for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin);}
 
-/* ============ SMALL GLOBE ICONS (for htmlElementsData) ============ */
-function makeSmallSatIcon(color){
-  return '<svg viewBox="0 0 24 24" width="22" height="22" style="filter:drop-shadow(0 0 4px '+color+');"><circle cx="12" cy="12" r="10" fill="'+color+'" opacity="0.92"/><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.9"/><g transform="translate(12 12)"><rect x="-5.5" y="-1.5" width="3" height="3" rx="0.3" fill="#fff"/><rect x="2.5" y="-1.5" width="3" height="3" rx="0.3" fill="#fff"/><rect x="-2" y="-1.8" width="4" height="3.6" rx="0.5" fill="#fff"/></g></svg>';
-}
-function makeSmallPlaneIcon(color){
-  return '<svg viewBox="0 0 24 24" width="22" height="22" style="filter:drop-shadow(0 0 4px '+color+');"><circle cx="12" cy="12" r="10" fill="'+color+'" opacity="0.92"/><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.9"/><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16z" fill="#fff" stroke="none" transform="translate(12 12) scale(0.55) translate(-12 -12)"/></svg>';
-}
-function makeObserverIcon(){
-  return '<svg viewBox="0 0 24 24" width="26" height="26" style="filter:drop-shadow(0 0 6px #a5b4fc);"><circle cx="12" cy="12" r="10" fill="#a5b4fc" opacity="0.9"/><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="1.4" opacity="0.95"/><circle cx="12" cy="12" r="3.5" fill="#fff"/><circle cx="12" cy="12" r="1.5" fill="#6366f1"/></svg>';
-}
-var ICON_OBSERVER_SVG = makeObserverIcon();
-var ICON_SAT_SVG = makeSmallSatIcon('#22d3ee');
-var ICON_SAT_SVG_OVERHEAD = makeSmallSatIcon('#f59e0b');
-var ICON_PLANE_SVG = makeSmallPlaneIcon('#10b981');
-
-/* ============ 3D GLOBE — htmlElementsData + small icons + timing fix ============ */
+/* ============ GLOBE — POINTS DATA (fast + accurate) ============ */
 var globe3D=null;
 var globeState={lat:0,lon:0,containerId:null};
 var globeRetryTimers=[];
+var globePointHandlers={};
 function clearGlobeRetries(){globeRetryTimers.forEach(function(t){clearTimeout(t);});globeRetryTimers=[];}
+
 function createGlobe(containerId,lat,lon,altitude){
   var container=document.getElementById(containerId);
   if(!container)return null;
@@ -859,6 +819,7 @@ function createGlobe(containerId,lat,lon,altitude){
   if(lat<-90||lat>90||lon<-180||lon>180)return null;
   globeState.lat=lat;globeState.lon=lon;globeState.containerId=containerId;
   clearGlobeRetries();
+  globePointHandlers={};
   try{
     var world=Globe({rendererConfig:{antialias:false,alpha:false,powerPreference:'high-performance'}})
       .width(container.clientWidth||360)
@@ -868,35 +829,17 @@ function createGlobe(containerId,lat,lon,altitude){
       .showAtmosphere(true)
       .atmosphereColor('#22d3ee')
       .atmosphereAltitude(0.1)
-      .htmlElementsData([])
-      .htmlAltitude(0.001)
-      .htmlTransitionDuration(0)
-      .htmlElement(function(d){
-        var el=document.createElement('div');
-        el.className='globe-marker';
-        // rotation on inner content for heading
-        var inner=document.createElement('div');
-        inner.style.transform='rotate('+(d.heading||0)+'deg)';
-        inner.style.transformOrigin='center center';
-        inner.style.transition='transform 0.4s ease';
-        inner.style.display='flex';
-        inner.style.alignItems='center';
-        inner.style.justifyContent='center';
-        inner.innerHTML=d.html||'';
-        inner.style.pointerEvents=d.onClick?'auto':'none';
-        inner.style.cursor=d.onClick?'pointer':'default';
-        if(d.onClick){
-          inner.addEventListener('click',function(e){
-            e.stopPropagation();
-            d.onClick(d);
-          });
-          inner.addEventListener('touchend',function(e){
-            e.stopPropagation();
-            d.onClick(d);
-          });
-        }
-        el.appendChild(inner);
-        return el;
+      .pointsData([])
+      .pointLat('lat')
+      .pointLng('lng')
+      .pointColor('color')
+      .pointAltitude('altitude')
+      .pointRadius('radius')
+      .pointResolution(12)
+      .pointsMerge(false)
+      .onPointClick(function(pt){
+        var h=globePointHandlers[pt.key];
+        if(h)h();
       })
       (container);
     var controls=world.controls();
@@ -917,14 +860,15 @@ function createGlobe(containerId,lat,lon,altitude){
     return world;
   }catch(e){console.warn('Globe failed',e);return null;}
 }
-function setGlobeMarkers(world,markers){
+function setGlobePoints(world,points){
   if(!world)return;
-  world.htmlElementsData(markers||[]);
+  world.pointsData(points||[]);
 }
 function resetGlobeView(){if(!globe3D)return;try{globe3D.pointOfView({lat:globeState.lat,lng:globeState.lon,altitude:0.5},800);}catch(e){}}
 function resetLiveGlobeView(){if(!globe3D)return;try{globe3D.pointOfView({lat:liveLat,lng:liveLon,altitude:0.5},800);}catch(e){}}
 function destroyGlobe(){
   clearGlobeRetries();
+  globePointHandlers={};
   if(globe3D){try{if(globe3D._destructor)globe3D._destructor();}catch(e){}globe3D=null;}
   ['globeContainer','liveGlobeContainer'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='';});
 }
@@ -1457,15 +1401,15 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
     destroyGlobe();
     globe3D=createGlobe('globeContainer',lat,lon,0.5);
     if(!globe3D)return;
-    var markers=[];
-    markers.push({lat:lat,lng:lon,html:ICON_OBSERVER_SVG,heading:0});
-    satMatches.forEach(function(s){
-      markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG,heading:s.heading!=null?s.heading:0});
+    var pts=[];
+    pts.push({lat:lat,lng:lon,color:'#a5b4fc',altitude:0.02,radius:0.55,key:'obs'});
+    satMatches.forEach(function(s,i){
+      pts.push({lat:s.subLat,lng:s.subLon,color:'#22d3ee',altitude:0.01,radius:0.28,key:'s'+i});
     });
-    acMatches.forEach(function(a){
-      markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,heading:a.heading!=null?a.heading:0});
+    acMatches.forEach(function(a,i){
+      pts.push({lat:a.lat,lng:a.lon,color:'#10b981',altitude:0.01,radius:0.25,key:'a'+i});
     });
-    setGlobeMarkers(globe3D,markers);
+    setGlobePoints(globe3D,pts);
   },150);
   saveHistory({lat:lat,lon:lon,dateStr:jd+' '+monthNamesFa[jm-1]+' '+jy,az:azimuth,cls:cls,title:title,mainName:hasSat?satMatches[0].name:(hasAc?acMatches[0].name:'UNKNOWN')});
 }
@@ -1490,11 +1434,11 @@ function toggleNearbyAll(){
   var limit=Math.min(items.length,80);
   for(var i=0;i<limit;i++){
     var it=items[i];
-    var icon=it.type==='sat'?ICON_SAT_SVG:ICON_PLANE_SVG;
-    var iconSmall=icon.replace(/width="22"/,'width="18"').replace(/height="22"/,'height="18"');
+    var icColor=it.type==='sat'?'#22d3ee':'#10b981';
+    var icon='<svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="10" fill="'+icColor+'"/><circle cx="12" cy="12" r="10" fill="none" stroke="#fff" stroke-width="1" opacity="0.9"/></svg>';
     var typeText=it.type==='sat'?'ماهواره':'هواپیما';
     html+='<div class="nearby-list-item">' +
-      '<div class="icon">'+iconSmall+'</div>' +
+      '<div class="icon">'+icon+'</div>' +
       '<div class="info">' +
         '<div class="name">'+escapeHtml(it.name)+'</div>' +
         '<div class="meta">'+typeText+' • سمت '+escapeHtml(it.direction)+' • '+escapeHtml(it.movement)+'</div>' +
@@ -1504,10 +1448,10 @@ function toggleNearbyAll(){
   }
   body.innerHTML=html;
   if(globe3D){
-    var markers=[{lat:globeState.lat,lng:globeState.lon,html:ICON_OBSERVER_SVG,heading:0}];
-    cachedAllSat.forEach(function(s){markers.push({lat:s.subLat,lng:s.subLon,html:ICON_SAT_SVG,heading:s.heading||0});});
-    cachedAllAc.forEach(function(a){markers.push({lat:a.lat,lng:a.lon,html:ICON_PLANE_SVG,heading:a.heading||0});});
-    setGlobeMarkers(globe3D,markers);
+    var pts=[{lat:globeState.lat,lng:globeState.lon,color:'#a5b4fc',altitude:0.02,radius:0.55,key:'obs'}];
+    cachedAllSat.forEach(function(s,i){pts.push({lat:s.subLat,lng:s.subLon,color:'#22d3ee',altitude:0.01,radius:0.28,key:'s'+i});});
+    cachedAllAc.forEach(function(a,i){pts.push({lat:a.lat,lng:a.lon,color:'#10b981',altitude:0.01,radius:0.25,key:'a'+i});});
+    setGlobePoints(globe3D,pts);
   }
 }
 function guessAirline(c){if(!c)return'نامشخص';var p=c.trim().substring(0,3).toUpperCase();var t={IRA:'ایران‌ایر',IRC:'ماهان‌ایر',IRM:'ایران ایرتور',CQH:'کاسپین',QSM:'قشم‌ایر',ATC:'آتا',IRZ:'زاگرس',IRX:'کیش‌ایر',IRU:'آسمان',UAE:'امارات',QTR:'قطر ایرویز',ETD:'الاتحاد',THY:'ترک‌ایرلاین',FDB:'فلای‌دبی',DLH:'لوفت‌هانزا',AFR:'ایرفرانس',KLM:'کا‌ال‌ام',AFL:'ایرفلوت',SIA:'سنگاپور ایرلاینز',QFA:'کانتاس',AIC:'ایر ایندیا',PIA:'پاکستان ایر',SVA:'سعودی',KAC:'کویت ایرویز',GFA:'گلف ایر',MEA:'خاورمیانه',RJA:'رویال اردن',SYP:'سوریه'};return t[p]||'نامشخص';}
@@ -1834,37 +1778,30 @@ function extrapolateAircraftToTime(offsetMin){
     return Object.assign({},a,{lat:toDeg(lat2),lon:toDeg(lon2)});
   });
 }
-var liveMarkerLookup={};
+var liveSatLookup={},liveAcLookup={};
 function updateMarkerLayer(){
   if(!globe3D)return;
-  liveMarkerLookup={};
-  var markers=[{lat:liveLat,lng:liveLon,html:ICON_OBSERVER_SVG,heading:0}];
+  globePointHandlers={};
+  liveSatLookup={};liveAcLookup={};
+  var pts=[{lat:liveLat,lng:liveLon,color:'#a5b4fc',altitude:0.025,radius:0.6,key:'obs'}];
   var satShown=Math.min(liveSatCurrent.length,LIVE_MAX_SAT_MARKERS);
   for(var i=0;i<satShown;i++){
     var s=liveSatCurrent[i];
-    var key='s'+i;
-    liveMarkerLookup[key]=s;
-    markers.push({
-      lat:s.lat,lng:s.lon,
-      html:s.isNearOverhead?ICON_SAT_SVG_OVERHEAD:ICON_SAT_SVG,
-      heading:s.heading||0,
-      onClick:(function(k){return function(){showLiveInfoSat(liveMarkerLookup[k]);};})(key)
-    });
+    var k='s'+i;
+    liveSatLookup[k]=s;
+    globePointHandlers[k]=(function(key){return function(){showLiveInfoSat(liveSatLookup[key]);};})(k);
+    pts.push({lat:s.lat,lng:s.lon,color:s.isNearOverhead?'#f59e0b':'#22d3ee',altitude:0.012,radius:s.isNearOverhead?0.35:0.28,key:k});
   }
   var acList=extrapolateAircraftToTime(liveTimeOffsetMin);
   var acShown=Math.min(acList.length,LIVE_MAX_AC_MARKERS);
   for(var j=0;j<acShown;j++){
     var a=acList[j];
-    var key2='a'+j;
-    liveMarkerLookup[key2]=a;
-    markers.push({
-      lat:a.lat,lng:a.lon,
-      html:ICON_PLANE_SVG,
-      heading:a.heading||0,
-      onClick:(function(k){return function(){showLiveInfoAc(liveMarkerLookup[k]);};})(key2)
-    });
+    var k2='a'+j;
+    liveAcLookup[k2]=a;
+    globePointHandlers[k2]=(function(key){return function(){showLiveInfoAc(liveAcLookup[key]);};})(k2);
+    pts.push({lat:a.lat,lng:a.lon,color:'#10b981',altitude:0.012,radius:0.25,key:k2});
   }
-  setGlobeMarkers(globe3D,markers);
+  setGlobePoints(globe3D,pts);
   var indicator=document.getElementById('liveLastUpdate');
   if(indicator)indicator.innerText='🛰️ '+liveSatCurrent.length+' | ✈️ '+acList.length;
 }
