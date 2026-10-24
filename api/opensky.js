@@ -1,68 +1,55 @@
 // api/opensky.js
 const https = require('https');
-const { URL } = require('url');
 
 let cachedToken = null;
 let tokenExpiry = 0;
 
-// تابع کمکی برای درخواست با پشتیبانی از IPv4 و تلاش مجدد
-function fetchWithIPv4(url, options = {}) {
+function request(urlStr, opts = {}) {
+  const { method = 'GET', headers = {}, body = null, timeout = 6000 } = opts;
   return new Promise((resolve, reject) => {
-    const req = https.request(url, { ...options, family: 4 }, (res) => {
+    const req = https.request(urlStr, { method, headers, family: 4 }, (res) => {
       let data = '';
-      res.on('data', (chunk) => (data += chunk));
-      res.on('end', () => resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, status: res.statusCode, text: () => Promise.resolve(data), json: () => Promise.resolve(JSON.parse(data)) }));
+      res.on('data', (c) => (data += c));
+      res.on('end', () => resolve({ status: res.statusCode, body: data }));
     });
     req.on('error', reject);
-    req.setTimeout(10000, () => {
-      req.destroy();
-      reject(new Error('Timeout'));
-    });
-    if (options.body) req.write(options.body);
+    req.setTimeout(timeout, () => req.destroy(new Error('Timeout')));
+    if (body) req.write(body);
     req.end();
   });
 }
 
-async function getOpenSkyToken() {
+async function getToken() {
   const now = Date.now();
-  if (cachedToken && now < tokenExpiry) {
-    return cachedToken;
-  }
+  if (cachedToken && now < tokenExpiry) return cachedToken;
 
-  const clientId = process.env.OPENSKY_CLIENT_ID;
-  const clientSecret = process.env.OPENSKY_CLIENT_SECRET;
+  const id = process.env.OPENSKY_CLIENT_ID;
+  const secret = process.env.OPENSKY_CLIENT_SECRET;
+  if (!id || !secret) throw new Error('credentials not set');
 
-  if (!clientId || !clientSecret) {
-    throw new Error('OpenSky credentials not configured');
-  }
-
-  const tokenUrl = 'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token';
   const postData = new URLSearchParams({
     grant_type: 'client_credentials',
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: id,
+    client_secret: secret,
   }).toString();
 
-  let lastError = null;
-  // ۳ بار تلاش مجدد با فاصله
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      const response = await fetchWithIPv4(tokenUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(postData) },
-        body: postData,
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      const data = await response.json();
-      cachedToken = data.access_token;
-      tokenExpiry = now + (data.expires_in - 300) * 1000;
-      return cachedToken;
-    } catch (e) {
-      lastError = e;
-      await new Promise((r) => setTimeout(r, 1000 * attempt)); // ۱ ثانیه، ۲ ثانیه، ۳ ثانیه صبر می‌کند
+  const r = await request(
+    'https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+      },
+      body: postData,
+      timeout: 5000,
     }
-  }
-  throw new Error(`OpenSky token fetch failed after 3 attempts: ${lastError.message}`);
+  );
+  if (r.status < 200 || r.status >= 300) throw new Error('token HTTP ' + r.status);
+  const data = JSON.parse(r.body);
+  cachedToken = data.access_token;
+  tokenExpiry = now + (data.expires_in - 300) * 1000;
+  return cachedToken;
 }
 
 module.exports = async (req, res) => {
@@ -70,30 +57,37 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  const { lamin, lomin, lamax, lomax, debug } = req.query;
+  const info = { tokenOk: false, tokenError: null, mode: null };
+
+  let token = null;
   try {
-    const token = await getOpenSkyToken();
-    const { lamin, lomin, lamax, lomax } = req.query;
+    token = await getToken();
+    info.tokenOk = true;
+  } catch (e) {
+    info.tokenError = e.message;
+  }
 
-    const url = new URL('https://opensky-network.org/api/states/all');
-    if (lamin) url.searchParams.set('lamin', lamin);
-    if (lomin) url.searchParams.set('lomin', lomin);
-    if (lamax) url.searchParams.set('lamax', lamax);
-    if (lomax) url.searchParams.set('lomax', lomax);
+  const url = new URL('https://opensky-network.org/api/states/all');
+  if (lamin) url.searchParams.set('lamin', lamin);
+  if (lomin) url.searchParams.set('lomin', lomin);
+  if (lamax) url.searchParams.set('lamax', lamax);
+  if (lomax) url.searchParams.set('lomax', lomax);
 
-    // درخواست API با IPv4
-    const apiResponse = await fetchWithIPv4(url.toString(), {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  try {
+    const headers = token ? { Authorization: 'Bearer ' + token } : {};
+    info.mode = token ? 'token' : 'anonymous';
+    const r = await request(url.toString(), { headers, timeout: 7000 });
 
-    if (!apiResponse.ok) {
-      const text = await apiResponse.text();
-      return res.status(apiResponse.status).json({ error: text });
+    if (debug) {
+      return res.status(200).json({ info, status: r.status, sample: r.body.slice(0, 200) });
     }
-
-    const data = await apiResponse.json();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (r.status < 200 || r.status >= 300) {
+      return res.status(r.status).json({ error: r.body.slice(0, 300), info });
+    }
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).send(r.body);
+  } catch (e) {
+    return res.status(504).json({ error: 'OpenSky unreachable: ' + e.message, info });
   }
 };
