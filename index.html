@@ -476,7 +476,8 @@ body,html{overflow-x:hidden;}
     <div id="frBox" class="card" style="display:none;">
       <div class="field-label"><svg class="icon-svg" viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg> بررسی هواپیما با Flightradar24</div>
       <p class="text-small text-muted" id="frHint" style="margin-bottom:12px;line-height:1.9;"></p>
-      <a id="frLink" class="btn btn-cyan" target="_blank" rel="noopener" style="text-decoration:none;margin-bottom:10px;">باز کردن Flightradar24 روی موقعیت من</a>
+      <div class="globe-wrap" style="height:360px;margin:0 0 10px;"><iframe id="frFrame" style="width:100%;height:100%;border:0;" referrerpolicy="no-referrer" loading="lazy"></iframe></div>
+      <a id="frLink" class="btn btn-outline btn-mini" target="_blank" rel="noopener" style="text-decoration:none;margin-bottom:12px;">اگر نقشه نمایش داده نشد، در Flightradar24 باز کن</a>
       <div id="frVerdictBtns">
         <button type="button" class="btn btn-success" onclick="frVerdict(true)" style="margin-bottom:8px;">✈️ هواپیما را در آن سمت دیدم</button>
         <button type="button" class="btn btn-outline" onclick="frVerdict(false)">هیچ هواپیمایی ندیدم</button>
@@ -487,7 +488,7 @@ body,html{overflow-x:hidden;}
     <button type="button" class="btn btn-outline" id="nearbyToggleBtn" onclick="toggleNearbyAll()" style="margin-bottom:12px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-radar-live"/></svg><span id="nearbyBtnText">مشاهده تمامی اهداف اطراف</span></button>
     <div id="nearbyListWrap" class="nearby-list-wrap"><div class="nearby-list-header"><span class="title">📋 اهداف اطراف</span><button class="close-btn" onclick="toggleNearbyAll()">×</button></div><div id="nearbyListBody" class="nearby-list"></div></div>
     <div class="globe-wrap"><div class="globe-actions"><button type="button" class="btn btn-mini" onclick="resetGlobeView()">🎯 بازگشت به موقعیت من</button></div><div id="globeContainer" class="globe-box"></div></div>
-    <div class="map-legend"><div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div><div class="legend-item ac"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg>هواپیما</div><div class="legend-item me"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-observer"/></svg>موقعیت شما</div></div>
+    <div class="map-legend"><div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div><div class="legend-item me"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-observer"/></svg>موقعیت شما</div></div>
     <details class="diag-box"><summary><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-info"/></svg>جزئیات فنی فرایند تحلیل</summary><div id="diagContent" style="margin-top:12px;"></div></details>
     <button type="button" class="btn btn-outline" onclick="resetSearch()" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>بررسی مجدد و ثبت مشاهده‌ی جدید</button>
   </div>
@@ -634,9 +635,9 @@ body,html{overflow-x:hidden;}
   <div id="liveAcPanel" style="display:none;">
     <div class="card">
       <div class="field-label"><svg class="icon-svg" viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg> هواپیماها — Flightradar24</div>
-      <p class="text-small text-muted" style="margin-bottom:10px;line-height:1.8;">نقشه‌ی زنده‌ی Flightradar24 روی موقعیت شما. اگر در کادر زیر باز نشد، دکمه‌ی باز کردن را بزنید.</p>
-      <div class="globe-wrap" style="height:420px;margin-top:0;"><iframe id="liveFrFrame" style="width:100%;height:100%;border:0;" referrerpolicy="no-referrer" loading="lazy"></iframe></div>
-      <a id="liveFrLink" class="btn btn-cyan" target="_blank" rel="noopener" style="text-decoration:none;margin-top:12px;">باز کردن در Flightradar24</a>
+      <p class="text-small text-muted" style="margin-bottom:10px;line-height:1.8;">عبور هواپیماها روی موقعیت شما، زنده داخل همین صفحه.</p>
+      <div class="globe-wrap" style="height:70vh;min-height:420px;margin-top:0;"><iframe id="liveFrFrame" style="width:100%;height:100%;border:0;" referrerpolicy="no-referrer" loading="lazy"></iframe></div>
+      <a id="liveFrLink" class="btn btn-outline btn-mini" target="_blank" rel="noopener" style="text-decoration:none;margin-top:12px;">اگر نقشه نمایش داده نشد، در Flightradar24 باز کن</a>
       <button type="button" class="btn btn-outline" onclick="resetLive()" style="margin-top:10px;">بازگشت</button>
     </div>
   </div>
@@ -652,7 +653,7 @@ body,html{overflow-x:hidden;}
       <div id="liveGlobeContainer" class="globe-box"></div>
       <div id="liveInfoPopup" class="live-info-popup" style="display:none;"></div>
     </div>
-    <div class="map-legend"><div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div><div class="legend-item ac"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-plane"/></svg>هواپیما</div><div class="legend-item me"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-observer"/></svg>موقعیت شما</div></div>
+    <div class="map-legend"><div class="legend-item sat"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-satellite"/></svg>ماهواره</div><div class="legend-item me"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;"><use href="#i-observer"/></svg>موقعیت شما</div></div>
     <button type="button" class="btn btn-outline" onclick="resetLive()" style="margin-top:14px;"><svg class="icon-svg icon-sm" viewBox="0 0 24 24"><use href="#i-refresh"/></svg>مشاهده‌ی منطقه‌ی دیگر</button>
   </div>
 </div>
@@ -851,6 +852,7 @@ function navigateTo(pageId){
   window.scrollTo(0,0);
 }
 function resetSearchPageState(){
+  var _ff=document.getElementById('frFrame');if(_ff)_ff.src='about:blank';
   var form=document.getElementById('searchFormPanel');var res=document.getElementById('resultBox');
   if(form)form.style.display='block';if(res)res.style.display='none';
   destroyGlobe();disableCompass();
@@ -1349,7 +1351,7 @@ async function analyzeRetrospectiveWindow(lat,lon,reportedTime,userAzimuth,userM
       var alt2=toDeg(look2.elevation);if(alt2<MIN_ELEV)continue;
       var az2=toDeg(look2.azimuth);var azDiff2=Math.abs(az2-userAzimuth);if(azDiff2>180)azDiff2=360-azDiff2;
       if(azDiff2>AZ_TOL_FINE)continue;
-      if(satInEarthShadow(pv2.position,pre2.date))continue;if(estimateSatMag(look2.rangeSat,cand.name)>6.5)continue;var timeDiffSec=Math.abs(ms2-reportedTime.getTime())/1000;
+      if(diag.nightFilter){if(satInEarthShadow(pv2.position,pre2.date)){diag.shadowRej++;continue;}if(estimateSatMag(look2.rangeSat,cand.name)>6.5){diag.dimRej++;continue;}}var timeDiffSec=Math.abs(ms2-reportedTime.getTime())/1000;
       var geo=satellite.eciToGeodetic(pv2.position,pre2.gmst);var subLat=toDeg(geo.latitude),subLon=toDeg(geo.longitude);
       var nextT=new Date(ms2+5000);var pvNext=satellite.propagate(cand.satrec,nextT);var heading=null;
       if(pvNext&&pvNext.position){var gmstN=satellite.gstime(nextT);var geoN=satellite.eciToGeodetic(pvNext.position,gmstN);heading=simpleBearing(subLat,subLon,toDeg(geoN.latitude),toDeg(geoN.longitude));}
@@ -1369,26 +1371,10 @@ async function runRetrospectiveAnalysis(lat,lon,obsDate,azimuth,moveDir,jy,jm,jd
   diag.sunAltCenter=sunAltitude(obsDate,lat,lon);var isNight=diag.sunAltCenter<=-6;
   try{
     var mainText=document.getElementById('loadingMainText');var satMatches=[];
-    if(!isNight){diag.satSkippedDaytime=true;}
-    else{if(mainText)mainText.innerText='تحلیل گذشته‌نگر ۳ دقیقه‌ای...';satMatches=await analyzeRetrospectiveWindow(lat,lon,obsDate,azimuth,moveDir,diag);}
-    var acMatches=[];_cachedAcDataRaw=[];
-    var minutesAgo=(Date.now()-obsDate.getTime())/60000;var acSkippedOldTime=minutesAgo>30;
-    if(!acSkippedOldTime){
-      if(mainText)mainText.innerText='دریافت داده‌های ترافیک هوایی...';
-      try{
-        var acData=await fetchAllAircraft(lat,lon,250);
-        diag.acSourcesOk=acData.sourcesOk;diag.aircraftWithinRadius=acData.list.length;_cachedAcDataRaw=acData.list.map(function(a){return aircraftAtTime(a,obsDate);});
-        acData.list.forEach(function(a){
-          if(a.onGround)return;a=aircraftAtTime(a,obsDate);var be=bearingElevation(lat,lon,a.lat,a.lon,a.altM);if(be.elev<3)return;
-          var azDiff=Math.abs(be.bearing-azimuth);if(azDiff>180)azDiff=360-azDiff;if(azDiff>acAzTolerance(obsDate))return;
-          diag.aircraftMatches++;
-          acMatches.push({name:a.callsign||a.icao,icao:a.icao,country:a.country||'نامشخص',elev:be.elev.toFixed(1),az:be.bearing.toFixed(1),dist:(be.dist/1000).toFixed(1),alt:a.altM,speed:a.speedKmh,heading:a.heading,lat:a.lat,lon:a.lon,azDiff:azDiff,score:(100-azDiff*5)+(be.elev*1.5)});
-        });
-        acMatches.sort(function(a,b){return b.score-a.score;});
-      }catch(err){diag.acError=err.message;}
-    }else{diag.acSkippedOldTime=true;}
-    diag.acComplete=!diag.acSkippedOldTime&&!diag.acError&&diag.aircraftWithinRadius>0;
-    diag.acReason=diag.acSkippedOldTime?'زمان گزارش بیش از ۳۰ دقیقه گذشته و موقعیت هواپیماها قابل بازسازی نیست.':(diag.acError?'دریافت داده‌ی هواپیما با خطا مواجه شد.':'هیچ داده‌ی هواپیمایی در این منطقه دریافت نشد (پوشش ناکافی). هواپیما بودن قابل رد کردن نیست.');
+    diag.nightFilter=isNight;diag.shadowRej=0;diag.dimRej=0;
+    if(mainText)mainText.innerText='تحلیل ماهواره‌ها (۳ دقیقه‌ی گذشته)...';
+    satMatches=await analyzeRetrospectiveWindow(lat,lon,obsDate,azimuth,moveDir,diag);
+    var acMatches=[];_cachedAcDataRaw=[];diag.acManual=true;
     cachedAllSat=satMatches.slice();cachedAllAc=acData_safe_list(lat,lon,azimuth);
     finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,acMatches,jy,jm,jd,jh,jmin,diag);
   }catch(err){
@@ -1414,7 +1400,7 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
   document.getElementById('resultBox').style.display='block';
   var hasSat=satMatches.length>0,hasAc=acMatches.length>0;var isUnknown=!hasSat&&!hasAc;
   var hero=document.getElementById('resultHero');var cls,title,sub,icon;
-  if(isUnknown&&!diag.acComplete){cls='un';title='⚠️ بررسی ناقص — نتیجه قطعی نیست';sub=diag.acReason;icon='alert';}else if(isUnknown){cls='threat';title='🚨 شیء ناشناس — تهدید احتمالی';sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';icon='alert';}
+  if(isUnknown){cls='un';title='ماهواره‌ای مطابقت ندارد — بررسی چشمی هواپیما';sub='هیچ ماهواره‌ی شناخته‌شده‌ای با این سمت و زمان نمی‌خواند. هواپیما را با نقشه‌ی پایین بررسی کنید.';icon='alert';}else if(isUnknown){cls='threat';title='🚨 شیء ناشناس — تهدید احتمالی';sub='هیچ ماهواره یا هواپیمای تاییدشده‌ای در ۳ دقیقه‌ی گذشته از آن جهت عبور نکرده.';icon='alert';}
   else if(hasSat&&!hasAc){cls='sat';title='✓ ماهواره تاییدشده';sub=satMatches.length+' ماهواره با مشخصات شما مطابقت دارد.';icon='satellite';}
   else if(hasAc&&!hasSat){cls='ac';title='✓ هواپیمای تاییدشده';sub=acMatches.length+' پرواز با مشخصات شما مطابقت دارد.';icon='plane';}
   else{cls='mix';title='✓ شناسایی دوگانه';sub=satMatches.length+' ماهواره و '+acMatches.length+' هواپیما مطابقت دارند.';icon='satellite';}
@@ -1451,7 +1437,7 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
     cardsHtml+=buildObjCard('plane',a.name,rows,score);
   });
   document.getElementById('objectsContainer').innerHTML=cardsHtml;
-  var warnBox=document.getElementById('acTimeWarning');var warnParts=[];
+  var warnBox=document.getElementById('acTimeWarning');var warnParts=[];if(diag.sunAltCenter>-6)warnParts.push('☀️ خورشید بالاتر از افق است؛ ماهواره‌ها در این زمان معمولاً با چشم دیده نمی‌شوند و تطابق فقط هندسی است.');
   if(diag.acSkippedOldTime)warnParts.push('⚠️ تحلیل هواپیما انجام نشد چون زمان گزارش بیش از ۳۰ دقیقه با اکنون فاصله دارد.');
   if(diag.acError)warnParts.push('خطا در دریافت هواپیما: '+diag.acError);
   if(warnParts.length>0){warnBox.style.display='block';warnBox.innerHTML=warnParts.map(escapeHtml).join('<br><br>');}
@@ -1462,8 +1448,8 @@ function finishAndShowRetrospective(lat,lon,obsDate,azimuth,moveDir,satMatches,a
     '<div class="diag-row"><span>وضعیت نور</span><span>'+(diag.satSkippedDaytime?'☀️ روز':(diag.sunAltCenter<=-18?'🌙 شب کامل':'🌆 گرگ‌ومیش'))+'</span></div>'+
     '<div class="diag-row"><span>ماهواره‌های بررسی‌شده</span><span>'+(diag.satSkippedDaytime?'— (روز)':diag.satChecked)+'</span></div>'+
     '<div class="diag-row" style="color:#6ee7b7;"><span>تطابق ماهواره</span><span>'+satMatches.length+'</span></div>'+
-    '<div class="diag-row"><span>هواپیماهای نزدیک</span><span>'+diag.aircraftWithinRadius+'</span></div>'+
-    '<div class="diag-row" style="color:#6ee7b7;"><span>هواپیمای مطابق</span><span>'+diag.aircraftMatches+'</span></div>'+
+    '<div class="diag-row"><span>حذف‌شده: سایه‌ی زمین</span><span>'+(diag.shadowRej||0)+'</span></div>'+
+    '<div class="diag-row"><span>حذف‌شده: کم‌نور</span><span>'+(diag.dimRej||0)+'</span></div>'+
     '<div class="diag-row"><span>ارتفاع خورشید</span><span>'+(diag.sunAltCenter!=null?diag.sunAltCenter.toFixed(1)+'°':'-')+'</span></div>';
   setTimeout(function(){
     destroyGlobe();globe3D=createGlobe('globeContainer',lat,lon,0.5);
@@ -1560,95 +1546,47 @@ function getPredLocationInfo(){
   return null;
 }
 
-/* ==== KML PASS FINDER (two-phase, accurate & fast) ==== */
+/* ==== PASS FINDERS: adaptive stepping — never skips a pass ==== */
+/* هر گام تا زودترین زمانی که ماهواره می‌تواند به منطقه برسد جلو می‌رود (سرعت زمینی ≤ ۱۱.۵ km/s)، داخل منطقه هر ۳ ثانیه بررسی می‌کند */
 function findPassesForSatelliteKml(satrec,name,startTime,endTime,options){
-  var passes=[];
-  var COARSE_STEP=30000,FINE_STEP=5000;
-  var bbox=options.bbox;
-  var marginDeg=1;
-  // Phase 1: find potential time windows
-  var currentTime=startTime;
-  var inWindow=false;var windowStart=0,windowEnd=0;
-  var potentialWindows=[];
-  while(currentTime<=endTime){
-    var tDate=new Date(currentTime);var pv=satellite.propagate(satrec,tDate);
-    var inExpandedBbox=false;
-    if(pv&&pv.position){
-      var gmst=satellite.gstime(tDate);var geo=satellite.eciToGeodetic(pv.position,gmst);
-      var subLat=toDeg(geo.latitude),subLon=toDeg(geo.longitude);
-      if(subLat>=bbox.minLat-marginDeg&&subLat<=bbox.maxLat+marginDeg&&subLon>=bbox.minLon-marginDeg&&subLon<=bbox.maxLon+marginDeg){
-        inExpandedBbox=true;
-      }
-    }
-    if(inExpandedBbox){
-      if(!inWindow){inWindow=true;windowStart=currentTime;}
-      windowEnd=currentTime;
-    } else if(inWindow){
-      potentialWindows.push({start:windowStart,end:windowEnd});
-      inWindow=false;
-    }
-    currentTime+=COARSE_STEP;
+  var passes=[],VMAX=11.5,IN_STEP=3000,bb=options.bbox,t=startTime,inP=false,pd=null;
+  function close(){if(pd)passes.push(pd);inP=false;pd=null;}
+  while(t<=endTime){
+    var td=new Date(t),pv=satellite.propagate(satrec,td);
+    if(!pv||!pv.position){t+=30000;continue;}
+    var gmst=satellite.gstime(td),geo=satellite.eciToGeodetic(pv.position,gmst);
+    var sLat=toDeg(geo.latitude),sLon=toDeg(geo.longitude);
+    var cLat=Math.min(Math.max(sLat,bb.minLat),bb.maxLat),cLon=Math.min(Math.max(sLon,bb.minLon),bb.maxLon);
+    var d=haversineKm(sLat,sLon,cLat,cLon);
+    if(d>0){if(inP)close();t+=Math.max(1000,(d/VMAX)*900);continue;}
+    if(pointInAnyPolygon(sLat,sLon,options.polygons,bb)){
+      var look=satellite.ecfToLookAngles(options.observerGd,satellite.eciToEcf(pv.position,gmst));
+      var el=toDeg(look.elevation),az=toDeg(look.azimuth),rg=look.rangeSat;
+      if(!inP){inP=true;pd={name:name,startTime:t,startAz:az,peakElev:el,peakTime:t,peakAz:az,endTime:t,endAz:az,minRange:rg,mode:'kml'};}
+      else{pd.endTime=t;pd.endAz=az;if(el>pd.peakElev){pd.peakElev=el;pd.peakTime=t;pd.peakAz=az;}if(rg<pd.minRange)pd.minRange=rg;}
+    }else if(inP)close();
+    t+=IN_STEP;
   }
-  if(inWindow)potentialWindows.push({start:windowStart,end:windowEnd});
-  // Extend windows by one coarse step each side
-  potentialWindows.forEach(function(w){
-    w.start=Math.max(startTime,w.start-COARSE_STEP);
-    w.end=Math.min(endTime,w.end+COARSE_STEP);
-  });
-  if(potentialWindows.length===0)return passes;
-  // Phase 2: fine scan in each window
-  var observerGd=options.observerGd;
-  var localPasses=[];
-  potentialWindows.forEach(function(w){
-    var ct=w.start;var inP=false;var pd=null;
-    while(ct<=w.end){
-      var td=new Date(ct);var pv=satellite.propagate(satrec,td);
-      var visible=false;var elev=-90,az=0,rangeKm=99999;
-      if(pv&&pv.position){
-        var gmst=satellite.gstime(td);var geo=satellite.eciToGeodetic(pv.position,gmst);
-        var subLat=toDeg(geo.latitude),subLon=toDeg(geo.longitude);
-        visible=pointInAnyPolygon(subLat,subLon,options.polygons,options.bbox);
-        var ecf=satellite.eciToEcf(pv.position,gmst);var look=satellite.ecfToLookAngles(observerGd,ecf);
-        elev=toDeg(look.elevation);az=toDeg(look.azimuth);rangeKm=look.rangeSat;
-      }
-      if(visible){
-        if(!inP){inP=true;pd={name:name,startTime:ct,startAz:az,peakElev:elev,peakTime:ct,peakAz:az,endTime:ct,endAz:az,minRange:rangeKm,mode:'kml'};}
-        else{pd.endTime=ct;pd.endAz=az;if(elev>pd.peakElev){pd.peakElev=elev;pd.peakTime=ct;pd.peakAz=az;}if(rangeKm<pd.minRange)pd.minRange=rangeKm;}
-      } else if(inP){localPasses.push(pd);inP=false;pd=null;}
-      ct+=FINE_STEP;
-    }
-    if(inP&&pd)localPasses.push(pd);
-  });
-  // Dedupe overlapping
-  var deduped=[];
-  localPasses.forEach(function(p){
-    var dup=deduped.some(function(q){return Math.abs(p.startTime-q.startTime)<10000;});
-    if(!dup)deduped.push(p);
-  });
-  return deduped;
+  close();return passes;
 }
-
 function findPassesForSatelliteRadius(satrec,name,obsLat,obsLon,startTime,endTime,minElev,observerGd,maxGroundDistKm){
-  var passes=[];var step=30000;var currentTime=startTime;var inPass=false;var passData=null;
-  while(currentTime<=endTime){
-    var tDate=new Date(currentTime);var pv=satellite.propagate(satrec,tDate);
-    var elev=-90,az=0,rangeKm=99999;var subLat=null,subLon=null;
-    if(pv&&pv.position){
-      var gmst=satellite.gstime(tDate);var geo=satellite.eciToGeodetic(pv.position,gmst);
-      subLat=toDeg(geo.latitude);subLon=toDeg(geo.longitude);
-      var ecf=satellite.eciToEcf(pv.position,gmst);var look=satellite.ecfToLookAngles(observerGd,ecf);
-      elev=toDeg(look.elevation);az=toDeg(look.azimuth);rangeKm=look.rangeSat;
-    }
-    var groundDist=subLat!=null?haversineKm(obsLat,obsLon,subLat,subLon):99999;
-    var visible=elev>minElev&&groundDist<maxGroundDistKm;
-    if(visible){
-      if(!inPass){inPass=true;passData={name:name,startTime:currentTime,startAz:az,peakElev:elev,peakTime:currentTime,peakAz:az,endTime:currentTime,endAz:az,minRange:rangeKm,minGroundDist:groundDist,mode:'radius'};}
-      else{passData.endTime=currentTime;passData.endAz=az;if(elev>passData.peakElev){passData.peakElev=elev;passData.peakTime=currentTime;passData.peakAz=az;}if(rangeKm<passData.minRange)passData.minRange=rangeKm;if(groundDist<passData.minGroundDist)passData.minGroundDist=groundDist;}
-    } else if(inPass){if(passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){passes.push(passData);}inPass=false;passData=null;}
-    currentTime+=step;
+  var passes=[],VMAX=11.5,IN_STEP=3000,t=startTime,inP=false,pd=null;
+  function close(){if(pd&&pd.peakElev>=minElev+3)passes.push(pd);inP=false;pd=null;}
+  while(t<=endTime){
+    var td=new Date(t),pv=satellite.propagate(satrec,td);
+    if(!pv||!pv.position){t+=30000;continue;}
+    var gmst=satellite.gstime(td),geo=satellite.eciToGeodetic(pv.position,gmst);
+    var d=haversineKm(obsLat,obsLon,toDeg(geo.latitude),toDeg(geo.longitude));
+    if(d>=maxGroundDistKm){if(inP)close();t+=Math.max(1000,((d-maxGroundDistKm)/VMAX)*900);continue;}
+    var look=satellite.ecfToLookAngles(observerGd,satellite.eciToEcf(pv.position,gmst));
+    var el=toDeg(look.elevation),az=toDeg(look.azimuth),rg=look.rangeSat;
+    if(el>minElev){
+      if(!inP){inP=true;pd={name:name,startTime:t,startAz:az,peakElev:el,peakTime:t,peakAz:az,endTime:t,endAz:az,minRange:rg,minGroundDist:d,mode:'radius'};}
+      else{pd.endTime=t;pd.endAz=az;if(el>pd.peakElev){pd.peakElev=el;pd.peakTime=t;pd.peakAz=az;}if(rg<pd.minRange)pd.minRange=rg;if(d<pd.minGroundDist)pd.minGroundDist=d;}
+    }else if(inP)close();
+    t+=IN_STEP;
   }
-  if(inPass&&passData&&passData.peakElev>=minElev+3&&passData.minGroundDist<maxGroundDistKm){passes.push(passData);}
-  return passes;
+  close();return passes;
 }
 
 var PREDICTION_MIN_ELEV=20;
@@ -1707,6 +1645,9 @@ async function runPrediction(){
         var sma=Math.pow(398600.4418*Math.pow(period*60,2)/(4*Math.PI*Math.PI),1/3);
         var alt=sma-6371;
         if(alt>40000||alt<100){processed++;continue;}
+        var _inc=satrec.inclo*180/Math.PI,_ml=Math.min(_inc,180-_inc);
+        if(locInfo.mode==='kml'){if(locInfo.bbox.minLat>_ml+1.5||locInfo.bbox.maxLat<-_ml-1.5){processed++;continue;}}
+        else if(Math.abs(locInfo.lat)>_ml+1.5){processed++;continue;}
         var satPasses;
         if(locInfo.mode==='kml'){
           satPasses=findPassesForSatelliteKml(satrec,name,startMs,endMs,{bbox:locInfo.bbox,polygons:locInfo.polygons,observerGd:observerGd});
@@ -1853,7 +1794,7 @@ function setLiveView(v){liveView=v;document.getElementById('liveViewSatCard').cl
 function showLiveAircraftFr(){
   document.getElementById('liveSetupPanel').style.display='none';
   document.getElementById('liveAcPanel').style.display='block';
-  document.getElementById('liveFrFrame').src='https://www.flightradar24.com/simple?lat='+liveLat.toFixed(2)+'&lon='+liveLon.toFixed(2)+'&z=9';
+  document.getElementById('liveFrFrame').src='https://www.flightradar24.com/simple?lat='+liveLat.toFixed(2)+'&lon='+liveLon.toFixed(2)+'&z=9&label1=reg&size=small';
   document.getElementById('liveFrLink').href=frUrl(liveLat,liveLon,9);
   window.scrollTo(0,0);
 }
@@ -1862,10 +1803,10 @@ function setupFrBox(lat,lon,cls,obsDate,azimuth){
   _frCtx={lat:lat,lon:lon,cls:cls};
   document.getElementById('frLink').href=frUrl(lat,lon,9);
   var old=(Date.now()-obsDate.getTime())/60000>5;
-  document.getElementById('frHint').innerText='نقشه را باز کنید و ببینید در سمت '+azimuthToCompass(azimuth)+' ('+Math.round(azimuth)+'°) هواپیمایی هست یا نه، سپس نتیجه را ثبت کنید.'+(old?' توجه: نقشه‌ی زنده فقط «الان» را نشان می‌دهد؛ برای زمان گذشته از Playback خود Flightradar24 استفاده کنید.':'');
+  document.getElementById('frHint').innerText='در نقشه‌ی بالا ببینید در سمت '+azimuthToCompass(azimuth)+' ('+Math.round(azimuth)+'°) هواپیمایی هست یا نه، سپس نتیجه را ثبت کنید.'+(old?' توجه: نقشه‌ی زنده فقط «الان» را نشان می‌دهد؛ برای زمان گذشته از Playback خود Flightradar24 استفاده کنید.':'');
   document.getElementById('frVerdictBtns').style.display='block';
   document.getElementById('frStatus').innerText='';
-  document.getElementById('frBox').style.display=(cls==='un'||cls==='threat')?'block':'none';
+  var _vis=(cls==='un'||cls==='threat');document.getElementById('frBox').style.display=_vis?'block':'none';document.getElementById('frFrame').src=_vis?('https://www.flightradar24.com/simple?lat='+lat.toFixed(2)+'&lon='+lon.toFixed(2)+'&z=10&label1=reg&size=small'):'about:blank';
 }
 function updateLastHistory(cls,title,name){try{var h=safeHist();if(h[0]){h[0].cls=cls;h[0].title=title;h[0].mainName=name;localStorage.setItem('rasadyar_history',JSON.stringify(h));}}catch(e){}}
 function frVerdict(seen){
